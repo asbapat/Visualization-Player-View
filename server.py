@@ -7,6 +7,14 @@ import json
 import pandas as pd
 
 
+app = Flask(__name__)
+
+
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+
 if __name__ == "__main__":
     premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0, index_col=0,
                                       usecols=['Player Surname', 'Time Played', 'Goals', 'Assists', 'Clean Sheets',
