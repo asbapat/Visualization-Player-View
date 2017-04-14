@@ -5,6 +5,78 @@ import numpy as np
 import random
 import json
 import pandas as pd
+import math
+
+from scipy.spatial.distance import cdist
+from sklearn.preprocessing import normalize, MinMaxScaler
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn import metrics
+from sklearn.manifold import MDS
+
+
+def find_best_k():
+    no_of_cluster = range(1, 25)
+    clusters_list = list()
+    centroid_list = list()
+    euclidean_distance_list = list()
+    min_distance_list = list()
+    average_squared_sum_list = list()
+    elbow_list = list()
+
+
+    # Create clusters with different k values
+    for cluster in no_of_cluster:
+        clusters_list.append(KMeans(n_clusters=cluster).fit(premier_league_data.values))
+
+    # Find the centroid of each cluster
+    for cluster in clusters_list:
+        centroid_list.append(cluster.cluster_centers_)
+
+    # Compute the distance between centroid of a cluster and each value
+    for centroid in centroid_list:
+        euclidean_distance_list.append(cdist(premier_league_data.values, centroid, 'euclidean'))
+
+    # Find the minimum distance column wise for each distance in the euclidean_distance_list
+    for distance in euclidean_distance_list:
+        min_distance_list.append(np.min(distance, axis=1))
+
+    # Calculate the average squared sum for each distance
+    for dist in min_distance_list:
+        average_squared_sum_list.append(sum(dist) / premier_league_data.values.shape[0])
+
+    for cluster in no_of_cluster:
+        elbow_dict = dict()
+        elbow_dict[cluster] = {'K': cluster, 'AvgSS': average_squared_sum_list[cluster-1]}
+        elbow_list.append(elbow_dict[cluster])
+
+    return elbow_list
+
+
+def adaptive_sampling(no_of_clusters):
+    cluster_features = list()
+
+    # Perform K-Means Clustering
+    clusters = KMeans(n_clusters=no_of_clusters).fit(premier_league_data)
+
+    # Add a column called 'cluster_no' in the data frame
+    premier_league_data['cluster_no'] = clusters.labels_
+
+    for i in range(no_of_clusters):
+        # Get the number of samples in that particular cluster based on the sample percent
+        samples_required = len(premier_league_data[premier_league_data['cluster_no'] == i]) * sample_percent
+        # Find the samples(rows) that are a part of the i'th cluster. Run for all the features in a cluster
+        data_from_cluster = premier_league_data[premier_league_data['cluster_no'] == i]
+        # Get a random sample of the players from a particular cluster
+        cluster_features.append(premier_league_data.ix[random.sample(data_from_cluster.index, int(samples_required))])
+
+    # Combine the data for a particular player from all the features (columns) selected
+    adaptive_sample_data = pd.concat(cluster_features)
+
+    # Delete column 'cluster_no' from the data frame
+    del adaptive_sample_data['cluster_no']
+
+    return adaptive_sample_data
 
 
 app = Flask(__name__)
