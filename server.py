@@ -18,8 +18,11 @@ from sklearn.manifold import MDS
 def make_collapsible_tree():
     teams = list()
     club_list = list()
+    club_players_list = list()
+    player_stats_list = list()
     league_dict = dict()
     teams_dict = dict()
+    player_dict = dict()
     for team in premier_league_data.loc[:, "Team"]:
         teams.append(team)
         if team not in club_list:
@@ -28,10 +31,14 @@ def make_collapsible_tree():
     
     i = 0
     for player in premier_league_data.loc[:, "Player Surname"]:
-        teams_dict[teams[i]].append(player)
+        player_dict = {"name": player, "stats": []}
+        teams_dict[teams[i]].append(player_dict)
         i += 1
-    league_dict = {'English Premier League': teams_dict}
-    return [league_dict]
+
+    for team in teams_dict:
+        club_players_list.append({"name": team, "children": teams_dict[team]})
+    league_dict = {"name": "English Premier League", "children": club_players_list}
+    return league_dict
 
 
 def find_best_k():
@@ -120,7 +127,6 @@ if __name__ == "__main__":
 
     league_list = make_collapsible_tree()
     
-    # json_values = league_dict.to_json(orient='records')
     with open('static/leaguejson/league.json', 'w') as f:
             json.dump(league_list, f)
     
