@@ -15,6 +15,25 @@ from sklearn import metrics
 from sklearn.manifold import MDS
 
 
+def make_collapsible_tree():
+    teams = list()
+    club_list = list()
+    league_dict = dict()
+    teams_dict = dict()
+    for team in premier_league_data.loc[:, "Team"]:
+        teams.append(team)
+        if team not in club_list:
+            club_list.append(team)
+            teams_dict[team] = []
+    
+    i = 0
+    for player in premier_league_data.loc[:, "Player Surname"]:
+        teams_dict[teams[i]].append(player)
+        i += 1
+    league_dict = {'English Premier League': teams_dict}
+    return [league_dict]
+
+
 def find_best_k():
     no_of_cluster = range(1, 25)
     clusters_list = list()
@@ -88,8 +107,8 @@ def index():
 
 
 if __name__ == "__main__":
-    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0, index_col=0,
-                                      usecols=['Player Surname', 'Time Played', 'Goals', 'Assists', 'Clean Sheets',
+    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
+                                      usecols=['Player Surname', 'Team', 'Time Played', 'Goals', 'Assists', 'Clean Sheets',
                                              'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
                                              'Shots On Target inc goals', 'Key Passes', 'Big Chances',
@@ -99,9 +118,17 @@ if __name__ == "__main__":
                                              'Error leading to Goal', 'Error leading to Attempt',
                                              'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
 
+    league_list = make_collapsible_tree()
+    
+    # json_values = league_dict.to_json(orient='records')
+    with open('static/leaguejson/league.json', 'w') as f:
+            json.dump(league_list, f)
+    
     player_names = list(premier_league_data.index.values)
     premier_league_data.index.names = ['Player Name']
     premier_league_data.columns.names = ['Attributes']
+    del premier_league_data['Team']
+    premier_league_data = premier_league_data.set_index(['Player Surname'])
     scaler = MinMaxScaler()
     premier_league_data = pd.DataFrame(scaler.fit_transform(premier_league_data), columns=premier_league_data.columns)
 
