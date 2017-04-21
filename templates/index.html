@@ -16,8 +16,25 @@
     <h1 align="center">English Premier League 2011/12 Statistics</h1>
     <h3 align="center">Visualize the performance of Premier League players in the 2011/12 season based on different attributes</h3>
 
-    <script type='text/javascript'>
-        collapsibleTree();
-    </script>
+    <div class="tab">
+        <button class="tabStyle" onclick="checkTab(event, 'gameweek')">Gameweek Data</button>
+        <button class="tabStyle" onclick="checkTab(event, 'season')">Season Data</button>
+    </div>
+
+    <div id="gameweek" class="tabcontent">
+        <div id="makeGameweek">
+            <h3 align="center">Gameweek Data</h3>
+
+        </div>
+    </div>
+
+    <div id="season" class="tabcontent">
+        <div id="makeSeason">
+            <h3 align="center">Season Data</h3>
+
+
+        </div>
+    </div>
+
 </body>
 </html>
