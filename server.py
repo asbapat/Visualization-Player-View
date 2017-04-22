@@ -14,6 +14,8 @@ from sklearn.decomposition import PCA
 from sklearn import metrics
 from sklearn.manifold import MDS
 
+JSON_DIR = 'static/leaguejson/'
+
 
 def make_collapsible_tree():
     teams = list()                  # Stores the club of each player
@@ -107,6 +109,7 @@ def find_best_k():
 
 def adaptive_sampling(no_of_clusters):
     cluster_features = list()
+    sample_percent = 0.5
 
     # Perform K-Means Clustering
     clusters = KMeans(n_clusters=no_of_clusters).fit(premier_league_data)
@@ -139,6 +142,40 @@ def index():
     return render_template('index.html')
 
 
+@app.route("/adaptivesampling")
+def adaptivesampling():
+    # Implement adaptive sampling
+    # Find best value of k by elbow method
+    elbow_values = find_best_k()
+    with open(JSON_DIR + 'kmeans_json.json', 'w') as f:
+        json.dump(elbow_values, f)
+
+    # No. of clusters is obtained from find_best_k()
+    no_of_clusters = 5
+    adaptive_sample_of_players = adaptive_sampling(no_of_clusters)
+
+    # Perform PCA on the sampled data based on best PCA attributes
+    pca = PCA(n_components=5).fit(adaptive_sample_of_players)
+
+    pca = pca.transform(adaptive_sample_of_players)
+
+    sample_player_names = list()
+    for value in adaptive_sample_of_players.index.values:
+        sample_player_names.append(player_names[value])
+
+    se = pd.DataFrame(sample_player_names)
+    pca = np.concatenate((pca, se), axis=1)
+
+    pca_values = pd.DataFrame(pca)
+    pca_values.columns = ['PCA1', 'PCA2', 'PCA3', 'PCA4', 'PCA5', 'Name']
+    json_values = pca_values.to_json(orient='records')
+
+    with open(JSON_DIR + 'pca_values_adaptive_json.json', 'w') as f:
+        f.write(json_values)
+
+    return ('', 204)
+
+
 if __name__ == "__main__":
     premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
                                       usecols=['Player Surname', 'Team', 'Time Played', 'Position Id', 'Goals', 'Assists', 'Clean Sheets',
@@ -153,7 +190,7 @@ if __name__ == "__main__":
 
     league_list = make_collapsible_tree()
     
-    with open('static/leaguejson/league.json', 'w') as f:
+    with open(JSON_DIR + 'league.json', 'w') as f:
             json.dump(league_list, f)
     
     player_names = list(premier_league_data.index.values)
