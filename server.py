@@ -51,15 +51,18 @@ def make_collapsible_tree():
             position = 'Striker'
 
         player_list.append(surname)
+        player_dict[surname] = []
         stats_dict = {"Position": position, "Time Played": row['Time Played'], "Goals": row['Goals']}
         stats_list.append([stats_dict])
-        player_dict[surname] = stats_dict
+        player_dict[surname].append({"name": "Position", "size": position})
+        player_dict[surname].append({"name": "Time Played", "size": row['Time Played']})
+        player_dict[surname].append({"name": "Goals", "size": row['Goals']})
 
     i = 0
     team_list = list()
     for player in player_list:
-        teams_dict[teams[i]].append({"name": player, "children": stats_list[i]})
-        player_stats_list.append({"name": player, "children": stats_list[i]})
+        teams_dict[teams[i]].append({"name": player, "children": player_dict[player]})
+        player_stats_list.append({"name": player, "children": player_dict[player]})
         i += 1
 
     for team in teams_dict:
