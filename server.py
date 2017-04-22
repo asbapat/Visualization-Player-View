@@ -16,15 +16,13 @@ from sklearn.manifold import MDS
 
 
 def make_collapsible_tree():
-    teams = list()
-    club_list = list()
-    club_players_list = list()
-    player_stats_list = list()
-    player_list = list()
-    league_dict = dict()
-    teams_dict = dict()
-    stats_dict = dict()
-    player_dict = dict()
+    teams = list()                  # Stores the club of each player
+    club_list = list()              # Stores the unique list of clubs
+    player_stats_list = list()      # Stores the statistics of each player
+    player_list = list()            # Stores the surname of each player
+    stats_list = list()             # Stores the stats of each player
+    teams_dict = dict()             # Maps the player to his particular club
+    player_dict = dict()            # Maps the statistics to a player
 
     for team in premier_league_data.loc[:, "Team"]:
         teams.append(team)
@@ -32,31 +30,39 @@ def make_collapsible_tree():
             club_list.append(team)
             teams_dict[team] = []
 
+    unique_id = 1
+    for index, row in premier_league_data.loc[:, ['Player Surname','Time Played', 'Goals', 'Position Id']].iterrows():
+        surname = row['Player Surname']
+        position_id = int(row['Position Id'])
+        # If two players have the same surname
+        if surname in player_dict:
+            surname += str(unique_id)
+            unique_id += 1
+
+        if position_id == 1:
+            position = 'Goalkeeper'
+        elif position_id == 2:
+            position = 'Defender'
+        elif position_id == 4:
+            position = 'Midfielder'
+        elif position_id == 6:
+            position = 'Striker'
+
+        player_list.append(surname)
+        stats_dict = {"Position": position, "Time Played": row['Time Played'], "Goals": row['Goals']}
+        stats_list.append([stats_dict])
+        player_dict[surname] = stats_dict
+
     i = 0
-    for index, row in premier_league_data.loc[:, ['Player Surname','Time Played', 'Goals']].iterrows():
-        player_list.append(row['Player Surname'])
-        player_dict[row['Player Surname']] = []
-        stats_dict = {"Time Played": row['Time Played'], "Goals": row['Goals']}
-        player_dict[row['Player Surname']].append(stats_dict)
-        teams_dict[teams[i]].append(player_dict)
+    team_list = list()
+    for player in player_list:
+        teams_dict[teams[i]].append({"name": player, "children": stats_list[i]})
+        player_stats_list.append({"name": player, "children": stats_list[i]})
         i += 1
 
-    # i = 0
-    # for player in premier_league_data.loc[:,"Player Surname"]:
-    #     player_list.append(player)
-    #     player_dict = {"name": player}
-    #     player_dict[player] = []
-    #     teams_dict[teams[i]].append(player_dict)
-    #     i += 1
-
-    team_list = list()
-    for player in player_dict:
-        player_stats_list.append({"name": player, "children": player_dict[player]})
-    print player_stats_list
-
     for team in teams_dict:
-        team_list.append({"name":team, "children": player_stats_list})
-        #club_players_list.append({"name": team, "children": team_list})
+        team_list.append({"name":team, "children": teams_dict[team]})
+
     league_dict = {"name": "English Premier League", "children": team_list}
     return league_dict
 
@@ -135,7 +141,7 @@ def index():
 
 if __name__ == "__main__":
     premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
-                                      usecols=['Player Surname', 'Team', 'Time Played', 'Goals', 'Assists', 'Clean Sheets',
+                                      usecols=['Player Surname', 'Team', 'Time Played', 'Position Id', 'Goals', 'Assists', 'Clean Sheets',
                                              'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
                                              'Shots On Target inc goals', 'Key Passes', 'Big Chances',
@@ -154,6 +160,7 @@ if __name__ == "__main__":
     premier_league_data.index.names = ['Player Name']
     premier_league_data.columns.names = ['Attributes']
     del premier_league_data['Team']
+    del premier_league_data['Position Id']
     premier_league_data = premier_league_data.set_index(['Player Surname'])
     scaler = MinMaxScaler()
     premier_league_data = pd.DataFrame(scaler.fit_transform(premier_league_data), columns=premier_league_data.columns)
