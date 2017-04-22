@@ -54,9 +54,9 @@ def make_collapsible_tree():
         player_dict[surname] = []
         stats_dict = {"Position": position, "Time Played": row['Time Played'], "Goals": row['Goals']}
         stats_list.append([stats_dict])
-        player_dict[surname].append({"name": "Position", "size": position})
-        player_dict[surname].append({"name": "Time Played", "size": row['Time Played']})
-        player_dict[surname].append({"name": "Goals", "size": row['Goals']})
+        player_dict[surname].append({"name": "Position: " + position, "size": position})
+        player_dict[surname].append({"name": "Time Played: " + str(row['Time Played']), "size": row['Time Played']})
+        player_dict[surname].append({"name": "Goals: " + str(row['Goals']), "size": row['Goals']})
 
     i = 0
     team_list = list()
@@ -180,7 +180,7 @@ def adaptivesampling():
 
 
 if __name__ == "__main__":
-    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
+    premier_league_data = pd.read_csv("F:\SBU\VisualizationProject\Player-View\Premier League 2011-12.csv", header=0,
                                       usecols=['Player Surname', 'Team', 'Time Played', 'Position Id', 'Goals', 'Assists', 'Clean Sheets',
                                              'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
     league_list = make_collapsible_tree()
     
-    with open(JSON_DIR + 'league.json', 'w') as f:
+    with open('F:\SBU\VisualizationProject\Player-View\static\leaguejson\league.json', 'w') as f:
             json.dump(league_list, f)
     
     player_names = list(premier_league_data.index.values)
