@@ -3,7 +3,9 @@
  */
 
 function collapsibleTree(){
-var margin = {top: 20, right: 20, bottom: 30, left: 60},
+
+    d3.selectAll("svg").remove();
+var margin = {top: 20, right: 20, bottom: 30, left: 200},
     width = 960 - margin.left - margin.right,
     height = 430 - margin.top - margin.bottom;
 
