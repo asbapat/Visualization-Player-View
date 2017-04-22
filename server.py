@@ -134,7 +134,7 @@ def index():
 
 
 if __name__ == "__main__":
-    premier_league_data = pd.read_csv("F:\SBU\VisualizationProject\Player-View\Premier League 2011-12.csv", header=0,
+    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
                                       usecols=['Player Surname', 'Team', 'Time Played', 'Goals', 'Assists', 'Clean Sheets',
                                              'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
     league_list = make_collapsible_tree()
     
-    with open('F:\SBU\VisualizationProject\Player-View\static\leaguejson\league.json', 'w') as f:
+    with open('static/leaguejson/league.json', 'w') as f:
             json.dump(league_list, f)
     
     player_names = list(premier_league_data.index.values)
