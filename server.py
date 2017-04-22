@@ -20,24 +20,44 @@ def make_collapsible_tree():
     club_list = list()
     club_players_list = list()
     player_stats_list = list()
+    player_list = list()
     league_dict = dict()
     teams_dict = dict()
+    stats_dict = dict()
     player_dict = dict()
+
     for team in premier_league_data.loc[:, "Team"]:
         teams.append(team)
         if team not in club_list:
             club_list.append(team)
             teams_dict[team] = []
-    
+
     i = 0
-    for player in premier_league_data.loc[:, "Player Surname"]:
-        player_dict = {"name": player, "stats": []}
+    for index, row in premier_league_data.loc[:, ['Player Surname','Time Played', 'Goals']].iterrows():
+        player_list.append(row['Player Surname'])
+        player_dict[row['Player Surname']] = []
+        stats_dict = {"Time Played": row['Time Played'], "Goals": row['Goals']}
+        player_dict[row['Player Surname']].append(stats_dict)
         teams_dict[teams[i]].append(player_dict)
         i += 1
 
+    # i = 0
+    # for player in premier_league_data.loc[:,"Player Surname"]:
+    #     player_list.append(player)
+    #     player_dict = {"name": player}
+    #     player_dict[player] = []
+    #     teams_dict[teams[i]].append(player_dict)
+    #     i += 1
+
+    team_list = list()
+    for player in player_dict:
+        player_stats_list.append({"name": player, "children": player_dict[player]})
+    print player_stats_list
+
     for team in teams_dict:
-        club_players_list.append({"name": team, "children": teams_dict[team]})
-    league_dict = {"name": "English Premier League", "children": club_players_list}
+        team_list.append({"name":team, "children": player_stats_list})
+        #club_players_list.append({"name": team, "children": team_list})
+    league_dict = {"name": "English Premier League", "children": team_list}
     return league_dict
 
 
@@ -114,7 +134,7 @@ def index():
 
 
 if __name__ == "__main__":
-    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
+    premier_league_data = pd.read_csv("F:\SBU\VisualizationProject\Player-View\Premier League 2011-12.csv", header=0,
                                       usecols=['Player Surname', 'Team', 'Time Played', 'Goals', 'Assists', 'Clean Sheets',
                                              'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
@@ -127,7 +147,7 @@ if __name__ == "__main__":
 
     league_list = make_collapsible_tree()
     
-    with open('static\leaguejson\league.json', 'w') as f:
+    with open('F:\SBU\VisualizationProject\Player-View\static\leaguejson\league.json', 'w') as f:
             json.dump(league_list, f)
     
     player_names = list(premier_league_data.index.values)
