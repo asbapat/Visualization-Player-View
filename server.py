@@ -151,8 +151,8 @@ def adaptivesampling():
     # Implement adaptive sampling
     # Find best value of k by elbow method
     elbow_values = find_best_k()
-    with open(JSON_DIR + 'kmeans_json.json', 'w') as f:
-        json.dump(elbow_values, f)
+    #with open(JSON_DIR + 'kmeans_json.json', 'w') as f:
+    #    json.dump(elbow_values, f)
 
     # No. of clusters is obtained from find_best_k()
     no_of_clusters = 5
