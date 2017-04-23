@@ -67,6 +67,18 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
+    var slider = d3.select("#slider").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", 40)
+        .attr("class", "slider")
+        .attr("transform", "translate(" + (margin.left) + "," + (margin.top) + ")");
+
+    var ticksData = d3.scale.linear()
+        .domain([0, 38])
+        .range([0, width])
+        .clamp(true);
+
+
     function drawScatterPlot(error, playersJson) {
         if(error) throw error;
 
@@ -135,5 +147,69 @@ function makeGameweekPlot() {
                     .duration(500)
                     .style("opacity", 0);
             });
+
+        slider.append("line")
+            .attr("class", "track")
+            .attr("width", width+40)
+            .attr("height", height + 70)
+            .attr("x1", xScale.range()[0])
+            .attr("x2", xScale.range()[1])
+            .select(function() {
+                return this.parentNode.appendChild(this.cloneNode(true));
+            })
+            .attr("class", "track-inset")
+            .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+            .attr("class", "track-overlay")
+            .call(d3.behavior.drag())
+            .on("dragend", function() {
+                xposEnd = d3.mouse(this)[0];
+                console.log(xposEnd);
+                slider.interrupt(); })
+            .on("dragstart", function () {
+                hue(x.invert(d3.event.x));
+            });
+
+        //     xposEnd = d3.mouse(this)[0];
+        //     console.log(xposEnd);
+        //     if(xposStart > xposEnd) {
+        //         bins = bins - 1;
+        //         //makeBarChart(newData, bins);
+        //     }
+        //     else if(xposStart < xposEnd) {
+        //         bins = bins + 1;
+        //         //makeBarChart(newData, bins);
+        //     }
+        //     slider.interrupt();
+        // })
+        // .on("dragstart", function(d) {
+        //     //xposStart = d3.mouse(this)[0];
+        // }));
+
+        slider.insert("g", ".track-overlay")
+            .attr("class", "ticks")
+            .attr("transform", "translate(0," + 18 + ")")
+            .selectAll("text")
+            .data(ticksData.ticks(38))
+            .enter().append("text")
+            .attr("x", ticksData)
+            .attr("text-anchor", "middle")
+            .style("font-size", "9px")
+            .text(function(d) { return d; });
+
+        var handle = slider.insert("circle", ".track-overlay")
+            .attr("class", "handle")
+            .attr("r", 9);
+
+        slider.transition()
+            .duration(750)
+            .tween("hue", function() {
+                var i = d3.interpolate(0, 0.5);
+                return function(t) { hue(i(t)); };
+            });
+
+        function hue(h) {
+            handle.attr("cx", xScale(h));
+            svg.style("background-color", d3.hsl(h, 0.8, 0.8));
+        }
     }
 }
