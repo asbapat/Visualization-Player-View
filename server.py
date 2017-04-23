@@ -181,7 +181,7 @@ def adaptivesampling():
 
 
 if __name__ == "__main__":
-    premier_league_data = pd.read_csv("static/leaguejson/league.json", header=0,
+    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
                                       usecols=['Player Surname', 'Team', 'Time Played', 'Position Id', 'Goals', 'Assists', 'Clean Sheets',
                                              'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
