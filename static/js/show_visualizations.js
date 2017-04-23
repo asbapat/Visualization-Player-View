@@ -2,7 +2,7 @@ getAdaptiveSamples();
 
 function getAdaptiveSamples() {
     queue()
-        .defer(d3.json, "/adaptivesampling");
+        .defer(d3.json, "/pca");
 }
 
 function checkTab(evt, tabName) {
@@ -33,8 +33,8 @@ function checkTab(evt, tabName) {
 }
 
 var margin = {top: 20, right: 20, bottom: 30, left: 60},
-    width = 960 - margin.left - margin.right,
-    height = 430 - margin.top - margin.bottom;
+    width = 480 - margin.left - margin.right,
+    height = 330 - margin.top - margin.bottom;
 
 function makeGameweekPlot() {
 
@@ -61,7 +61,7 @@ function makeGameweekPlot() {
         .attr("height", height + margin.top + margin.bottom)
         .attr("id", "canvas")
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.right + "," + margin.top + ")");
 
     var tooltip = d3.select("#resource-type-row-chart").append("div")
         .attr("class", "tooltip")
