@@ -51,7 +51,7 @@ body.application hr {
     /*min-height: 240px;*/
     overflow: hidden;
     padding: 5px 10px;
-    position: relative;
+    /*position: relative;*/
 }
 
 .chart-wrapper .chart-notes {

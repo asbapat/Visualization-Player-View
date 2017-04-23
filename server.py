@@ -149,9 +149,9 @@ def index():
 def adaptivesampling():
     # Implement adaptive sampling
     # Find best value of k by elbow method
-    elbow_values = find_best_k()
-    with open(JSON_DIR + 'kmeans_json.json', 'w') as f:
-        json.dump(elbow_values, f)
+    #elbow_values = find_best_k()
+    #with open(JSON_DIR + 'kmeans_json.json', 'w') as f:
+    #    json.dump(elbow_values, f)
 
     # No. of clusters is obtained from find_best_k()
     no_of_clusters = 5
@@ -166,6 +166,7 @@ def adaptivesampling():
     for value in adaptive_sample_of_players.index.values:
         sample_player_names.append(player_names[value])
 
+    print sample_player_names
     se = pd.DataFrame(sample_player_names)
     pca = np.concatenate((pca, se), axis=1)
 
@@ -180,7 +181,7 @@ def adaptivesampling():
 
 
 if __name__ == "__main__":
-    premier_league_data = pd.read_csv("F:\SBU\VisualizationProject\Player-View\Premier League 2011-12.csv", header=0,
+    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
                                       usecols=['Player Surname', 'Team', 'Time Played', 'Position Id', 'Goals', 'Assists', 'Clean Sheets',
                                              'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
@@ -193,15 +194,15 @@ if __name__ == "__main__":
 
     league_list = make_collapsible_tree()
     
-    with open('F:\SBU\VisualizationProject\Player-View\static\leaguejson\league.json', 'w') as f:
+    with open(JSON_DIR + 'league.json', 'w') as f:
             json.dump(league_list, f)
-    
-    player_names = list(premier_league_data.index.values)
-    premier_league_data.index.names = ['Player Name']
-    premier_league_data.columns.names = ['Attributes']
+
     del premier_league_data['Team']
     del premier_league_data['Position Id']
     premier_league_data = premier_league_data.set_index(['Player Surname'])
+    player_names = list(premier_league_data.index.values)
+    premier_league_data.index.names = ['Player Name']
+    premier_league_data.columns.names = ['Attributes']
     scaler = MinMaxScaler()
     premier_league_data = pd.DataFrame(scaler.fit_transform(premier_league_data), columns=premier_league_data.columns)
 
