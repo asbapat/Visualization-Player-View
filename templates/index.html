@@ -5,36 +5,127 @@
     <title>English Premier League 2011/12 Statistics</title>
     <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
     <script type="text/javascript" src="http://d3js.org/queue.v1.min.js"></script>
-     <script src='./static/js/show_visualizations.js'></script>
+    <script src='./static/js/show_visualizations.js'></script>
     <script src="./static/js/CollapsibleTree.js"></script>
 
     <link rel="stylesheet" href="./static/css/style.css">
+    <link rel="stylesheet" href="./static/lib/css/dashboards.css">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato" />
 </head>
 
-<body>
-    <h1 align="center">English Premier League 2011/12 Statistics</h1>
-    <h3 align="center">Visualize the performance of Premier League players in the 2011/12 season based on different attributes</h3>
+<body class="application">
 
-    <div class="tab">
-        <button class="tabStyle" onclick="checkTab(event, 'gameweek')">Gameweek Data</button>
-        <button class="tabStyle" onclick="checkTab(event, 'season')">Season Data</button>
-    </div>
-
-    <div id="gameweek" class="tabcontent">
-        <div id="makeGameweek">
-            <h3 align="center">Gameweek Data</h3>
-
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header" align="center">
+            <a class="navbar-brand" href="./">English Premier League 2011/12 Statistics</a>
         </div>
     </div>
+</div>
 
-    <div id="season" class="tabcontent">
-        <div id="makeSeason">
-            <h3 align="center">Season Data</h3>
+<h3 align="center">Visualize the performance of Premier League players in the 2011/12 season based on different attributes</h3>
 
+<div class="tab">
+    <button class="tabStyle" onclick="checkTab(event, 'gameweek')">Gameweek Data</button>
+    <button class="tabStyle" onclick="checkTab(event, 'season')">Season Data</button>
+</div>
+
+<div id="gameweek" class="tabcontent">
+    <div id="makeGameweek">
+        <!--h3 align="center">Gameweek Data</h3-->
+
+        <h3 style="padding-left: 50px;">Slider</h3>
+        <div class="container-fluid">
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div class="row">
+
+                        <!-- Time Chart -->
+                        <div class="col-sm-12">
+                            <div class="chart-wrapper">
+                                <div class="chart-title">
+                                    Top 10 Players
+                                </div>
+                                <div class="chart-stage">
+                                    <div id="time-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Time Chart -->
+
+                        <!-- Resources Pie -->
+                        <div class="col-sm-6">
+                            <div class="chart-wrapper">
+                                <div class="chart-title">
+                                    Visualize Players
+                                </div>
+                                <div class="chart-stage">
+                                    <div id="resource-type-row-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Resources Pie -->
+
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div class="col-sm-6">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">
+                            Performance of Players
+                        </div>
+                        <div class="chart-stage">
+                            <div id="us-chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Map -->
+
+                <!-- Metric 1 -->
+                <div class="col-sm-3">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">
+                            Team 1 Stats
+                        </div>
+                        <div class="chart-stage">
+                            <div id="number-projects-nd"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Metric 1 -->
+
+                <!-- Metric 2 -->
+                <div class="col-sm-3">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">
+                            Team 2 Stats
+                        </div>
+                        <div class="chart-stage">
+                            <div id="total-donations-nd"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Metric 2 -->
+
+            </div>
 
         </div>
+
     </div>
+</div>
+
+<div id="season" class="tabcontent">
+    <div id="makeSeason">
+        <h3 align="center">Season Data</h3>
+
+
+    </div>
+</div>
+
+<script>document.getElementsByClassName('tabStyle')[0].click();</script>
 
 </body>
 </html>
