@@ -69,12 +69,7 @@ function collapsibleTree() {
             .attr("transform", function (d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
             })
-            .on("click", click)
-            .on("mouseover", mouseover)
-            .on("mousemove", function (d) {
-                mousemove(d)
-            })
-            .on("mouseout", mouseout);
+            .on("click", click);
 
         nodeEnter.append("circle")
             .attr("r", 1e-6)
@@ -171,61 +166,4 @@ function collapsibleTree() {
         }
         update(d);
     }
-     var div = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 1e-6);
-
-    function mouseover(d){
-        if(d._children === null)
-        {
-            div.transition(300)
-                .style("opacity", 1)
-        }
-    }
-
-    function mousemove(d) {
-            div.text(d.size)
-                .style("left", (d3.event.pageX ) + "px")
-                .style("top", (d3.event.pageY) + "px");
-    }
-    function mouseout(){
-        div.transition()
-                .duration(300)
-                .style("opacity", 1e-6);
-
-    }
 }
-
-
-    //  var tooltip = d3.select("body")
-    //             .append('div')
-    //             .style("position", "absolute")
-    //             .style("z-index", "10")
-    //             .style("visibility", "hidden")
-    //
-    // function mouseover(d){
-    //     if(d._children == null){
-    //         // d3.select(this).append("text")
-    //         //     .attr("class","hover")
-    //         //     .attr('transform',function (d) {
-    //         //         return 'translate(75,0)';
-    //         //     })
-    //         //     .text(d.size)
-    //         //     .style("font-size",18);
-    //
-    //             tooltip.text(d.size);
-    //             return tooltip.style("visibility","visible");
-    //     }
-    //     else{
-    //         return null;
-    //     }
-    // }
-    // function mousemove(d,e){
-    //     if(d._children == null){
-    //         return tooltip.style("top", (e.pageY-10)+"px")
-    //             .style("left",(e.pageX+10)+"px");
-    //     }
-    //     else{
-    //         return null;
-    //     }
-    // }
