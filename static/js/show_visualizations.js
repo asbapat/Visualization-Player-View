@@ -32,14 +32,14 @@ function checkTab(evt, tabName) {
     }
 }
 
-var margin = {top: 20, right: 20, bottom: 30, left: 60},
-    width = 480 - margin.left - margin.right,
-    height = 330 - margin.top - margin.bottom;
+var margin = {top: 20, right: 20, bottom: 20, left: 20},
+    width = 600 - margin.left - margin.right,
+    height = 350 - margin.top - margin.bottom;
 
 function makeGameweekPlot() {
 
     queue()
-        .defer(d3.json, "static/leaguejson/pca_values_adaptive_json.json")
+        .defer(d3.json, "static/leaguejson/players_pca_json.json")
         .await(drawScatterPlot);
 
     d3.select("#canvas").remove();
@@ -56,14 +56,14 @@ function makeGameweekPlot() {
 
     var color = d3.scale.category10();
 
-    var svg = d3.select("#resource-type-row-chart").append("svg")
+    var svg = d3.select("#pca-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .attr("id", "canvas")
         .append("g")
-        .attr("transform", "translate(" + margin.right + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var tooltip = d3.select("#resource-type-row-chart").append("div")
+    var tooltip = d3.select("#pca-chart").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
@@ -127,8 +127,8 @@ function makeGameweekPlot() {
                 .duration(200)
                 .style("opacity", .9);
             tooltip.html(d.Name + " (" + xValue(d) + ", " + yValue(d) + ")")
-                .style("left", (d3.event.pageX + 5) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+                .style("left", (d3.event.pageX - 670) + "px")
+                .style("top", (d3.event.pageY - 180) + "px");
         })
             .on("mouseout", function(d) {
                 tooltip.transition()

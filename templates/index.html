@@ -5,25 +5,33 @@
     <title>English Premier League 2011/12 Statistics</title>
     <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
     <script type="text/javascript" src="http://d3js.org/queue.v1.min.js"></script>
+    <script type="text/javascript" src="./static/lib/js/jquery.min.js"></script>
+    <script type="text/javascript" src="./static/lib/js/bootstrap.min.js"></script>
     <script type="text/javascript" src='./static/js/show_visualizations.js'></script>
     <script type="text/javascript" src="./static/js/CollapsibleTree.js"></script>
 
     <link rel="stylesheet" href="./static/css/style.css">
     <link rel="stylesheet" href="./static/lib/css/dashboards.css">
+    <link rel="stylesheet" href="./static/lib/css//bootstrap.min.css">
+    <link rel="icon" type="image/png" href="https://ismdj.scdn5.secure.raxcdn.com/static/libsass/plfpl/dist/img/favicons/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato" />
 </head>
 
 <body class="application">
 
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background-color: #2c4e81;">
     <div class="container-fluid">
         <div class="navbar-header" align="center">
-            <a class="navbar-brand" href="./">English Premier League 2011/12 Statistics</a>
+            <picture>
+                <img alt="Premier League Logo" id="mainLogo" style="height: 60px; width: 90px; float: left;"
+                     src="https://resources-pl.pulselive.com/ver/i/elements/premier-league-logo-header.png"/>
+            </picture>
+            <a class="navbar-brand" href="./" style="padding-top: 20px;">English Premier League 2011/12 Statistics</a>
         </div>
     </div>
 </div>
 
-<h3 align="center">Visualize the performance of Premier League players in the 2011/12 season based on different attributes</h3>
+{#<h3 align="center">Visualize the performance of Premier League players in the 2011/12 season based on different attributes</h3>#}
 
 <div class="tab">
     <button class="tabStyle" onclick="checkTab(event, 'gameweek')">Gameweek Data</button>
@@ -34,7 +42,7 @@
     <div id="makeGameweek">
         <!--h3 align="center">Gameweek Data</h3-->
 
-        <h3 style="padding-left: 50px;">Slider</h3>
+        <h4 style="padding-left: 50px;">Slider</h4>
         <div class="container-fluid">
 
             <div class="row">
@@ -56,10 +64,10 @@
                         <!-- Time Chart -->
 
                         <!-- Resources Pie -->
-                        <div class="col-sm-6">
+                        <div class="col-sm-12">
                             <div class="chart-wrapper">
                                 <div class="chart-title">
-                                    Visualize Players
+                                    Custom Visualizations
                                 </div>
                                 <div class="chart-stage">
                                     <div id="resource-type-row-chart"></div>
@@ -75,10 +83,10 @@
                 <div class="col-sm-6">
                     <div class="chart-wrapper">
                         <div class="chart-title">
-                            Performance of Players
+                            Visualize Players
                         </div>
                         <div class="chart-stage">
-                            <div id="us-chart"></div>
+                            <div id="pca-chart"></div>
                         </div>
                     </div>
                 </div>
@@ -88,7 +96,7 @@
                 <div class="col-sm-3">
                     <div class="chart-wrapper">
                         <div class="chart-title">
-                            Interesting Statistics
+                            Interesting Statistics 1
                         </div>
                         <div class="chart-stage">
                             <div id="number-projects-nd"></div>
@@ -97,9 +105,23 @@
                 </div>
                 <!-- Metric 1 -->
 
+                <!-- Metric 2 -->
+                <div class="col-sm-3">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">
+                            Interesting Statistics 2
+                        </div>
+                        <div class="chart-stage">
+                            <div id="total-donations-nd"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Metric 2 -->
+
             </div>
 
         </div>
+
 
     </div>
 </div>

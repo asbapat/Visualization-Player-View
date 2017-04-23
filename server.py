@@ -126,7 +126,7 @@ def perform_pca():
     pca_values.columns = ['PCA1', 'PCA2', 'PCA3', 'PCA4', 'PCA5', 'Name']
     json_values = pca_values.to_json(orient='records')
 
-    with open(JSON_DIR + 'pca_values_adaptive_json.json', 'w') as f:
+    with open(JSON_DIR + 'players_pca_json.json', 'w') as f:
         f.write(json_values)
 
     return ('', 204)
