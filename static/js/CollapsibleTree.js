@@ -6,7 +6,7 @@ function collapsibleTree() {
 
     d3.selectAll("svg").remove();
     var margin = {top: 20, right: 20, bottom: 30, left: 200},
-        width = 960 - margin.left - margin.right,
+        width = 1200 - margin.left - margin.right,
         height = 430 - margin.top - margin.bottom;
 
     var i = 0,
@@ -88,7 +88,18 @@ function collapsibleTree() {
             .text(function (d) {
                 return d.name;
             })
-            .style("fill-opacity", 1e-6);
+            .style("fill-opacity", 1e-6)
+            .style("font-weight","bold")
+            .style("fill",function (d){
+                if(d._children == null && d!= root){
+                    return "red";
+                }
+            })
+            .style("font-size", function (d) {
+                if(d._children == null && d!= root){
+                    return "0.85em";
+                }
+            });
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
@@ -157,6 +168,14 @@ function collapsibleTree() {
 
 // Toggle children on click.
     function click(d) {
+        var name = d.name;
+        svg.append("g")
+                .append("svg:image")
+                .attr("xlink:href", "static/lib/images/logos/" + name + ".png")
+                .attr("width",150)
+                .attr("height",150)
+                .attr("x",850)
+                .attr("y",0);
         if (d.children) {
             d._children = d.children;
             d.children = null;

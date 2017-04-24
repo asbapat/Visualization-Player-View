@@ -108,7 +108,7 @@ function makeGameweekPlot() {
         svg.append("rect")
             .style("fill", "#fff")
             .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("height", height + margin.top + margin.bottom);
 
         // Draw the X-Axis
         svg.append("g")
@@ -120,8 +120,8 @@ function makeGameweekPlot() {
             .attr("x", width)
             .attr("y", -6)
             .style("text-anchor", "end")
-            .style("font-weight", "bold")
-            .style("font-size", "1.2em")
+             .style("font-weight", "bold")
+            // .style("font-size", "1.2em")
             .text("PCA-1");
 
         // Draw the Y-Axis
@@ -136,7 +136,7 @@ function makeGameweekPlot() {
             .attr("dy", ".71em")
             .style("text-anchor", "end")
             .style("font-weight", "bold")
-            .style("font-size", "1.2em")
+            // .style("font-size", "1.2em")
             .text("PCA-2");
 
         var points = svg.selectAll("circle")
