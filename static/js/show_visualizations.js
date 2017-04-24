@@ -158,7 +158,7 @@ function makeGameweekPlot() {
             tooltip.transition()
                 .duration(200)
                 .style("opacity", .9);
-            tooltip.html(d.Name + " (" + xValue(d) + ", " + yValue(d) + ")")
+            tooltip.html(d.Name + " (" + Number((xValue(d)).toFixed(3)) + ", " + Number((yValue(d)).toFixed(3)) + ")")
                 .style("left", (d3.event.pageX - 670) + "px")
                 .style("top", (d3.event.pageY - 180) + "px");
         })
