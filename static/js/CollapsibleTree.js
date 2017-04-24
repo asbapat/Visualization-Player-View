@@ -168,14 +168,16 @@ function collapsibleTree() {
 
 // Toggle children on click.
     function click(d) {
+        d3.select("#teamlogo").remove();
         var name = d.name;
-        svg.append("g")
-                .append("svg:image")
-                .attr("xlink:href", "static/lib/images/logos/" + name + ".png")
-                .attr("width",150)
-                .attr("height",150)
-                .attr("x",850)
-                .attr("y",0);
+        var teamDetails = svg.append("g")
+            .append("svg:image")
+            .attr("xlink:href", "static/lib/images/logos/" + name + ".png")
+            .attr("width",150)
+            .attr("height",150)
+            .attr("id", "teamlogo")
+            .attr("x",850)
+            .attr("y",0);
         if (d.children) {
             d._children = d.children;
             d.children = null;
