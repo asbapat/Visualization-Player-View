@@ -33,13 +33,7 @@ function collapsibleTree() {
         root.x0 = height / 2;
         root.y0 = 0;
 
-        function collapse(d) {
-            if (d.children) {
-                d._children = d.children;
-                d._children.forEach(collapse);
-                d.children = null;
-            }
-        }
+
 
         root.children.forEach(collapse);
         update(root);
@@ -47,6 +41,13 @@ function collapsibleTree() {
 
     d3.select(self.frameElement).style("height", "800px");
 
+    function collapse(d) {
+        if (d.children) {
+            d._children = d.children;
+            d._children.forEach(collapse);
+            d.children = null;
+        }
+    }
     function update(source) {
 
         var nodes = tree.nodes(root).reverse(),
@@ -184,6 +185,13 @@ function collapsibleTree() {
         } else {
             d.children = d._children;
             d._children = null;
+        }
+        if (d.parent) {
+            d.parent.children.forEach(function(element) {
+                if (d !== element) {
+                    collapse(element);
+                }
+            });
         }
         update(d);
     }
