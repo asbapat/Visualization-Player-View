@@ -43,6 +43,7 @@ function makeGameweekPlot() {
         .await(drawScatterPlot);
 
     d3.select("#canvas").remove();
+    d3.select("#sld").remove();
     var x0 = [-2,2],
         y0 = [-2,2];
     var xValue = function(d) { return d.PCA1; };
@@ -73,6 +74,7 @@ function makeGameweekPlot() {
     var slider = d3.select("#slider").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", 40)
+        .attr("id", "sld")
         .attr("class", "slider")
         .attr("transform", "translate(" + (margin.left) + "," + (margin.top) + ")");
 
