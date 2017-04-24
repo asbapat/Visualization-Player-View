@@ -43,18 +43,21 @@ function makeGameweekPlot() {
         .await(drawScatterPlot);
 
     d3.select("#canvas").remove();
-
+    var x0 = [-2,2],
+        y0 = [-2,2];
     var xValue = function(d) { return d.PCA1; };
-    var xScale = d3.scale.linear().domain([-2, 2]).range([0, width]);
+    var xScale = d3.scale.linear().domain(x0).range([0, width]);
     var xMap = function(d) { return xScale(xValue(d)); };
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
     var yValue = function(d) { return d.PCA2; };
-    var yScale = d3.scale.linear().domain([-2, 2]).range([height, 0]);
+    var yScale = d3.scale.linear().domain(y0).range([height, 0]);
     var yMap = function(d) { return yScale(yValue(d)); };
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     var color = d3.scale.category10();
+
+
 
     var svg = d3.select("#pca-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -93,6 +96,20 @@ function makeGameweekPlot() {
         else
             yScale.domain([-d3.max(playersData, yValue)-0.2, d3.max(playersData, yValue)+0.2]);
 
+
+        var zoom = d3.behavior.zoom()
+            .x(xScale)
+            .y(yScale)
+            .scaleExtent([1,100])
+            .on("zoom", zoomed);
+
+         svg.call(zoom);
+
+        svg.append("rect")
+            .style("fill", "#fff")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+
         // Draw the X-Axis
         svg.append("g")
             .attr("class", "x axis")
@@ -122,14 +139,15 @@ function makeGameweekPlot() {
             .style("font-size", "1.2em")
             .text("PCA-2");
 
-        var points = svg.selectAll(".points")
+        var points = svg.selectAll("circle")
             .data(playersData);
+
         points.enter().append("circle")
             .attr("class", "dot")
             .transition()
             .duration(1000)
             .ease("backOut")
-            .attr("r", 3.5)
+             .attr("r", 3.5)
             .attr("cx", xMap)
             .attr("cy", yMap)
             .style("fill", function(d) { return color(d); });
@@ -147,6 +165,14 @@ function makeGameweekPlot() {
                     .duration(500)
                     .style("opacity", 0);
             });
+
+         function zoomed(){
+            svg.select(".x.axis").call(xAxis);
+            svg.select(".y.axis").call(yAxis);
+            svg.selectAll(".dot")
+                .attr("cx", xMap)
+                .attr("cy", yMap);
+        }
 
         slider.append("line")
             .attr("class", "track")
