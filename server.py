@@ -62,14 +62,17 @@ def make_collapsible_tree():
     i = 0
     team_list = list()
     for player in player_list:
-        teams_dict[teams[i]].append({"name": player, "children": player_dict[player]})
+        team_jersey = 'static/lib/jerseys/' + teams[i] + '.png'
+        teams_dict[teams[i]].append({"name": player, "image": team_jersey, "children": player_dict[player]})
         player_stats_list.append({"name": player, "children": player_dict[player]})
         i += 1
 
     for team in teams_dict:
-        team_list.append({"name":team, "children": teams_dict[team]})
+        team_logo = 'static/lib/logos/' + team + '.png'
+        team_list.append({"name":team, "image": team_logo, "children": teams_dict[team]})
 
-    league_dict = {"name": "English Premier League", "children": team_list}
+    premier_league_logo = 'static/lib/logos/Pl_logo.png'
+    league_dict = {"name": "English Premier League", "image": premier_league_logo, "children": team_list}
     return league_dict
 
 
