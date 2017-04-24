@@ -109,3 +109,15 @@ div.tab button.active {
   stroke-opacity: 0.5;
   stroke-width: 1.25px;
 }
+
+.axis path,
+    .axis line {
+        fill: none;
+        stroke: rgba(22, 22, 22, 0.75);
+        shape-rendering: crispEdges;
+    }
+
+.axis text {
+        font-family: sans-serif;
+        font-size: 12px;
+    }
