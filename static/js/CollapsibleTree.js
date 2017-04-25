@@ -177,7 +177,33 @@ function collapsibleTree() {
 
 // Toggle children on click.
     function click(d) {
+        if(!d._children){
+            d3.select("#teamlogo").remove();
+            var profile = svg.append("g")
+                .append("svg:image")
+                .attr("xlink:href", d.player_image)
+                .attr("width",150)
+                .attr("height",150)
+                .attr("x",850)
+                .attr("y",0);
 
+           var table = svg.append("foreignObject")
+               .attr("width", 400)
+               .attr("height", 400)
+           .append("xhtml:body");
+
+            table.append('table');
+            var thead = table.append('thead');
+            var tbody = table.append('tbody');
+
+            thead.append('tr')
+                .selectAll('th')
+                .data(d)
+                .enter()
+                .append('th')
+                .text(d.name);
+
+        }
         if (d.children) {
             d._children = d.children;
             d.children = null;
@@ -186,10 +212,10 @@ function collapsibleTree() {
             d.children = d._children;
             d._children = null;
             d3.select("#teamlogo").remove();
-        var name = d.name;
+
         var teamDetails = svg.append("g")
             .append("svg:image")
-            .attr("xlink:href", "static/lib/images/logos/" + name + ".png")
+            .attr("xlink:href", d.image)
             .attr("width",150)
             .attr("height",150)
             .attr("id", "teamlogo")
