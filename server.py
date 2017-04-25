@@ -5,7 +5,6 @@ import numpy as np
 import random
 import json
 import pandas as pd
-import math
 
 from scipy.spatial.distance import cdist
 from sklearn.preprocessing import normalize, MinMaxScaler
@@ -81,6 +80,27 @@ def make_collapsible_tree():
     return league_dict
 
 
+def calculate_bps():
+    bps_score_dict = dict()
+
+    unique_id = 1
+    for index, row in gameweek_premier_league_data.loc[:, ['Player Surname', 'Time Played', 'Goals', 'Position Id']].iterrows():
+        surname = row['Player Surname']
+        # If two players have the same surname
+        if surname in bps_score_dict:
+            surname += str(unique_id)
+            unique_id += 1
+
+        bps_score = 0
+        if int(row['Time Played']) > 0 and int(row['Time Played']) < 60:
+            bps_score += 3
+        elif int(row['Time Played']) > 60:
+            bps_score += 6
+        bps_score_dict[row['Player Surname']] = bps_score
+
+    return bps_score_dict
+
+
 def adaptive_sampling(no_of_clusters):
     cluster_features = list()
     sample_percent = 0.5
@@ -152,10 +172,22 @@ if __name__ == "__main__":
                                              'Error leading to Goal', 'Error leading to Attempt',
                                              'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
 
-    league_list = make_collapsible_tree()
+    gameweek_premier_league_data = pd.read_csv("Premier League 2011-12 Gameweek.csv", header=0,
+                                      usecols=['Player Surname', 'Team', 'Gameweek', 'Time Played', 'Position Id', 'Goals',
+                                               'Assists', 'Clean Sheets',
+                                               'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
+                                               'Successful Dribbles', 'Shots Off Target inc woodwork',
+                                               'Shots On Target inc goals', 'Key Passes', 'Big Chances',
+                                               'Successful crosses in the air', 'Total Clearances', 'Blocks',
+                                               'Interceptions', 'Recoveries', 'Tackles Won', 'Winning Goal',
+                                               'Total Successful Passes All', 'Penalties Conceded',
+                                               'Error leading to Goal', 'Error leading to Attempt',
+                                               'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
+
+    league_dict = make_collapsible_tree()
     
     with open(JSON_DIR +'league.json', 'w') as f:
-            json.dump(league_list, f)
+            json.dump(league_dict, f)
 
     del premier_league_data['Team']
     del premier_league_data['Position Id']
@@ -163,7 +195,22 @@ if __name__ == "__main__":
     player_names = list(premier_league_data.index.values)
     premier_league_data.index.names = ['Player Name']
     premier_league_data.columns.names = ['Attributes']
+
+    bps_score_values = calculate_bps()
+    with open(JSON_DIR +'bps.json', 'w') as f:
+            json.dump(bps_score_values, f)
+
+    del gameweek_premier_league_data['Team']
+    del gameweek_premier_league_data['Gameweek']
+    del gameweek_premier_league_data['Position Id']
+    gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Player Surname'])
+    player_names = list(gameweek_premier_league_data.index.values)
+    gameweek_premier_league_data.index.names = ['Player Name']
+    gameweek_premier_league_data.columns.names = ['Attributes']
+
     scaler = MinMaxScaler()
     premier_league_data = pd.DataFrame(scaler.fit_transform(premier_league_data), columns=premier_league_data.columns)
+    gameweek_premier_league_data = pd.DataFrame(scaler.fit_transform(gameweek_premier_league_data),
+                                                columns=gameweek_premier_league_data.columns)
 
     app.run(host='0.0.0.0', port=8086, debug=True, use_reloader=False)
