@@ -75,7 +75,7 @@ def make_collapsible_tree():
         team_logo = 'static/lib/images/logos/' + team + '.png'
         team_list.append({"name":team, "image": team_logo, "children": teams_dict[team]})
 
-    premier_league_logo = 'static/lib/logos/Pl_logo.png'
+    premier_league_logo = 'static/lib/images/logos/Pl_logo.png'
     league_dict = {"name": "English Premier League", "image": premier_league_logo, "children": team_list}
     return league_dict
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     del gameweek_premier_league_data['Gameweek']
     del gameweek_premier_league_data['Position Id']
     gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Player Surname'])
-    player_names = list(gameweek_premier_league_data.index.values)
+    gameweek_player_names = list(gameweek_premier_league_data.index.values)
     gameweek_premier_league_data.index.names = ['Player Name']
     gameweek_premier_league_data.columns.names = ['Attributes']
 
