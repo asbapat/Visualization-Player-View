@@ -20,7 +20,7 @@ function collapsibleTree() {
         .projection(function (d) {
             return [d.y, d.x];
         });
-    var svg = d3.select("#makeSeason").append("svg")
+    var svg = d3.select("#collapsibleTree").append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -92,23 +92,23 @@ function collapsibleTree() {
             .style("fill-opacity", 1e-6)
             .style("font-weight","bold");
 
-       nodeEnter.append("image")
-           .attr("xlink:href", function(d){
-                   return d.image;
-           })
-           .attr("x", "-5px")
-           .attr("y","-8px")
-           .attr("width","15px")
-           .attr("height", "15px");
+        nodeEnter.append("image")
+            .attr("xlink:href", function(d){
+                return d.image;
+            })
+            .attr("x", "-5px")
+            .attr("y","-8px")
+            .attr("width","15px")
+            .attr("height", "15px");
 
-       nodeEnter.append("image")
-           .attr("xlink:href", function(d){
-               return d.jersey_image;
-           })
+        nodeEnter.append("image")
+            .attr("xlink:href", function(d){
+                return d.jersey_image;
+            })
             .attr("x", "-7px")
-           .attr("y","-8px")
-           .attr("width","15px")
-           .attr("height", "15px");
+            .attr("y","-8px")
+            .attr("width","15px")
+            .attr("height", "15px");
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
@@ -178,30 +178,49 @@ function collapsibleTree() {
 // Toggle children on click.
     function click(d) {
         if(!d._children){
-            d3.select("#teamlogo").remove();
-            var profile = svg.append("g")
-                .append("svg:image")
-                .attr("xlink:href", d.player_image)
-                .attr("width",150)
-                .attr("height",150)
-                .attr("x",850)
-                .attr("y",0);
+            d3.select("#tableContent").remove();
+            // var profile = svg.append("g")
+            //     .append("svg:image")
+            //     .attr("xlink:href", d.player_image)
+            //     .attr("width",150)
+            //     .attr("height",150)
+            //     .attr("x",850)
+            //     .attr("y",0);
 
-           var table = svg.append("foreignObject")
-               .attr("width", 400)
-               .attr("height", 400)
-           .append("xhtml:body");
+            var playerTable = d3.select('#playerDetails')
+                .append('table')
+                .attr('id', 'tableContent')
+                .attr("width", 500)
+                .attr("height", height + margin.top + margin.bottom);
 
-            table.append('table');
-            var thead = table.append('thead');
-            var tbody = table.append('tbody');
+            //playerTable.append("foreignObject")
+            //  .attr("width", 400)
+            //.attr("height", 400);
+            // .append("xhtml:body");
 
-            thead.append('tr')
+            //var thead = playerTable.append('thead');
+            //var tbody = playerTable.append('tbody');
+
+            var headers = playerTable.append('thead').append('tr')
                 .selectAll('th')
-                .data(d)
+                .data([d.name, d.position])
                 .enter()
                 .append('th')
-                .text(d.name);
+                .text(function(d) { return d; });
+
+
+            var rows = playerTable.append('tbody').selectAll('tr')
+                .data(d)
+                .enter()
+                .append('tr');
+
+            rows.selectAll('td')
+                .data(d)
+                .enter()
+                .append('td')
+                .text(function(d) {
+                    return d.position;
+                });
 
         }
         if (d.children) {
@@ -213,14 +232,14 @@ function collapsibleTree() {
             d._children = null;
             d3.select("#teamlogo").remove();
 
-        var teamDetails = svg.append("g")
-            .append("svg:image")
-            .attr("xlink:href", d.image)
-            .attr("width",150)
-            .attr("height",150)
-            .attr("id", "teamlogo")
-            .attr("x",850)
-            .attr("y",0);
+            var teamDetails = svg.append("g")
+                .append("svg:image")
+                .attr("xlink:href", d.image)
+                .attr("width",150)
+                .attr("height",150)
+                .attr("id", "teamlogo")
+                .attr("x",850)
+                .attr("y",0);
         }
         if (d.parent) {
             d.parent.children.forEach(function(element) {
