@@ -94,14 +94,18 @@ function collapsibleTree() {
 
        nodeEnter.append("image")
            .attr("xlink:href", function(d){
-               if(d._children === null){
-                   return d.jersey_image;
-               }
-               else{
                    return d.image;
-               }
            })
            .attr("x", "-5px")
+           .attr("y","-8px")
+           .attr("width","15px")
+           .attr("height", "15px");
+
+       nodeEnter.append("image")
+           .attr("xlink:href", function(d){
+               return d.jersey_image;
+           })
+            .attr("x", "-7px")
            .attr("y","-8px")
            .attr("width","15px")
            .attr("height", "15px");
@@ -186,7 +190,9 @@ function collapsibleTree() {
         if (d.children) {
             d._children = d.children;
             d.children = null;
+            console.log("if");
         } else {
+            console.log("else");
             d.children = d._children;
             d._children = null;
         }
