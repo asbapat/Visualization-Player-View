@@ -7,7 +7,7 @@ function collapsibleTree() {
     d3.selectAll("svg").remove();
     var margin = {top: 20, right: 20, bottom: 30, left: 200},
         width = 1200 - margin.left - margin.right,
-        height = 430 - margin.top - margin.bottom;
+        height = 500 - margin.top - margin.bottom;
 
     var i = 0,
         duration = 750,
@@ -55,7 +55,7 @@ function collapsibleTree() {
 
         // Normalize for fixed-depth.
         nodes.forEach(function (d) {
-            d.y = d.depth * 180;
+            d.y = d.depth * 200;
         });
 
         // Update the nodes…
@@ -90,7 +90,8 @@ function collapsibleTree() {
                 return d.name;
             })
             .style("fill-opacity", 1e-6)
-            .style("font-weight","bold");
+            .style("font-weight","bold")
+            .style("font-size", "0.75em");
 
         nodeEnter.append("image")
             .attr("xlink:href", function(d){
