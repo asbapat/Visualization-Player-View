@@ -177,7 +177,15 @@ function collapsibleTree() {
 
 // Toggle children on click.
     function click(d) {
-        d3.select("#teamlogo").remove();
+
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+            d3.select("#teamlogo").remove();
+        } else {
+            d.children = d._children;
+            d._children = null;
+            d3.select("#teamlogo").remove();
         var name = d.name;
         var teamDetails = svg.append("g")
             .append("svg:image")
@@ -187,14 +195,6 @@ function collapsibleTree() {
             .attr("id", "teamlogo")
             .attr("x",850)
             .attr("y",0);
-        if (d.children) {
-            d._children = d.children;
-            d.children = null;
-            console.log("if");
-        } else {
-            console.log("else");
-            d.children = d._children;
-            d._children = null;
         }
         if (d.parent) {
             d.parent.children.forEach(function(element) {
