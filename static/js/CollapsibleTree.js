@@ -90,15 +90,18 @@ function collapsibleTree() {
                 return d.name;
             })
             .style("fill-opacity", 1e-6)
-            .style("font-weight","bold")
-            .style("fill",function (d){
-                if(d._children == null && d!= root){
-                    return "red";
+            .style("font-weight","bold");
+
+        nodeEnter.append("g")
+            .append("image")
+            .attr("xlink:href", function (d) {
+                if(d._children === null){
+                    console.log("Test");
+                    return d.player_image;
                 }
-            })
-            .style("font-size", function (d) {
-                if(d._children == null && d!= root){
-                    return "0.85em";
+                else{
+                    console.log("Club");
+                    return d.image;
                 }
             });
 
