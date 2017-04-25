@@ -92,18 +92,19 @@ function collapsibleTree() {
             .style("fill-opacity", 1e-6)
             .style("font-weight","bold");
 
-        nodeEnter.append("g")
-            .append("image")
-            .attr("xlink:href", function (d) {
-                if(d._children === null){
-                    console.log("Test");
-                    return d.player_image;
-                }
-                else{
-                    console.log("Club");
-                    return d.image;
-                }
-            });
+       nodeEnter.append("image")
+           .attr("xlink:href", function(d){
+               if(d._children === null){
+                   return d.jersey_image;
+               }
+               else{
+                   return d.image;
+               }
+           })
+           .attr("x", "-5px")
+           .attr("y","-8px")
+           .attr("width","15px")
+           .attr("height", "15px");
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
