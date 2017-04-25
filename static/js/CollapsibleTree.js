@@ -55,7 +55,7 @@ function collapsibleTree() {
 
         // Normalize for fixed-depth.
         nodes.forEach(function (d) {
-            d.y = d.depth * 200;
+            d.y = d.depth * 120;
         });
 
         // Update the nodes…
@@ -178,6 +178,7 @@ function collapsibleTree() {
 
 // Toggle children on click.
     function click(d) {
+
         if(!d._children){
             d3.select("#tableContent").remove();
             // var profile = svg.append("g")
@@ -204,25 +205,26 @@ function collapsibleTree() {
 
             var headers = playerTable.append('thead').append('tr')
                 .selectAll('th')
-                .data([d.name, d.position])
-                .enter()
-                .append('th')
-                .text(function(d) { return d; });
+                .append("img")
+                .attr('src',d.player_image)
+                // .data([d.name, d.position])
+                // .enter()
+                 .append('th')
+                // .text(function(d) { return d; });
 
 
-            var rows = playerTable.append('tbody').selectAll('tr')
-                .data(d)
-                .enter()
-                .append('tr');
-
-            rows.selectAll('td')
-                .data(d)
-                .enter()
-                .append('td')
-                .text(function(d) {
-                    return d.position;
-                });
-
+            // var rows = playerTable.append('tbody').selectAll('tr')
+            //     .data(d)
+            //     .enter()
+            //     .append('tr');
+            //
+            // rows.selectAll('td')
+            //     .data(d)
+            //     .enter()
+            //     .append('td')
+            //     .text(function(d) {
+            //         return d.position;
+            //     });
         }
         if (d.children) {
             d._children = d.children;
