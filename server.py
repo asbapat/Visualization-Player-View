@@ -32,6 +32,7 @@ def make_collapsible_tree():
             teams_dict[team] = []
 
     unique_id = 1
+    i = 0
     for index, row in premier_league_data.loc[:, ['Player Surname','Time Played', 'Goals', 'Position Id']].iterrows():
         surname = row['Player Surname']
         position_id = int(row['Position Id'])
@@ -53,12 +54,15 @@ def make_collapsible_tree():
         player_dict[surname] = []
         stats_dict = {"Position": position, "Time Played": row['Time Played'], "Goals": row['Goals']}
         stats_list.append([stats_dict])
+        team_logo = 'static/lib/images/logos/' + teams[i] + '.png'
+        i += 1
         # player_dict[surname].append({"name": "Position: " + position, "size": "Position: "})
         # player_dict[surname].append({"name": "Time Played: " + str(row['Time Played']), "size": "Time Played: "})
         # player_dict[surname].append({"name": "Goals: " + str(row['Goals']), "size": "Goals: "})
         player_dict[surname].append(position)
         player_dict[surname].append(row['Time Played'])
         player_dict[surname].append(row['Goals'])
+        player_dict[surname].append(team_logo)
 
     i = 0
     team_list = list()
@@ -67,7 +71,7 @@ def make_collapsible_tree():
         player_image = 'static/lib/images/players/' + player + '.png'
         teams_dict[teams[i]].append({"name": player, "jersey_image": team_jersey, "player_image": player_image,
                                      "position": player_dict[player][0], "time_played": player_dict[player][1],
-                                     "goals": player_dict[player][2]})
+                                     "goals": player_dict[player][2], "player_logo": player_dict[player][3]})
         # player_stats_list.append({"name": player, "children": player_dict[player]})
         i += 1
 

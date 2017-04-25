@@ -192,25 +192,46 @@ function collapsibleTree() {
             var playerTable = d3.select('#playerDetails')
                 .append('table')
                 .attr('id', 'tableContent')
-                .attr("width", 500)
+                .attr("width", "100%")
                 .attr("height", height + margin.top + margin.bottom);
 
-            //playerTable.append("foreignObject")
-            //  .attr("width", 400)
-            //.attr("height", 400);
-            // .append("xhtml:body");
-
-            //var thead = playerTable.append('thead');
-            //var tbody = playerTable.append('tbody');
-
+            var columns = [{src:d.player_image}];
+            var logo = [{src:d.player_logo}];
             var headers = playerTable.append('thead').append('tr')
                 .selectAll('th')
-                .append("img")
-                .attr('src',d.player_image)
-                // .data([d.name, d.position])
-                // .enter()
-                 .append('th')
-                // .text(function(d) { return d; });
+                .data(columns)
+                .enter()
+                .append('th');
+
+            headers.append('img')
+                .attr('src',function (d) {return d.src;})
+                .attr('width',100)
+                .attr('height', 100);
+            //.style("float", "left");
+
+            headers.append('text')
+                .data([d.name])
+                .text(function (d) {return d;})
+                .attr("dx",10)
+                .style("padding-left", "70px");
+
+            headers.append('text')
+                .data([d.position])
+                .text(function (d) {return d;})
+                .attr("dx",10)
+                .style("padding-left", "25px");
+
+            headers.append('img')
+                .data(logo)
+                .attr('src',function (d) {return d.src;})
+                .attr('width',150)
+                .attr('height', 80)
+                .style("float", "right");
+                //.style("padding-left", "20px");
+            // .data([d.name, d.position])
+            //  .enter()
+            //  .append('th')
+            //  .text(function(d) { return d; });
 
 
             // var rows = playerTable.append('tbody').selectAll('tr')
