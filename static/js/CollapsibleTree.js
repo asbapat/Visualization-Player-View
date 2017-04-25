@@ -92,9 +92,10 @@ function collapsibleTree() {
             .style("fill-opacity", 1e-6)
             .style("font-weight","bold");
 
-        nodeEnter.append("svg:image")
+        nodeEnter.append("g")
+            .append("image")
             .attr("xlink:href", function (d) {
-                if(d._children == null){
+                if(d._children === null){
                     console.log("Test");
                     return d.player_image;
                 }
