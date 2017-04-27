@@ -134,11 +134,9 @@ def adaptive_sampling(no_of_clusters):
 
 app = Flask(__name__)
 
-
 @app.route("/")
 def index():
     return render_template('index.html')
-
 
 @app.route("/pca")
 def perform_pca():

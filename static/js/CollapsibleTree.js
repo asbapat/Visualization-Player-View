@@ -97,10 +97,10 @@ function collapsibleTree() {
             .attr("xlink:href", function(d){
                 return d.image;
             })
-            .attr("x", "-5px")
-            .attr("y","-8px")
-            .attr("width","15px")
-            .attr("height", "15px");
+            .attr("x", "-9px")
+            .attr("y","-10px")
+            .attr("width","20px")
+            .attr("height", "20px");
 
         nodeEnter.append("image")
             .attr("xlink:href", function(d){
@@ -108,8 +108,8 @@ function collapsibleTree() {
             })
             .attr("x", "-7px")
             .attr("y","-8px")
-            .attr("width","15px")
-            .attr("height", "15px");
+            .attr("width","20px")
+            .attr("height", "20px");
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
@@ -224,9 +224,10 @@ function collapsibleTree() {
             headers.append('img')
                 .data(logo)
                 .attr('src',function (d) {return d.src;})
-                .attr('width',150)
+                .attr('width',170)
                 .attr('height', 80)
-                .style("float", "right");
+                .style("padding-left", "60px");
+                //.style("float", "right");
                 //.style("padding-left", "20px");
             // .data([d.name, d.position])
             //  .enter()
