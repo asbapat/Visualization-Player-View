@@ -58,8 +58,6 @@ function makeGameweekPlot() {
 
     var color = d3.scale.category10();
 
-
-
     var svg = d3.select("#pca-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -82,6 +80,7 @@ function makeGameweekPlot() {
         .domain([0, 38])
         .range([0, width])
         .clamp(true);
+
 
 
     function drawScatterPlot(error, playersJson) {
@@ -161,11 +160,15 @@ function makeGameweekPlot() {
             tooltip.html(d.Name + " (" + Number((xValue(d)).toFixed(3)) + ", " + Number((yValue(d)).toFixed(3)) + ")")
                 .style("left", (d3.event.pageX - 670) + "px")
                 .style("top", (d3.event.pageY - 180) + "px");
+            d3.select(this).style("fill", "red");
         })
             .on("mouseout", function(d) {
                 tooltip.transition()
                     .duration(500)
                     .style("opacity", 0);
+                d3.select(this).style("fill",function(d){return color(d);})
+
+
             });
 
          function zoomed(){
@@ -180,22 +183,23 @@ function makeGameweekPlot() {
             .attr("class", "track")
             .attr("width", width+40)
             .attr("height", height + 70)
-            .attr("x1", xScale.range()[0])
-            .attr("x2", xScale.range()[1])
+            .attr("x1", ticksData.range()[0])
+            .attr("x2", ticksData.range()[1])
             .select(function() {
                 return this.parentNode.appendChild(this.cloneNode(true));
             })
             .attr("class", "track-inset")
             .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
             .attr("class", "track-overlay")
-            .call(d3.behavior.drag())
+            .call(d3.behavior.drag()
+               // .on("dragstart.interrupt", function(){ slider.interrupt();})
             .on("dragend", function() {
                 xposEnd = d3.mouse(this)[0];
                 console.log(xposEnd);
                 slider.interrupt(); })
-            .on("dragstart", function () {
-                hue(x.invert(d3.event.x));
-            });
+            .on("drag", function () {
+                hue(ticksData.invert(d3.mouse(this)[0]));
+            }));
 
         //     xposEnd = d3.mouse(this)[0];
         //     console.log(xposEnd);
@@ -226,7 +230,10 @@ function makeGameweekPlot() {
 
         var handle = slider.insert("circle", ".track-overlay")
             .attr("class", "handle")
-            .attr("r", 9);
+            .attr("r", 9)
+            .on("drag", function () {
+                hue(d3.mouse(this)[0]);
+            });
 
         slider.transition()
             .duration(750)
@@ -236,8 +243,9 @@ function makeGameweekPlot() {
             });
 
         function hue(h) {
-            handle.attr("cx", xScale(h));
+            handle.attr("cx", ticksData(h));
             svg.style("background-color", d3.hsl(h, 0.8, 0.8));
         }
+
     }
 }
