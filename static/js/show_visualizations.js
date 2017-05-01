@@ -69,6 +69,7 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
+
     var slider = d3.select("#slider").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", 40)
@@ -80,7 +81,6 @@ function makeGameweekPlot() {
         .domain([0, 38])
         .range([0, width])
         .clamp(true);
-
 
 
     function drawScatterPlot(error, playersJson) {
@@ -194,7 +194,7 @@ function makeGameweekPlot() {
             .call(d3.behavior.drag()
                // .on("dragstart.interrupt", function(){ slider.interrupt();})
             .on("dragend", function() {
-                xposEnd = d3.mouse(this)[0];
+                xposEnd = ticksData.invert(d3.mouse(this)[0]);
                 console.log(xposEnd);
                 slider.interrupt(); })
             .on("drag", function () {
@@ -217,6 +217,7 @@ function makeGameweekPlot() {
         //     //xposStart = d3.mouse(this)[0];
         // }));
 
+
         slider.insert("g", ".track-overlay")
             .attr("class", "ticks")
             .attr("transform", "translate(0," + 18 + ")")
@@ -230,10 +231,7 @@ function makeGameweekPlot() {
 
         var handle = slider.insert("circle", ".track-overlay")
             .attr("class", "handle")
-            .attr("r", 9)
-            .on("drag", function () {
-                hue(d3.mouse(this)[0]);
-            });
+            .attr("r", 9);
 
         slider.transition()
             .duration(750)
