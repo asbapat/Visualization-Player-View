@@ -33,7 +33,7 @@ def make_collapsible_tree():
 
     unique_id = 1
     i = 0
-    for index, row in premier_league_data.loc[:, ['Player Surname','Time Played', 'Goals', 'Position Id']].iterrows():
+    for index, row in premier_league_data.loc[:, ['Player Surname','Time Played', 'Goals', 'Position Id', 'Big Chances', 'Total Fouls Conceded']].iterrows():
         surname = row['Player Surname']
         position_id = int(row['Position Id'])
         # If two players have the same surname
@@ -63,6 +63,8 @@ def make_collapsible_tree():
         player_dict[surname].append(row['Time Played'])
         player_dict[surname].append(row['Goals'])
         player_dict[surname].append(team_logo)
+        player_dict[surname].append(row['Big Chances'])
+        player_dict[surname].append(row['Total Fouls Conceded'])
 
     i = 0
     team_list = list()
@@ -71,7 +73,8 @@ def make_collapsible_tree():
         player_image = 'static/lib/images/players/' + player + '.png'
         teams_dict[teams[i]].append({"name": player, "jersey_image": team_jersey, "player_image": player_image,
                                      "position": player_dict[player][0], "time_played": player_dict[player][1],
-                                     "goals": player_dict[player][2], "player_logo": player_dict[player][3]})
+                                     "goals": player_dict[player][2], "player_logo": player_dict[player][3],
+                                     "bigchances": player_dict[player][4], "totalFouls": player_dict[player][5]})
         # player_stats_list.append({"name": player, "children": player_dict[player]})
         i += 1
 
@@ -209,6 +212,7 @@ if __name__ == "__main__":
     gameweek_player_names = list(gameweek_premier_league_data.index.values)
     gameweek_premier_league_data.index.names = ['Player Name']
     gameweek_premier_league_data.columns.names = ['Attributes']
+
 
     scaler = MinMaxScaler()
     premier_league_data = pd.DataFrame(scaler.fit_transform(premier_league_data), columns=premier_league_data.columns)

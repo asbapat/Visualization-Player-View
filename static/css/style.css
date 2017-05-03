@@ -121,3 +121,6 @@ div.tab button.active {
         font-family: sans-serif;
         font-size: 12px;
     }
+td, th{
+    padding: 1px 4px;
+}

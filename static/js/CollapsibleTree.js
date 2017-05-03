@@ -181,6 +181,7 @@ function collapsibleTree() {
 
         if(!d._children){
             d3.select("#tableContent").remove();
+            d3.select('#playerDetail').remove();
             // var profile = svg.append("g")
             //     .append("svg:image")
             //     .attr("xlink:href", d.player_image)
@@ -189,11 +190,12 @@ function collapsibleTree() {
             //     .attr("x",850)
             //     .attr("y",0);
 
-            var playerTable = d3.select('#playerDetails')
+            var playerTable = d3.select('#playerProfile')
                 .append('table')
                 .attr('id', 'tableContent')
-                .attr("width", "100%")
-                .attr("height", height + margin.top + margin.bottom);
+                .attr("width", "85%")
+                .attr("height", margin.top)
+                .attr("align", "center");
 
             var columns = [{src:d.player_image}];
             var logo = [{src:d.player_logo}];
@@ -201,7 +203,8 @@ function collapsibleTree() {
                 .selectAll('th')
                 .data(columns)
                 .enter()
-                .append('th');
+                .append('th')
+                .style("background", "skyblue");
 
             headers.append('img')
                 .attr('src',function (d) {return d.src;})
@@ -229,6 +232,33 @@ function collapsibleTree() {
                 .style("padding-left", "60px");
                 //.style("float", "right");
                 //.style("padding-left", "20px");
+
+             var playerDetails = d3.select('#playerDetails')
+                .append('table')
+                .attr('id', 'playerDetail')
+                .attr("width", "75%")
+                .attr("height", height/4)
+                 .attr("align", "center");
+
+             var heads = playerDetails.append('thead').append('tr')
+                .selectAll('th')
+                .data(["Time Played", "Goals", "Big Chances", "Total Fouls"])
+                .enter()
+                .append('th')
+                 .text(function(d) { return d;})
+                 .style("background", "lightyellow");
+
+             var body = playerDetails.append('tbody').append('tr')
+                 .selectAll('td')
+                 .data([d.time_played, d.goals, d.bigchances, d.totalFouls])
+                 .enter()
+                 .append('td')
+                 .text(function(d){ return d;});
+
+             console.log(d.bigchances)
+
+
+
             // .data([d.name, d.position])
             //  .enter()
             //  .append('th')
