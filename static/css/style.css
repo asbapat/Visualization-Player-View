@@ -124,3 +124,13 @@ div.tab button.active {
 td, th{
     padding: 1px 4px;
 }
+
+.svg2{
+    background-color: aliceblue;
+}
+
+.title{
+    alignment: center;
+    font-family: "Monotype Corsiva";
+    font-size: 15px;
+}

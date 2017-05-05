@@ -1,13 +1,18 @@
 /**
  * Created by asb on 4/17/2017.
  */
-
 function collapsibleTree() {
 
     d3.selectAll("svg").remove();
     var margin = {top: 20, right: 20, bottom: 30, left: 200},
         width = 1200 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
+
+    var xScale = d3.scale.linear().range([30, 550]).domain([0,38]);
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+    var yScale = d3.scale.linear().range([25, 200]).domain([10,0]);
+    var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     var i = 0,
         duration = 750,
@@ -182,6 +187,7 @@ function collapsibleTree() {
         if(!d._children){
             d3.select("#tableContent").remove();
             d3.select('#playerDetail').remove();
+            d3.select('#bpsChart').remove();
             // var profile = svg.append("g")
             //     .append("svg:image")
             //     .attr("xlink:href", d.player_image)
@@ -233,6 +239,46 @@ function collapsibleTree() {
                 //.style("float", "right");
                 //.style("padding-left", "20px");
 
+            var svg2 = d3.select("#lineChart").append("svg")
+                .attr('id','bpsChart')
+                .attr("class","svg2")
+                .attr("width", 580)
+                .attr("height", 220);
+
+            svg2.append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .append('text')
+                .attr("class", "title")
+                //.style("font-weight", "bold")
+                .text("Performance Variation");
+
+            svg2.append("g")
+                .attr("class","x axis")
+                .attr("transform","translate(0," + yScale(0) + ")")
+                .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", 530)
+            .attr("y", -6)
+            .style("text-anchor", "end")
+             .style("font-weight", "bold")
+            // .style("font-size", "1.2em")
+            .text("Gameweeks");
+
+            svg2.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + xScale(0) + ",0)")
+                .call(yAxis);
+            // .append("text")
+            // .attr("transform", "rotate(-90)")
+            // .attr("y", 6)
+            // .attr("x", -1)
+            // .attr("dy", ".71em")
+            // .style("text-anchor", "end")
+            // .style("font-weight", "bold")
+            // //.style("font-size", "0.2em")
+            // .text("BPS");
+
              var playerDetails = d3.select('#playerDetails')
                 .append('table')
                 .attr('id', 'playerDetail')
@@ -254,9 +300,6 @@ function collapsibleTree() {
                  .enter()
                  .append('td')
                  .text(function(d){ return d;});
-
-             console.log(d.bigchances)
-
 
 
             // .data([d.name, d.position])
