@@ -91,8 +91,14 @@ def calculate_bps():
     bps_score_dict = dict()
 
     unique_id = 1
-    # for index, row in gameweek_premier_league_data.loc[:, ['Player Surname', 'Time Played', 'Goals', 'Position Id']].iterrows():
+    gameweek = 1
+    bps_score_dict[str(gameweek)] = []
+
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
+        if int(index) > gameweek:
+            gameweek += 1
+            bps_score_dict[str(gameweek)] = []
+
         surname = row['Player Surname']
         # If two players have the same surname
         if surname in bps_score_dict:
@@ -163,8 +169,63 @@ def calculate_bps():
         if int(row['Successful Dribbles']) > 0:
             bps_score += 1 * int(row['Successful Dribbles'])
 
-        bps_score_dict[row['Player Surname']] = bps_score
-    print bps_score_dict
+        # BPS for winning goal
+        if int(row['Winning Goal']) > 0:
+            bps_score += 3
+
+        # BPS for pass completion rate
+        if int(row['Total Successful Passes All']) > 0 or int(row['Total Unsuccessful Passes All']) > 0:
+            total_passes = int(row['Total Successful Passes All']) + int(row['Total Unsuccessful Passes All'])
+            pass_completion = (int(row['Total Successful Passes All']) * 100) / total_passes
+            if total_passes > 30 and (pass_completion > 70 and pass_completion < 79):
+                bps_score += 2
+            elif total_passes > 30 and (pass_completion > 80 and pass_completion < 89):
+                bps_score += 4
+            elif total_passes > 30 and (pass_completion > 90):
+                bps_score += 6
+
+        # BPS for conceding a penalty
+        if int(row['Penalties Conceded']) > 0:
+            bps_score -= 3 * int(row['Penalties Conceded'])
+
+        # BPS for missing a penalty
+        if int(row['Penalties Not Scored']) > 0:
+            bps_score -= 6 * int(row['Penalties Not Scored'])
+
+        # BPS for getting a yellow card
+        if int(row['Yellow Cards']) > 0:
+            bps_score -= 3
+
+        # BPS for getting a red card
+        if int(row['Red Cards']) > 0:
+            bps_score -= 9
+
+        # BPS for scoring an own goal
+        if int(row['Other Goals']) > 0:
+            bps_score -= 6 * int(row['Other Goals'])
+
+        # BPS for making an error leading to goal
+        if int(row['Error leading to Goal']) > 0:
+            bps_score -= 3 * int(row['Error leading to Goal'])
+
+        # BPS for making an error leading to attempt
+        if int(row['Error leading to Attempt']) > 0:
+            bps_score -= int(row['Error leading to Attempt'])
+
+        # BPS for total fouls conceded
+        if int(row['Total Fouls Conceded']) > 0:
+            bps_score -= int(row['Total Fouls Conceded'])
+
+        # BPS for being caught offside
+        if int(row['Offsides']) > 0:
+            bps_score -= int(row['Offsides'])
+
+        # BPS for being caught offside
+        if int(row['Shots Off Target inc woodwork']) > 0:
+            bps_score -= int(row['Shots Off Target inc woodwork'])
+
+        bps_score_dict[str(gameweek)].append({"name" : row['Player Surname'], "index": bps_score})
+
     return bps_score_dict
 
 
@@ -228,31 +289,31 @@ def perform_pca():
 if __name__ == "__main__":
     premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
                                       usecols=['Player Surname', 'Team', 'Time Played', 'Position Id', 'Goals', 'Assists', 'Clean Sheets',
-                                             'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
-                                             'Successful Dribbles', 'Shots Off Target inc woodwork',
-                                             'Shots On Target inc goals', 'Key Passes', 'Big Chances',
-                                             'Successful crosses in the air', 'Total Clearances', 'Blocks',
-                                             'Interceptions', 'Recoveries', 'Tackles Won', 'Tackles Lost', 'Winning Goal',
-                                             'Total Successful Passes All', 'Penalties Conceded',
-                                             'Error leading to Goal', 'Error leading to Attempt',
-                                             'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
-
-    gameweek_premier_league_data = pd.read_csv("Premier League 2011-12 Gameweek.csv", header=0,
-                                      usecols=['Player Surname', 'Team', 'Gameweek', 'Time Played', 'Position Id', 'Goals',
-                                               'Assists', 'Clean Sheets',
                                                'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                                'Successful Dribbles', 'Shots Off Target inc woodwork',
                                                'Shots On Target inc goals', 'Key Passes', 'Big Chances',
-                                               'Successful open play crosses', 'Total Clearances', 'Blocks',
+                                               'Successful crosses in the air', 'Total Clearances', 'Blocks',
                                                'Interceptions', 'Recoveries', 'Tackles Won', 'Tackles Lost', 'Winning Goal',
                                                'Total Successful Passes All', 'Penalties Conceded',
                                                'Error leading to Goal', 'Error leading to Attempt',
                                                'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
 
+    gameweek_premier_league_data = pd.read_csv("Premier League 2011-12 Gameweek.csv", header=0,
+                                               usecols=['Player Surname', 'Team', 'Gameweek', 'Time Played', 'Position Id', 'Goals',
+                                                        'Assists', 'Clean Sheets', 'Other Goals',
+                                                        'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
+                                                        'Successful Dribbles', 'Shots Off Target inc woodwork',
+                                                        'Shots On Target inc goals', 'Key Passes', 'Big Chances',
+                                                        'Successful open play crosses', 'Total Clearances', 'Blocks',
+                                                        'Interceptions', 'Recoveries', 'Tackles Won', 'Winning Goal',
+                                                        'Total Successful Passes All', 'Total Unsuccessful Passes All', 'Penalties Conceded',
+                                                        'Error leading to Goal', 'Error leading to Attempt', 'Penalties Not Scored',
+                                                        'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
+
     league_dict = make_collapsible_tree()
-    
+
     with open(JSON_DIR +'league.json', 'w') as f:
-            json.dump(league_dict, f)
+        json.dump(league_dict, f)
 
     del premier_league_data['Team']
     del premier_league_data['Position Id']
@@ -261,10 +322,12 @@ if __name__ == "__main__":
     premier_league_data.index.names = ['Player Name']
     premier_league_data.columns.names = ['Attributes']
 
+    gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Gameweek'])
     bps_score_values = calculate_bps()
     with open(JSON_DIR +'bps.json', 'w') as f:
-            json.dump(bps_score_values, f)
+        json.dump(bps_score_values, f)
 
+    gameweek_premier_league_data = gameweek_premier_league_data.reset_index()
     del gameweek_premier_league_data['Team']
     del gameweek_premier_league_data['Gameweek']
     del gameweek_premier_league_data['Position Id']
