@@ -11,7 +11,7 @@ function collapsibleTree() {
     var xScale = d3.scale.linear().range([30, 550]).domain([0,38]);
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-    var yScale = d3.scale.linear().range([25, 200]).domain([10,0]);
+    var yScale = d3.scale.linear().range([25, 200]);
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     var i = 0,
@@ -230,8 +230,7 @@ function collapsibleTree() {
                 .attr("dx",10)
                 .style("padding-left", "25px");
 
-            headers.append('img')
-                .data(logo)
+            headers.append('img').data(logo)
                 .attr('src',function (d) {return d.src;})
                 .attr('width',170)
                 .attr('height', 80)
@@ -242,8 +241,20 @@ function collapsibleTree() {
             var svg2 = d3.select("#lineChart").append("svg")
                 .attr('id','bpsChart')
                 .attr("class","svg2")
-                .attr("width", 580)
+                .attr("width", 600)
                 .attr("height", 220);
+
+            yScale.domain([d3.max(d.index_values), 0]);
+
+            var weeks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
+
+            var line = d3.svg.line()
+                .x(function(d,i){
+                    return xScale(weeks[i]);
+                })
+                .y(function (d,i) {
+                    return yScale(d);
+                });
 
             svg2.append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -258,12 +269,12 @@ function collapsibleTree() {
                 .call(xAxis)
             .append("text")
             .attr("class", "label")
-            .attr("x", 530)
-            .attr("y", -6)
+            .attr("x", 590)
+            .attr("y", 13)
             .style("text-anchor", "end")
-             .style("font-weight", "bold")
+            // .style("font-weight", "bold")
             // .style("font-size", "1.2em")
-            .text("Gameweeks");
+            .text("Gameweek");
 
             svg2.append("g")
                 .attr("class", "y axis")
@@ -278,6 +289,12 @@ function collapsibleTree() {
             // .style("font-weight", "bold")
             // //.style("font-size", "0.2em")
             // .text("BPS");
+
+            svg2.append("path")
+                // .attr("class", "line")
+                .attr("d", line(d.index_values))
+            .attr("stroke", "#ff0000")
+                .style("fill","none");
 
              var playerDetails = d3.select('#playerDetails')
                 .append('table')
