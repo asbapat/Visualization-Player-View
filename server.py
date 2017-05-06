@@ -91,7 +91,8 @@ def calculate_bps():
     bps_score_dict = dict()
 
     unique_id = 1
-    for index, row in gameweek_premier_league_data.loc[:, ['Player Surname', 'Time Played', 'Goals', 'Position Id']].iterrows():
+    # for index, row in gameweek_premier_league_data.loc[:, ['Player Surname', 'Time Played', 'Goals', 'Position Id']].iterrows():
+    for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         surname = row['Player Surname']
         # If two players have the same surname
         if surname in bps_score_dict:
@@ -99,12 +100,71 @@ def calculate_bps():
             unique_id += 1
 
         bps_score = 0
+        # BPS for Minutes Played
         if int(row['Time Played']) > 0 and int(row['Time Played']) < 60:
             bps_score += 3
         elif int(row['Time Played']) > 60:
             bps_score += 6
-        bps_score_dict[row['Player Surname']] = bps_score
 
+        # BPS for scoring a goal based on position
+        if int(row['Position Id']) == 1 and int(row['Goals']) > 0:
+            bps_score += 12 * int(row['Goals'])
+        elif int(row['Position Id']) == 2 and int(row['Goals']) > 0:
+            bps_score += 12 * int(row['Goals'])
+        elif int(row['Position Id']) == 4 and int(row['Goals']) > 0:
+            bps_score += 18 * int(row['Goals'])
+        elif int(row['Position Id']) == 6 and int(row['Goals']) > 0:
+            bps_score += 24 * int(row['Goals'])
+
+        # BPS for getting an assist
+        if int(row['Assists']) > 0:
+            bps_score += 9 * int(row['Assists'])
+
+        # BPS for Goalkeeper and defender keeping a Cleansheet
+        if int(row['Position Id']) == 1 and int(row['Clean Sheets']) > 0:
+            bps_score += 12
+        elif int(row['Position Id']) == 2 and int(row['Clean Sheets']) > 0:
+            bps_score += 12
+
+        # BPS for Saving a penalty
+        if int(row['Saves from Penalty']) > 0:
+            bps_score += 15 * int(row['Saves from Penalty'])
+
+        # BPS for Saves
+        if int(row['Saves Made']) > 0:
+            bps_score += 2 * int(row['Saves Made'])
+
+        # BPS for successful open play cross
+        if int(row['Successful open play crosses']) > 0:
+            bps_score += 1 * int(row['Successful open play crosses'])
+
+        # BPS for Big Chance
+        if int(row['Big Chances']) > 0:
+            bps_score += 3 * int(row['Big Chances'])
+
+        # BPS for clearances, blocks and interceptions
+        if int(row['Total Clearances']) > 0 or int(row['Blocks']) > 0 or int(row['Interceptions']) > 0:
+            total_val = (int(row['Total Clearances']) + int(row['Blocks']) + int(row['Interceptions'])) / 2
+            bps_score += 1 * total_val
+
+        # BPS for recoveries
+        if int(row['Recoveries']) > 0:
+            bps_score += 1 *(int(row['Recoveries']) / 3)
+
+        # BPS for key passes
+        if int(row['Key Passes']) > 0:
+            bps_score += 1 * int(row['Key Passes'])
+
+        # BPS for net successful tackles
+        if (int(row['Tackles Won']) - int(row['Tackles Lost'])) > 0:
+            bps_score += 2 * (int(row['Tackles Won']) - int(row['Tackles Lost']))
+
+        # BPS for successful dribbles
+        if int(row['Successful Dribbles']) > 0:
+            bps_score += 1 * int(row['Successful Dribbles'])
+
+        bps_score_dict[row['Player Surname']] = bps_score
+    print bps_score_dict
     return bps_score_dict
 
 
@@ -172,7 +232,7 @@ if __name__ == "__main__":
                                              'Successful Dribbles', 'Shots Off Target inc woodwork',
                                              'Shots On Target inc goals', 'Key Passes', 'Big Chances',
                                              'Successful crosses in the air', 'Total Clearances', 'Blocks',
-                                             'Interceptions', 'Recoveries', 'Tackles Won', 'Winning Goal',
+                                             'Interceptions', 'Recoveries', 'Tackles Won', 'Tackles Lost', 'Winning Goal',
                                              'Total Successful Passes All', 'Penalties Conceded',
                                              'Error leading to Goal', 'Error leading to Attempt',
                                              'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
@@ -183,8 +243,8 @@ if __name__ == "__main__":
                                                'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
                                                'Successful Dribbles', 'Shots Off Target inc woodwork',
                                                'Shots On Target inc goals', 'Key Passes', 'Big Chances',
-                                               'Successful crosses in the air', 'Total Clearances', 'Blocks',
-                                               'Interceptions', 'Recoveries', 'Tackles Won', 'Winning Goal',
+                                               'Successful open play crosses', 'Total Clearances', 'Blocks',
+                                               'Interceptions', 'Recoveries', 'Tackles Won', 'Tackles Lost', 'Winning Goal',
                                                'Total Successful Passes All', 'Penalties Conceded',
                                                'Error leading to Goal', 'Error leading to Attempt',
                                                'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
