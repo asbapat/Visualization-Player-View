@@ -21,6 +21,7 @@ def make_collapsible_tree():
     club_list = list()              # Stores the unique list of clubs
     player_stats_list = list()      # Stores the statistics of each player
     player_list = list()            # Stores the surname of each player
+    player_id_list = list()         # Stores the ID of each player
     stats_list = list()             # Stores the stats of each player
     teams_dict = dict()             # Maps the player to his particular club
     player_dict = dict()            # Maps the statistics to a player
@@ -31,15 +32,11 @@ def make_collapsible_tree():
             club_list.append(team)
             teams_dict[team] = []
 
-    unique_id = 1
     i = 0
     for index, row in premier_league_data.loc[:, ['Player Surname','Time Played', 'Goals', 'Position Id', 'Big Chances', 'Total Fouls Conceded']].iterrows():
         surname = row['Player Surname']
+        player_id = int(index)
         position_id = int(row['Position Id'])
-        # If two players have the same surname
-        if surname in player_dict:
-            surname += str(unique_id)
-            unique_id += 1
 
         if position_id == 1:
             position = 'Goalkeeper'
@@ -51,7 +48,8 @@ def make_collapsible_tree():
             position = 'Striker'
 
         player_list.append(surname)
-        player_dict[surname] = []
+        player_id_list.append(player_id)
+        player_dict[player_id] = []
         stats_dict = {"Position": position, "Time Played": row['Time Played'], "Goals": row['Goals']}
         stats_list.append([stats_dict])
         team_logo = 'static/lib/images/logos/' + teams[i] + '.png'
@@ -59,24 +57,24 @@ def make_collapsible_tree():
         # player_dict[surname].append({"name": "Position: " + position, "size": "Position: "})
         # player_dict[surname].append({"name": "Time Played: " + str(row['Time Played']), "size": "Time Played: "})
         # player_dict[surname].append({"name": "Goals: " + str(row['Goals']), "size": "Goals: "})
-        player_dict[surname].append(position)
-        player_dict[surname].append(row['Time Played'])
-        player_dict[surname].append(row['Goals'])
-        player_dict[surname].append(team_logo)
-        player_dict[surname].append(row['Big Chances'])
-        player_dict[surname].append(row['Total Fouls Conceded'])
-        player_dict[surname].append(player_baps_dict[index])
+        player_dict[player_id].append(position)
+        player_dict[player_id].append(row['Time Played'])
+        player_dict[player_id].append(row['Goals'])
+        player_dict[player_id].append(team_logo)
+        player_dict[player_id].append(row['Big Chances'])
+        player_dict[player_id].append(row['Total Fouls Conceded'])
+        player_dict[player_id].append(player_baps_dict[index])
 
     i = 0
     team_list = list()
-    for player in player_list:
+    for p_id in player_id_list:
         team_jersey = 'static/lib/images/jerseys/' + teams[i] + '.png'
-        player_image = 'static/lib/images/players/' + player + '.png'
-        teams_dict[teams[i]].append({"name": player, "jersey_image": team_jersey, "player_image": player_image,
-                                     "position": player_dict[player][0], "time_played": player_dict[player][1],
-                                     "goals": player_dict[player][2], "player_logo": player_dict[player][3],
-                                     "bigchances": player_dict[player][4], "totalFouls": player_dict[player][5],
-                                     "index_values": player_dict[player][6]})
+        player_image = 'static/lib/images/players/' + player_mapping_dict[p_id] + '.png'
+        teams_dict[teams[i]].append({"name": player_mapping_dict[p_id], "jersey_image": team_jersey, "player_image": player_image,
+                                     "position": player_dict[p_id][0], "time_played": player_dict[p_id][1],
+                                     "goals": player_dict[p_id][2], "player_logo": player_dict[p_id][3],
+                                     "bigchances": player_dict[p_id][4], "totalFouls": player_dict[p_id][5],
+                                     "index_values": player_dict[p_id][6]})
         # player_stats_list.append({"name": player, "children": player_dict[player]})
         i += 1
 
@@ -218,7 +216,6 @@ def calculate_bps():
     for p_id in player_ids:
         player_baps_dict[p_id] = [0] * 38
 
-    unique_id = 1
     gameweek = 1
     bps_score_dict[str(gameweek)] = []
 
@@ -226,12 +223,6 @@ def calculate_bps():
         if int(index) > gameweek:
             gameweek += 1
             bps_score_dict[str(gameweek)] = []
-
-        surname = row['Player Surname']
-        # If two players have the same surname
-        if surname in bps_score_dict:
-            surname += str(unique_id)
-            unique_id += 1
 
         bps_score = get_bps_score(row)
 
@@ -337,7 +328,7 @@ if __name__ == "__main__":
     bps_score_values = calculate_bps()
     for gameweek in bps_score_values:
         maxIndex = max(bps_score_values[gameweek], key=lambda x: x['index'])
-        print maxIndex
+        print gameweek, maxIndex
 
     with open(JSON_DIR +'bps.json', 'w') as f:
         json.dump(bps_score_values, f)
