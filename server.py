@@ -212,6 +212,8 @@ def get_bps_score(row):
 
 def calculate_bps():
     bps_score_dict = dict()
+    top_10_baps = [0] * 10
+    top_10_players = [''] * 10
 
     for p_id in player_ids:
         player_baps_dict[p_id] = [0] * 38
@@ -221,10 +223,19 @@ def calculate_bps():
 
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         if int(index) > gameweek:
+            bps_score_dict[str(gameweek)].append({"top_10_index": top_10_baps})
+            bps_score_dict[str(gameweek)].append({"top_10_players": top_10_players})
             gameweek += 1
             bps_score_dict[str(gameweek)] = []
+            top_10_baps = [0] * 10
+            top_10_players = [''] * 10
 
         bps_score = get_bps_score(row)
+
+        if bps_score > min(top_10_baps):
+            lowest_score_index = top_10_baps.index(min(top_10_baps))
+            top_10_baps[lowest_score_index] = bps_score
+            top_10_players[lowest_score_index] = row['Player Surname']
 
         player_baps_dict[int(row['Player ID'])][index-1] = bps_score
         bps_score_dict[str(gameweek)].append({"name" : row['Player Surname'], "index": bps_score})
@@ -326,9 +337,9 @@ if __name__ == "__main__":
     gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Gameweek'])
 
     bps_score_values = calculate_bps()
-    for gameweek in bps_score_values:
-        maxIndex = max(bps_score_values[gameweek], key=lambda x: x['index'])
-        print gameweek, maxIndex
+    # for gameweek in bps_score_values:
+    #     maxIndex = max(bps_score_values[gameweek], key=lambda x: x['index'])
+    #     print gameweek, maxIndex
 
     with open(JSON_DIR +'bps.json', 'w') as f:
         json.dump(bps_score_values, f)
