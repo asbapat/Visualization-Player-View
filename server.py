@@ -308,7 +308,8 @@ if __name__ == "__main__":
                                                         'Interceptions', 'Recoveries', 'Tackles Won', 'Winning Goal',
                                                         'Total Successful Passes All', 'Total Unsuccessful Passes All', 'Penalties Conceded',
                                                         'Error leading to Goal', 'Error leading to Attempt', 'Penalties Not Scored',
-                                                        'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
+                                                        'Tackles Lost', 'Total Fouls Conceded', 'Offsides',
+                                                        'Touches open play final third'])
 
     league_dict = make_collapsible_tree()
 
@@ -324,6 +325,10 @@ if __name__ == "__main__":
 
     gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Gameweek'])
     bps_score_values = calculate_bps()
+    for gameweek in bps_score_values:
+        maxIndex = max(bps_score_values[gameweek], key=lambda x: x['index'])
+        print maxIndex
+
     with open(JSON_DIR +'bps.json', 'w') as f:
         json.dump(bps_score_values, f)
 

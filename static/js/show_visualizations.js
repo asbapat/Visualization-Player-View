@@ -69,6 +69,17 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
+    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("id", "canvas")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
 
     var slider = d3.select("#slider").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -78,7 +89,7 @@ function makeGameweekPlot() {
         .attr("transform", "translate(" + (margin.left) + "," + (margin.top) + ")");
 
     var ticksData = d3.scale.linear()
-        .domain([0, 38])
+        .domain([1, 38])
         .range([0, width])
         .clamp(true);
 

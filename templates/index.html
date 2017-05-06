@@ -40,7 +40,6 @@
 
 <div id="gameweek" class="tabcontent">
     <div id="makeGameweek">
-        <!--h3 align="center">Gameweek Data</h3-->
 
         <div id="slider"> </div>
 
@@ -51,7 +50,7 @@
                 <div class="col-sm-6">
                     <div class="row">
 
-                        <!-- Time Chart -->
+                        <!-- Best Players -->
                         <div class="col-sm-12">
                             <div class="chart-wrapper">
                                 <div class="chart-title">
@@ -62,25 +61,35 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Time Chart -->
+                        <!-- Best Players -->
 
-                        <!-- Resources Pie -->
+                        <!-- Interesting Statistics -->
                         <div class="col-sm-12">
                             <div class="chart-wrapper">
                                 <div class="chart-title">
-                                    Custom Visualizations
+                                    Interesting Statistics
                                 </div>
                                 <div class="chart-stage">
-                                    <div id="resource-type-row-chart"></div>
+                                    <div align="center">
+                                        <select id="options">
+                                            <option value="Big Chances" selected>Big Chances</option>
+                                            <option value="Successful Dribbles">Successful Dribbles</option>
+                                            <option value="Saves Made">Saves Made</option>
+                                            <option value="Recoveries">Recoveries</option>
+                                            <option value="Offsides">Offsides</option>
+                                            <option value="Touches open play final third">Final Third Touches</option>
+                                        </select>
+                                    </div>
+                                    <div id="interesting-stats-chart"></div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Resources Pie -->
+                        <!-- Interesting Statistics -->
 
                     </div>
                 </div>
 
-                <!-- Map -->
+                <!-- Scatterplot Matrix -->
                 <div class="col-sm-6">
                     <div class="chart-wrapper">
                         <div class="chart-title">
@@ -91,34 +100,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Map -->
-
-                <!-- Metric 1 -->
-                <div class="col-sm-3">
-                    <div class="chart-wrapper">
-                        <div class="chart-title">
-                            Interesting Statistics 1
-                        </div>
-                        <div class="chart-stage">
-                            <div id="number-projects-nd"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Metric 1 -->
-
-                <!-- Metric 2 -->
-                <div class="col-sm-3">
-                    <div class="chart-wrapper">
-                        <div class="chart-title">
-                            Interesting Statistics 2
-                        </div>
-                        <div class="chart-stage">
-                            <div id="total-donations-nd"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Metric 2 -->
-
+                <!-- Scatterplot Matrix -->
             </div>
 
         </div>
@@ -165,7 +147,7 @@
                         <div class="chart-stage">
                             <div id="playerProfile"></div>
                         </div>
-                       <div class="chart-stage">
+                        <div class="chart-stage">
                             <div id="lineChart"></div>
                         </div>
                         <div class="chart-stage">
