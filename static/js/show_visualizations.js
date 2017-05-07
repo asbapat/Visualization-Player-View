@@ -213,6 +213,10 @@ function makeSlider() {
         .call(d3.behavior.drag()
         // .on("dragstart.interrupt", function(){ slider.interrupt();})
             .on("dragend", function() {
+
+            })
+            .on("drag", function () {
+                hue(ticksData.invert(d3.mouse(this)[0]));
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
                 console.log(xposEnd , Math.round(xposEnd));
                 slider.interrupt();
@@ -361,9 +365,6 @@ function makeSlider() {
                             .attr("cy", yMap);
                     }
                 });
-            })
-            .on("drag", function () {
-                hue(ticksData.invert(d3.mouse(this)[0]));
             }));
 
 
