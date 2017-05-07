@@ -199,7 +199,7 @@ function collapsibleTree() {
             var playerTable = d3.select('#playerProfile')
                 .append('table')
                 .attr('id', 'tableContent')
-                .attr("width", "85%")
+                .attr("width", "100%")
                 .attr("height", margin.top)
                 .attr("align", "center");
 
@@ -220,12 +220,14 @@ function collapsibleTree() {
 
             headers.append('text')
                 .data([d.name])
+                .attr("class", "textboxes")
                 .text(function (d) {return d;})
                 .attr("dx",10)
                 .style("padding-left", "70px");
 
             headers.append('text')
                 .data([d.position])
+                .attr("class", "textboxes")
                 .text(function (d) {return d;})
                 .attr("dx",10)
                 .style("padding-left", "25px");
