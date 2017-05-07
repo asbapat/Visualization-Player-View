@@ -44,19 +44,6 @@ function makeGameweekPlot() {
 
     d3.select("#canvas").remove();
     d3.select("#sld").remove();
-    var x0 = [-2,2],
-        y0 = [-2,2];
-    var xValue = function(d) { return d.PCA1; };
-    var xScale = d3.scale.linear().domain(x0).range([0, width]);
-    var xMap = function(d) { return xScale(xValue(d)); };
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-    var yValue = function(d) { return d.PCA2; };
-    var yScale = d3.scale.linear().domain(y0).range([height, 0]);
-    var yMap = function(d) { return yScale(yValue(d)); };
-    var yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-    var color = d3.scale.category10();
 
     var svg = d3.select("#pca-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -69,14 +56,21 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
+    var top_player_svg = d3.select('#time-chart').append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .attr("id", "canvas")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
+    var intersting_stat_svg = d3.select("#interesting-stats-chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("id", "canvas")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var interesting_stat_tooltip = d3.select("#interesting-stats-chart").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
@@ -98,6 +92,19 @@ function makeGameweekPlot() {
         if (error) throw error;
 
         var playersData = playersJson;
+
+        var xValue = function(d) { return d.PCA1; };
+        var xScale = d3.scale.linear().domain([-2,2]).range([0, width]);
+        var xMap = function(d) { return xScale(xValue(d)); };
+        var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+        var yValue = function(d) { return d.PCA2; };
+        var yScale = d3.scale.linear().domain([-2,2]).range([height, 0]);
+        var yMap = function(d) { return yScale(yValue(d)); };
+        var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+        var color = d3.scale.category10();
+
         if (Math.abs(d3.min(playersData, xValue)) > d3.max(playersData, xValue))
             xScale.domain([d3.min(playersData, xValue) - 0.2, -d3.min(playersData, xValue) + 0.2]);
         else
@@ -211,7 +218,8 @@ function makeGameweekPlot() {
                // .on("dragstart.interrupt", function(){ slider.interrupt();})
             .on("dragend", function() {
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
-                console.log(xposEnd , Math.round(xposEnd));
+                //console.log(xposEnd , Math.round(xposEnd));
+                barChart(Math.round(xposEnd));
                 slider.interrupt(); })
             .on("drag", function () {
                 hue(ticksData.invert(d3.mouse(this)[0]));
@@ -244,4 +252,22 @@ function makeGameweekPlot() {
             handle.attr("cx", ticksData(h));
             svg.style("background-color", d3.hsl(h, 0.8, 0.8));
         }
+
+        // function barChart(position){
+        //
+        //     var xScale = d3.scale.linear().range([0,width]);
+        //     var yScale = d3.scale.ordinal().rangeRoundBands([height,0], 0.05);
+        //
+        //     d3.json("static/leaguejson/bps.json", function (error, data) {
+        //         if(error) throw error;
+        //
+        //         //console.log(position);
+        //         console.log(data[1]);
+        //         var players = data[12][247].top_10_players;
+        //         var indexes = data[1][246].top_10_players;
+        //
+        //        //console.log(players);
+        //     });
+        //
+        // }
 }
