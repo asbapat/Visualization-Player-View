@@ -215,24 +215,39 @@ def calculate_bps():
     bps_score_dict = dict()
     top_10_baps = [0] * 10
     top_10_players = [''] * 10
+    home_team = list()
+    away_team = list()
 
     for p_id in player_ids:
         player_baps_dict[p_id] = [0] * 38
 
     gameweek = 1
-    bps_score_dict[str(gameweek)] = []
+    bps_score_dict[str(gameweek)] = list()
 
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         if int(index) > gameweek:
             top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
             bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
             bps_score_dict[str(gameweek)].insert(1, {"top_10_index": top_10_baps})
+            print "Home team", home_team
+            print "Away team", away_team
             gameweek += 1
-            bps_score_dict[str(gameweek)] = []
+            bps_score_dict[str(gameweek)] = list()
             top_10_baps = [0] * 10
             top_10_players = [''] * 10
+            home_team = list()
+            away_team = list()
 
         bps_score = get_bps_score(row)
+
+        if row['Venue'] == 'Home':
+            if row['Team'] not in home_team:
+                home_team.append(row['Team'])
+                away_team.append(row['Opposition'])
+        elif row['Venue'] == 'Away':
+            if row['Team'] not in away_team:
+                home_team.append(row['Opposition'])
+                away_team.append(row['Team'])
 
         if bps_score > min(top_10_baps):
             lowest_score_index = top_10_baps.index(min(top_10_baps))
@@ -333,7 +348,7 @@ if __name__ == "__main__":
                                                         'Penalties Conceded', 'Error leading to Goal', 'Other Goals',
                                                         'Error leading to Attempt', 'Penalties Not Scored',
                                                         'Tackles Lost', 'Total Fouls Conceded', 'Offsides',
-                                                        'Touches open play final third'])
+                                                        'Touches open play final third', 'Opposition', 'Venue'])
 
     player_mapping_dict = dict()
     player_baps_dict = dict()
@@ -361,6 +376,12 @@ if __name__ == "__main__":
         del gameweeks_dataframe[key]['Gameweek']
         del gameweeks_dataframe[key]['Player Surname']
         del gameweeks_dataframe[key]['Position Id']
+        del gameweeks_dataframe[key]['Opposition']
+        del gameweeks_dataframe[key]['Venue']
+
+        # scaler = MinMaxScaler()
+        # gameweeks_dataframe[key] = pd.DataFrame(scaler.fit_transform(gameweeks_dataframe[key]),
+        #                                           columns=gameweeks_dataframe[key].columns)
 
     bps_score_values = calculate_bps()
 
@@ -382,6 +403,8 @@ if __name__ == "__main__":
 
     #gameweek_premier_league_data = gameweek_premier_league_data.reset_index()
     del gameweek_premier_league_data['Team']
+    del gameweek_premier_league_data['Opposition']
+    del gameweek_premier_league_data['Venue']
     del gameweek_premier_league_data['Player Surname']
     del gameweek_premier_league_data['Position Id']
     #gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Player Surname'])
@@ -394,6 +417,6 @@ if __name__ == "__main__":
     scaler = MinMaxScaler()
     premier_league_data = pd.DataFrame(scaler.fit_transform(premier_league_data), columns=premier_league_data.columns)
     gameweek_premier_league_data = pd.DataFrame(scaler.fit_transform(gameweek_premier_league_data),
-                                                columns=gameweek_premier_league_data.columns)
+                                               columns=gameweek_premier_league_data.columns)
 
     app.run(host='0.0.0.0', port=8086, debug=True, use_reloader=False)
