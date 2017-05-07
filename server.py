@@ -225,8 +225,8 @@ def calculate_bps():
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         if int(index) > gameweek:
             top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
-            bps_score_dict[str(gameweek)].append({"top_10_index": top_10_baps})
-            bps_score_dict[str(gameweek)].append({"top_10_players": top_10_players})
+            bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
+            bps_score_dict[str(gameweek)].insert(1, {"top_10_index": top_10_baps})
             gameweek += 1
             bps_score_dict[str(gameweek)] = []
             top_10_baps = [0] * 10
@@ -282,20 +282,19 @@ def index():
 @app.route("/pca", methods=['GET', 'POST'])
 def perform_pca():
     global selected
-    post = request.args.get('post', 0, type=int)
-    print post
+    gameweek = request.args.get('post', 0, type=int)
 
     # For first reload
-    if post == 0:
-        post = 1
+    if gameweek == 0:
+        gameweek = 1
 
     # Perform PCA on the data based on best PCA attributes
-    pca = PCA(n_components=5).fit(gameweeks_dataframe[post-1])
+    pca = PCA(n_components=5).fit(gameweeks_dataframe[gameweek])
 
-    pca = pca.transform(gameweeks_dataframe[post-1])
+    pca = pca.transform(gameweeks_dataframe[gameweek])
 
     sample_player_names = list()
-    for id in gameweeks_dataframe[post-1].index.values:
+    for id in gameweeks_dataframe[gameweek].index.values:
         sample_player_names.append(player_mapping_dict[id])
 
     se = pd.DataFrame(sample_player_names)
