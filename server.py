@@ -223,6 +223,7 @@ def calculate_bps():
 
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         if int(index) > gameweek:
+            top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
             bps_score_dict[str(gameweek)].append({"top_10_index": top_10_baps})
             bps_score_dict[str(gameweek)].append({"top_10_players": top_10_players})
             gameweek += 1
