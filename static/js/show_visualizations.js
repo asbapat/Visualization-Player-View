@@ -95,27 +95,27 @@ function makeGameweekPlot() {
 
 
     function drawScatterPlot(error, playersJson) {
-        if(error) throw error;
+        if (error) throw error;
 
         var playersData = playersJson;
-        if(Math.abs(d3.min(playersData, xValue)) > d3.max(playersData, xValue))
-            xScale.domain([d3.min(playersData, xValue)-0.2, -d3.min(playersData, xValue)+0.2]);
+        if (Math.abs(d3.min(playersData, xValue)) > d3.max(playersData, xValue))
+            xScale.domain([d3.min(playersData, xValue) - 0.2, -d3.min(playersData, xValue) + 0.2]);
         else
-            xScale.domain([-d3.max(playersData, xValue)-0.2, d3.max(playersData, xValue)+0.2]);
+            xScale.domain([-d3.max(playersData, xValue) - 0.2, d3.max(playersData, xValue) + 0.2]);
 
-        if(Math.abs(d3.min(playersData, yValue)) > d3.max(playersData, yValue))
-            yScale.domain([d3.min(playersData, yValue)-0.2, -d3.min(playersData, yValue)+0.2]);
+        if (Math.abs(d3.min(playersData, yValue)) > d3.max(playersData, yValue))
+            yScale.domain([d3.min(playersData, yValue) - 0.2, -d3.min(playersData, yValue) + 0.2]);
         else
-            yScale.domain([-d3.max(playersData, yValue)-0.2, d3.max(playersData, yValue)+0.2]);
+            yScale.domain([-d3.max(playersData, yValue) - 0.2, d3.max(playersData, yValue) + 0.2]);
 
 
         var zoom = d3.behavior.zoom()
             .x(xScale)
             .y(yScale)
-            .scaleExtent([1,100])
+            .scaleExtent([1, 100])
             .on("zoom", zoomed);
 
-         svg.call(zoom);
+        svg.call(zoom);
 
         svg.append("rect")
             .style("fill", "#fff")
@@ -132,14 +132,14 @@ function makeGameweekPlot() {
             .attr("x", width)
             .attr("y", -6)
             .style("text-anchor", "end")
-             .style("font-weight", "bold")
+            .style("font-weight", "bold")
             // .style("font-size", "1.2em")
             .text("PCA-1");
 
         // Draw the Y-Axis
         svg.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate("+ xScale(0) + ", 0)")
+            .attr("transform", "translate(" + xScale(0) + ", 0)")
             .call(yAxis)
             .append("text")
             .attr("transform", "rotate(-90)")
@@ -159,12 +159,14 @@ function makeGameweekPlot() {
             .transition()
             .duration(1000)
             .ease("backOut")
-             .attr("r", 3.5)
+            .attr("r", 3.5)
             .attr("cx", xMap)
             .attr("cy", yMap)
-            .style("fill", function(d) { return color(d); });
+            .style("fill", function (d) {
+                return color(d);
+            });
 
-        points.on("mouseover", function(d) {
+        points.on("mouseover", function (d) {
             tooltip.transition()
                 .duration(200)
                 .style("opacity", .9);
@@ -173,22 +175,25 @@ function makeGameweekPlot() {
                 .style("top", (d3.event.pageY - 180) + "px");
             d3.select(this).style("fill", "red");
         })
-            .on("mouseout", function(d) {
+            .on("mouseout", function (d) {
                 tooltip.transition()
                     .duration(500)
                     .style("opacity", 0);
-                d3.select(this).style("fill",function(d){return color(d);})
+                d3.select(this).style("fill", function (d) {
+                    return color(d);
+                })
 
 
             });
 
-         function zoomed(){
+        function zoomed() {
             svg.select(".x.axis").call(xAxis);
             svg.select(".y.axis").call(yAxis);
             svg.selectAll(".dot")
                 .attr("cx", xMap)
                 .attr("cy", yMap);
         }
+    }
 
         slider.append("line")
             .attr("class", "track")
@@ -239,6 +244,4 @@ function makeGameweekPlot() {
             handle.attr("cx", ticksData(h));
             svg.style("background-color", d3.hsl(h, 0.8, 0.8));
         }
-
-    }
 }
