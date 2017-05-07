@@ -82,15 +82,15 @@ function makeGameweekPlot() {
 
 
     var slider = d3.select("#slider").append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", 1200)
         .attr("height", 40)
         .attr("id", "sld")
         .attr("class", "slider")
-        .attr("transform", "translate(" + (margin.left) + "," + (margin.top) + ")");
+        .attr("transform", "translate(" + (margin.left+130) + "," + (margin.top) + ")");
 
     var ticksData = d3.scale.linear()
         .domain([1, 38])
-        .range([0, width])
+        .range([0, 1000])
         .clamp(true);
 
 
@@ -192,7 +192,7 @@ function makeGameweekPlot() {
 
         slider.append("line")
             .attr("class", "track")
-            .attr("width", width+40)
+            .attr("width", 960)
             .attr("height", height + 70)
             .attr("x1", ticksData.range()[0])
             .attr("x2", ticksData.range()[1])
@@ -211,22 +211,6 @@ function makeGameweekPlot() {
             .on("drag", function () {
                 hue(ticksData.invert(d3.mouse(this)[0]));
             }));
-
-        //     xposEnd = d3.mouse(this)[0];
-        //     console.log(xposEnd);
-        //     if(xposStart > xposEnd) {
-        //         bins = bins - 1;
-        //         //makeBarChart(newData, bins);
-        //     }
-        //     else if(xposStart < xposEnd) {
-        //         bins = bins + 1;
-        //         //makeBarChart(newData, bins);
-        //     }
-        //     slider.interrupt();
-        // })
-        // .on("dragstart", function(d) {
-        //     //xposStart = d3.mouse(this)[0];
-        // }));
 
 
         slider.insert("g", ".track-overlay")
