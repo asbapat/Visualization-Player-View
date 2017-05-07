@@ -206,7 +206,7 @@ function makeGameweekPlot() {
                // .on("dragstart.interrupt", function(){ slider.interrupt();})
             .on("dragend", function() {
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
-                console.log(xposEnd);
+                console.log(xposEnd , Math.round(xposEnd));
                 slider.interrupt(); })
             .on("drag", function () {
                 hue(ticksData.invert(d3.mouse(this)[0]));
