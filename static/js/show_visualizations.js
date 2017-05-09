@@ -69,14 +69,14 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
+    var interesting_stats_svg = d3.select("#interesting-stats-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .attr("id", "canvas")
+        .attr("id", "int_stats")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
+    var interesting_stats_tooltip = d3.select("#interesting-stats-chart").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
@@ -256,14 +256,14 @@ function makeSlider() {
                         .attr("class", "tooltip")
                         .style("opacity", 0);
 
-                    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
+                    var interesting_stats_svg = d3.select("#interesting-stats-chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
-                        .attr("id", "canvas")
+                        .attr("id", "int_stats")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
+                    var interesting_stats_tooltip = d3.select("#interesting-stats-chart").append("div")
                         .attr("class", "tooltip")
                         .style("opacity", 0);
 
