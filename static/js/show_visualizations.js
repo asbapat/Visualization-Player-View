@@ -44,20 +44,6 @@ function makeGameweekPlot() {
 
     d3.select("#canvas").remove();
 
-    var x0 = [-2,2],
-        y0 = [-2,2];
-    var xValue = function(d) { return d.PCA1; };
-    var xScale = d3.scale.linear().domain(x0).range([0, width]);
-    var xMap = function(d) { return xScale(xValue(d)); };
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-    var yValue = function(d) { return d.PCA2; };
-    var yScale = d3.scale.linear().domain(y0).range([height, 0]);
-    var yMap = function(d) { return yScale(yValue(d)); };
-    var yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-    var color = d3.scale.category10();
-
     var svg = d3.select("#pca-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -69,20 +55,40 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var interesting_stats_svg = d3.select("#interesting-stats-chart").append("svg")
+    var top_player_svg = d3.select("#time-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .attr("id", "int_stats")
+        .attr("id", "canvas2")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var interesting_stats_tooltip = d3.select("#interesting-stats-chart").append("div")
+
+    var interesting_stat_svg = d3.select("#interesting-stats-chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("id", "canvas")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var interesting_stat_tooltip = d3.select("#interesting-stats-chart").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
 
     function drawScatterPlot(error, playersJson) {
         if (error) throw error;
+
+        var xValue = function(d) { return d.PCA1; };
+        var xScale = d3.scale.linear().domain([-2,2]).range([0, width]);
+        var xMap = function(d) { return xScale(xValue(d)); };
+        var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+        var yValue = function(d) { return d.PCA2; };
+        var yScale = d3.scale.linear().domain([-2,2]).range([height, 0]);
+        var yMap = function(d) { return yScale(yValue(d)); };
+        var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+        var color = d3.scale.category10();
 
         var playersData = playersJson;
         if (Math.abs(d3.min(playersData, xValue)) > d3.max(playersData, xValue))
@@ -244,7 +250,7 @@ function makeSlider() {
 
                     var color = d3.scale.category10();
                     d3.select("#canvas").remove();
-
+                    d3.select("#canvas2").remove();
                     var svg = d3.select("#pca-chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
@@ -256,14 +262,21 @@ function makeSlider() {
                         .attr("class", "tooltip")
                         .style("opacity", 0);
 
-                    var interesting_stats_svg = d3.select("#interesting-stats-chart").append("svg")
+                    var top_player_svg = d3.select("#time-chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
-                        .attr("id", "int_stats")
+                        .attr("id", "canvas2")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                    var interesting_stats_tooltip = d3.select("#interesting-stats-chart").append("div")
+                    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .attr("id", "canvas")
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
                         .attr("class", "tooltip")
                         .style("opacity", 0);
 
