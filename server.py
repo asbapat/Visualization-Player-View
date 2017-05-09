@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 
 import numpy as np
 import random
@@ -224,8 +225,8 @@ def calculate_bps():
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         if int(index) > gameweek:
             top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
-            bps_score_dict[str(gameweek)].append({"top_10_index": top_10_baps})
-            bps_score_dict[str(gameweek)].append({"top_10_players": top_10_players})
+            bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
+            bps_score_dict[str(gameweek)].insert(1, {"top_10_index": top_10_baps})
             gameweek += 1
             bps_score_dict[str(gameweek)] = []
             top_10_baps = [0] * 10
@@ -277,18 +278,26 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route("/pca")
-def perform_pca():
-    # Perform PCA on the data based on best PCA attributes
-    pca = PCA(n_components=5).fit(premier_league_data)
 
-    pca = pca.transform(premier_league_data)
+@app.route("/pca", methods=['GET', 'POST'])
+def perform_pca():
+    global selected
+    gameweek = request.args.get('post', 0, type=int)
+
+    # For first reload
+    if gameweek == 0:
+        gameweek = 1
+
+    # Perform PCA on the data based on best PCA attributes
+    pca = PCA(n_components=5).fit(gameweeks_dataframe[gameweek])
+
+    pca = pca.transform(gameweeks_dataframe[gameweek])
 
     sample_player_names = list()
-    for value in premier_league_data.index.values:
-        sample_player_names.append(player_names[value])
+    for id in gameweeks_dataframe[gameweek].index.values:
+        sample_player_names.append(player_mapping_dict[id])
 
-    se = pd.DataFrame(player_names)
+    se = pd.DataFrame(sample_player_names)
     pca = np.concatenate((pca, se), axis=1)
 
     pca_values = pd.DataFrame(pca)
@@ -298,16 +307,17 @@ def perform_pca():
     with open(JSON_DIR + 'players_pca_json.json', 'w') as f:
         f.write(json_values)
 
-    return ('', 204)
+    return json_values
 
 
 if __name__ == "__main__":
     premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
-                                      usecols=['Player ID', 'Player Surname', 'Team', 'Time Played', 'Position Id', 'Goals', 'Assists',
-                                               'Clean Sheets', 'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
-                                               'Successful Dribbles', 'Shots On Target inc goals', 'Key Passes', 'Big Chances',
-                                               'Total Clearances', 'Blocks',
-                                               'Interceptions', 'Recoveries', 'Tackles Won', 'Tackles Lost', 'Winning Goal',
+                                      usecols=['Player ID', 'Player Surname', 'Team', 'Time Played', 'Position Id',
+                                               'Goals', 'Assists', 'Clean Sheets', 'Saves from Penalty', 'Saves Made',
+                                               'Yellow Cards', 'Red Cards', 'Successful Dribbles',
+                                               'Shots On Target inc goals', 'Key Passes', 'Big Chances',
+                                               'Total Clearances', 'Blocks', 'Winning Goal',
+                                               'Interceptions', 'Recoveries', 'Tackles Won', 'Tackles Lost',
                                                'Total Successful Passes All', 'Penalties Conceded',
                                                'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
 
@@ -337,10 +347,22 @@ if __name__ == "__main__":
 
     gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Gameweek'])
 
+    # Create unique list of gameweeks
+    gameweeks = [i for i in range(39)]
+
+    # Dataframe directory to store all the gameweek data
+    gameweeks_dataframe = {gameweek: pd.DataFrame for gameweek in gameweeks}
+
+    for key in gameweeks_dataframe.keys():
+        gameweeks_dataframe[key] = gameweek_premier_league_data[:][gameweek_premier_league_data.index.values == key]
+        gameweeks_dataframe[key] = gameweeks_dataframe[key].reset_index()
+        gameweeks_dataframe[key] = gameweeks_dataframe[key].set_index(['Player ID'])
+        del gameweeks_dataframe[key]['Team']
+        del gameweeks_dataframe[key]['Gameweek']
+        del gameweeks_dataframe[key]['Player Surname']
+        del gameweeks_dataframe[key]['Position Id']
+
     bps_score_values = calculate_bps()
-    # for gameweek in bps_score_values:
-    #     maxIndex = max(bps_score_values[gameweek], key=lambda x: x['index'])
-    #     print gameweek, maxIndex
 
     with open(JSON_DIR +'bps.json', 'w') as f:
         json.dump(bps_score_values, f)
@@ -350,7 +372,7 @@ if __name__ == "__main__":
     with open(JSON_DIR +'league.json', 'w') as f:
         json.dump(league_dict, f)
 
-    premier_league_data = premier_league_data.reset_index()
+    #premier_league_data = premier_league_data.reset_index()
     del premier_league_data['Team']
     del premier_league_data['Position Id']
     premier_league_data = premier_league_data.set_index(['Player Surname'])
@@ -358,13 +380,14 @@ if __name__ == "__main__":
     premier_league_data.index.names = ['Player Name']
     premier_league_data.columns.names = ['Attributes']
 
-    gameweek_premier_league_data = gameweek_premier_league_data.reset_index()
+    #gameweek_premier_league_data = gameweek_premier_league_data.reset_index()
     del gameweek_premier_league_data['Team']
-    del gameweek_premier_league_data['Gameweek']
+    del gameweek_premier_league_data['Player Surname']
     del gameweek_premier_league_data['Position Id']
-    gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Player Surname'])
-    gameweek_player_names = list(gameweek_premier_league_data.index.values)
-    gameweek_premier_league_data.index.names = ['Player Name']
+    #gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Player Surname'])
+    #gameweek_premier_league_data = gameweek_premier_league_data.set_index(['Gameweek'])
+    #gameweek_player_names = list(gameweek_premier_league_data.index.values)
+    gameweek_premier_league_data.index.names = ['Gameweek']
     gameweek_premier_league_data.columns.names = ['Attributes']
 
 
