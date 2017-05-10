@@ -224,7 +224,7 @@ function makeSlider() {
             .on("drag", function () {
                 hue(ticksData.invert(d3.mouse(this)[0]));
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
-                console.log(xposEnd , Math.round(xposEnd));
+                var gameweek = Math.round(xposEnd);
                 slider.interrupt();
                 d3.select("#canvas").remove();
 
@@ -251,6 +251,7 @@ function makeSlider() {
                     var color = d3.scale.category10();
                     d3.select("#canvas").remove();
                     d3.select("#canvas2").remove();
+
                     var svg = d3.select("#pca-chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
@@ -268,18 +269,6 @@ function makeSlider() {
                         .attr("id", "canvas2")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
-                        .attr("id", "canvas")
-                        .append("g")
-                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
-                        .attr("class", "tooltip")
-                        .style("opacity", 0);
-
 
                     var playersData = data;
                     if (Math.abs(d3.min(playersData, xValue)) > d3.max(playersData, xValue))
@@ -377,7 +366,114 @@ function makeSlider() {
                             .attr("cx", xMap)
                             .attr("cy", yMap);
                     }
+
                 });
+
+
+                d3.json("static/leaguejson/bps.json", function(error, data) {
+                    // console.log(data[gameweek][2].goal_types);
+                    var opt = document.getElementById("options");
+                    var newData = opt.options[opt.selectedIndex].value;
+                    var getId = getStatId(newData);
+                    makePieChart(getId);
+
+                    d3.select('#options')
+                        .on('change', function() {
+                            var newData = d3.event.target.value;
+                            var stat_id = getStatId(newData);
+                            makePieChart(stat_id);
+                        });
+
+                    function makePieChart(stat_id) {
+                        d3.select("#canvas3").remove();
+                        var color = d3.scale.category10();
+
+                        var interesting_statistics_svg = d3.select("#interesting-stats-chart").append("svg")
+                            .attr("width", width + margin.left + margin.right)
+                            .attr("height", height + margin.top + margin.bottom)
+                            .attr("id", "canvas3");
+
+                        var interesting_statistics_tooltip = d3.select("#interesting-stats-chart").append("div")
+                            .attr("class", "tooltip")
+                            .style("opacity", 0);
+
+                        // Draw the interesting statistics pie chart
+                        var radius = (280) / 2;
+                        var group = interesting_statistics_svg.append("g").attr("transform", "translate(" +
+                            (margin.left + 300) + "," + (margin.top + 150) + ")");
+                        var pie = d3.layout.pie().value(function (d) {
+                            return d;
+                        });
+                        var arc = d3.svg.arc()
+                            .outerRadius(radius)
+                            .innerRadius(radius / 4);
+
+                        var arcs = group.selectAll(".arc")
+                            .data(pie(data[gameweek][stat_id].values));
+
+                        arcs.enter()
+                            .append("g")
+                            .attr("fill", function (d) {
+                                return color(d.data);
+                            });
+
+                        arcs.append("path")
+                            .attr("d", arc);
+
+                        arcs.on("mouseover", function (d) {
+                            d3.select(this)
+                                .filter(function (d) {
+                                    return d.endAngle - d.startAngle > .01;
+                                }).append("text")
+                                .attr("text-anchor", "middle")
+                                .attr("id", "pietext")
+                                .attr("transform", function (d) {
+                                    d.outerRadius = radius;
+                                    d.innerRadius = radius / 4;
+                                    return "translate(" + arc.centroid(d) + ")";
+                                })
+                                .style("fill", "white")
+                                .text(function (d) {
+                                    return d.data;
+                                });
+                        })
+                            .on("mouseout", function (d) {
+                                d3.select(this)
+                                    .select("#pietext")
+                                    .remove();
+                            });
+
+                        arcs.exit().remove();
+                    }
+                    function getStatId(newData) {
+                        if(newData === 'Goals_type') {
+                            stat_id = 2;
+                        }
+                        else if(newData === 'Goals_position') {
+                            stat_id = 3;
+                        }
+                        else if(newData === 'Attempts') {
+                            stat_id = 4;
+                        }
+                        else if(newData === 'Passes') {
+                            stat_id = 5;
+                        }
+                        else if(newData === 'Pass_direction') {
+                            stat_id = 6;
+                        }
+                        else if(newData === 'Saves') {
+                            stat_id = 7;
+                        }
+                        else if(newData === 'Crosses') {
+                            stat_id = 8;
+                        }
+                        else if(newData === 'Clearances') {
+                            stat_id = 9;
+                        }
+                        return stat_id;
+                    }
+                });
+
             }));
 
 
