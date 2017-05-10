@@ -55,14 +55,6 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    // var top_player_svg = d3.select("#time-chart").append("svg")
-    //     .attr("width", width + margin.left + margin.right)
-    //     .attr("height", height + margin.top + margin.bottom)
-    //     .attr("id", "canvas2")
-    //     .append("g")
-    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
     function drawScatterPlot(error, playersJson) {
         if (error) throw error;
 
@@ -176,197 +168,7 @@ function makeGameweekPlot() {
         }
 
         barChart(1);
-        d3.json("static/leaguejson/bps.json", function(error, data) {
-            var opt = document.getElementById("options");
-            var newData = opt.options[opt.selectedIndex].value;
-            var getId = getStatId(newData);
-            var gameweek = 1;
-            makePieChart(getId);
-
-            d3.select('#options')
-                .on('change', function() {
-                    var newData = d3.event.target.value;
-                    var stat_id = getStatId(newData);
-                    makePieChart(stat_id);
-                });
-
-            function makePieChart(stat_id) {
-                d3.select("#canvas3").remove();
-                var color = d3.scale.category10();
-
-                var interesting_statistics_svg = d3.select("#interesting-stats-chart").append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", 185 + margin.top + margin.bottom)
-                    .attr("id", "canvas3");
-
-                var interesting_statistics_tooltip = d3.select("#interesting-stats-chart").append("div")
-                    .attr("class", "tooltip")
-                    .style("opacity", 0);
-
-                // Draw the interesting statistics pie chart
-                var radius = (200) / 2;
-                var group = interesting_statistics_svg.append("g").attr("transform", "translate(" +
-                    (margin.left + 300) + "," + (margin.top + 102) + ")");
-                var pie = d3.layout.pie().value(function (d) {
-                    return d;
-                });
-                var arc = d3.svg.arc()
-                    .outerRadius(radius)
-                    .innerRadius(radius / 4);
-
-                var textArc = d3.svg.arc()
-                    .outerRadius(radius * 1.2)
-                    .innerRadius((radius / 4) * 1.2);
-
-                var textOuterRadius = radius * 1.2;
-                var textInnerRadius = (radius / 4) * 1.2;
-
-                var arcs = group.selectAll(".arc")
-                    .data(pie(data[gameweek][stat_id].values));
-
-                arcs.enter()
-                    .append("g")
-                    .attr("fill", function (d) {
-                        return color(d.data);
-                    });
-
-                arcs.append("path")
-                    .attr("d", arc);
-
-                arcs.append("svg:text")
-                    .attr("transform", function(d) {
-                        d.outerRadius = textOuterRadius + 200; // Set Outer Coordinate
-                        d.innerRadius = textInnerRadius + 195; // Set Inner Coordinate
-                        return "translate(" + textArc.centroid(d) + ")";
-                    })
-                    .attr("text-anchor", "middle") //center the text on it's origin
-                    .style("fill", "black")
-                    .style("font", "bold 12px Arial")
-                    .text(function(d, i) {
-                        if(data[gameweek][stat_id].values[i] > 0)
-                            return data[gameweek][stat_id].legend[i];
-                    });
-
-                arcs.on("mouseover", function (d) {
-                    d3.select(this)
-                        .filter(function (d) {
-                            return d.endAngle - d.startAngle > .01;
-                        }).append("text")
-                        .attr("text-anchor", "middle")
-                        .attr("id", "pietext")
-                        .attr("transform", function (d) {
-                            d.outerRadius = radius;
-                            d.innerRadius = radius / 4;
-                            return "translate(" + arc.centroid(d) + ")";
-                        })
-                        .style("fill", "white")
-                        .text(function(d) { return d.data; });
-                })
-                    .on("mouseout", function (d) {
-                        d3.select(this)
-                            .select("#pietext")
-                            .remove();
-                    });
-
-                arcs.exit().remove();
-            }
-            function getStatId(newData) {
-                if(newData === 'Goals_type') {
-                    stat_id = 2;
-                }
-                else if(newData === 'Goals_position') {
-                    stat_id = 3;
-                }
-                else if(newData === 'Attempts') {
-                    stat_id = 4;
-                }
-                else if(newData === 'Passes') {
-                    stat_id = 5;
-                }
-                else if(newData === 'Pass_direction') {
-                    stat_id = 6;
-                }
-                else if(newData === 'Saves') {
-                    stat_id = 7;
-                }
-                else if(newData === 'Crosses') {
-                    stat_id = 8;
-                }
-                else if(newData === 'Clearances') {
-                    stat_id = 9;
-                }
-                return stat_id;
-            }
-        });
-
-        function barChart(position) {
-            d3.select('#canvas2').remove();
-
-            d3.json("static/leaguejson/bps.json", function (error, data) {
-                if(error) throw error;
-
-                var players = data[position][0].top_10_players;
-                var index = data[position][1].top_10_index;
-                console.log(index);
-                var h = 125;
-
-                var top_player_svg = d3.select("#time-chart").append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", h + margin.top + margin.bottom)
-                    .attr("id", "canvas2")
-                    .append("g")
-                    .attr("transform", "translate(80" + "," + margin.top + ")");
-
-                var yScale = d3.scale.linear()
-                    .range([0,h])
-                    .domain([0,players.length]);
-
-                var xScale = d3.scale.linear()
-                    .range([0,width])
-                    .domain([0, 100]);
-
-
-                var yAxis = d3.svg.axis()
-                    .scale(yScale)
-                    .tickSize(2)
-                    .tickFormat(function(d,i){return players[i];})
-                    .orient("left");
-
-                var gy = top_player_svg.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis);
-
-                var bars = top_player_svg.selectAll("rect")
-                    .data(index)
-                    .enter()
-                    .append("rect")
-                    .attr("id","bars")
-                    .attr("x", 0)
-                    .attr("y", function (d,i) {
-                        return yScale(i);
-                    })
-                    .attr("height", 10)
-                    .attr("width", function (d) {
-                        return xScale(d);
-                    })
-                    .style("fill", "blue");
-
-                top_player_svg.selectAll("text")
-                    .data(index, function(d){return d;})
-                    .enter()
-                    .append("text")
-                    .attr("class", "label")
-                    .text(function(d){return d;})
-                    .attr("text-anchor", "middle")
-                    .attr("y", function(d,i){
-                        return yScale(i);
-                    })
-                    .attr("x", function(d){ return xScale(d);})
-                    .attr("font-weight", "bold")
-                    .style("fill", "black")
-
-            });
-        }
+        drawPieChart(1);
     }
 }
 
@@ -406,7 +208,6 @@ function makeSlider() {
                 hue(ticksData.invert(d3.mouse(this)[0]));
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
                 var gameweek = Math.round(xposEnd);
-                barChart(gameweek);
                 slider.interrupt();
                 d3.select("#canvas").remove();
 
@@ -543,200 +344,8 @@ function makeSlider() {
                     }
 
                 });
-
-
-                d3.json("static/leaguejson/bps.json", function(error, data) {
-                    // console.log(data[gameweek][2].goal_types);
-                    var opt = document.getElementById("options");
-                    var newData = opt.options[opt.selectedIndex].value;
-                    var getId = getStatId(newData);
-                    makePieChart(getId);
-
-                    d3.select('#options')
-                        .on('change', function() {
-                            var newData = d3.event.target.value;
-                            var stat_id = getStatId(newData);
-                            makePieChart(stat_id);
-                        });
-
-                    function makePieChart(stat_id) {
-                        d3.select("#canvas3").remove();
-                        var color = d3.scale.category10();
-
-                        var interesting_statistics_svg = d3.select("#interesting-stats-chart").append("svg")
-                            .attr("width", width + margin.left + margin.right)
-                            .attr("height", 185 + margin.top + margin.bottom)
-                            .attr("id", "canvas3");
-
-                        var interesting_statistics_tooltip = d3.select("#interesting-stats-chart").append("div")
-                            .attr("class", "tooltip")
-                            .style("opacity", 0);
-
-                        // Draw the interesting statistics pie chart
-                        var radius = (200) / 2;
-                        var group = interesting_statistics_svg.append("g").attr("transform", "translate(" +
-                            (margin.left + 300) + "," + (margin.top + 102) + ")");
-                        var pie = d3.layout.pie().value(function (d) {
-                            return d;
-                        });
-                        var arc = d3.svg.arc()
-                            .outerRadius(radius)
-                            .innerRadius(radius / 4);
-
-                        var textArc = d3.svg.arc()
-                            .outerRadius(radius * 1.2)
-                            .innerRadius((radius / 4) * 1.2);
-
-                        var textOuterRadius = radius * 1.2;
-                        var textInnerRadius = (radius / 4) * 1.2;
-
-                        var arcs = group.selectAll(".arc")
-                            .data(pie(data[gameweek][stat_id].values));
-
-                        arcs.enter()
-                            .append("g")
-                            .attr("fill", function (d) {
-                                return color(d.data);
-                            });
-
-                        arcs.append("path")
-                            .attr("d", arc);
-
-                        arcs.append("svg:text")
-                            .attr("transform", function(d) {
-                                d.outerRadius = textOuterRadius + 200; // Set Outer Coordinate
-                                d.innerRadius = textInnerRadius + 195; // Set Inner Coordinate
-                                return "translate(" + textArc.centroid(d) + ")";
-                            })
-                            .attr("text-anchor", "middle") //center the text on it's origin
-                            .style("fill", "black")
-                            .style("font", "bold 12px Arial")
-                            .text(function(d, i) {
-                                if(data[gameweek][stat_id].values[i] > 0)
-                                    return data[gameweek][stat_id].legend[i];
-                            });
-
-                        arcs.on("mouseover", function (d) {
-                            d3.select(this)
-                                .filter(function (d) {
-                                    return d.endAngle - d.startAngle > .01;
-                                }).append("text")
-                                .attr("text-anchor", "middle")
-                                .attr("id", "pietext")
-                                .attr("transform", function (d) {
-                                    d.outerRadius = radius;
-                                    d.innerRadius = radius / 4;
-                                    return "translate(" + arc.centroid(d) + ")";
-                                })
-                                .style("fill", "white")
-                                .text(function(d) { return d.data; });
-                        })
-                            .on("mouseout", function (d) {
-                                d3.select(this)
-                                    .select("#pietext")
-                                    .remove();
-                            });
-
-                        arcs.exit().remove();
-                    }
-                    function getStatId(newData) {
-                        if(newData === 'Goals_type') {
-                            stat_id = 2;
-                        }
-                        else if(newData === 'Goals_position') {
-                            stat_id = 3;
-                        }
-                        else if(newData === 'Attempts') {
-                            stat_id = 4;
-                        }
-                        else if(newData === 'Passes') {
-                            stat_id = 5;
-                        }
-                        else if(newData === 'Pass_direction') {
-                            stat_id = 6;
-                        }
-                        else if(newData === 'Saves') {
-                            stat_id = 7;
-                        }
-                        else if(newData === 'Crosses') {
-                            stat_id = 8;
-                        }
-                        else if(newData === 'Clearances') {
-                            stat_id = 9;
-                        }
-                        return stat_id;
-                    }
-                });
-
-                function barChart(position) {
-                    d3.select('#canvas2').remove();
-
-                    d3.json("static/leaguejson/bps.json", function (error, data) {
-                        if(error) throw error;
-
-                        var players = data[position][0].top_10_players;
-                        var index = data[position][1].top_10_index;
-                        console.log(index);
-                        var h = 125;
-
-                        var top_player_svg = d3.select("#time-chart").append("svg")
-                            .attr("width", width + margin.left + margin.right)
-                            .attr("height", h + margin.top + margin.bottom)
-                            .attr("id", "canvas2")
-                            .append("g")
-                            .attr("transform", "translate(80" + "," + margin.top + ")");
-
-                        var yScale = d3.scale.linear()
-                            .range([0,h])
-                            .domain([0,players.length]);
-
-                        var xScale = d3.scale.linear()
-                            .range([0,width])
-                            .domain([0, 100]);
-
-
-                        var yAxis = d3.svg.axis()
-                            .scale(yScale)
-                            .tickSize(2)
-                            .tickFormat(function(d,i){return players[i];})
-                            .orient("left");
-
-                        var gy = top_player_svg.append("g")
-                            .attr("class", "y axis")
-                            .call(yAxis);
-
-                        var bars = top_player_svg.selectAll("rect")
-                            .data(index)
-                            .enter()
-                            .append("rect")
-                            .attr("id","bars")
-                            .attr("x", 0)
-                            .attr("y", function (d,i) {
-                                return yScale(i);
-                            })
-                            .attr("height", 10)
-                            .attr("width", function (d) {
-                                return xScale(d);
-                            })
-                            .style("fill", "blue");
-
-                        top_player_svg.selectAll("text")
-                            .data(index, function(d){return d;})
-                            .enter()
-                            .append("text")
-                            .attr("class", "label")
-                            .text(function(d){return d;})
-                            .attr("text-anchor", "middle")
-                            .attr("y", function(d,i){
-                                return yScale(i);
-                            })
-                            .attr("x", function(d){ return xScale(d);})
-                            .attr("font-weight", "bold")
-                            .style("fill", "black")
-
-                    });
-                }
-
+                barChart(gameweek);
+                drawPieChart(gameweek);
             }));
 
     slider.insert("g", ".track-overlay")
@@ -763,6 +372,201 @@ function makeSlider() {
 
     function hue(h) {
         handle.attr("cx", ticksData(h));
-        //svg.style("background-color", d3.hsl(h, 0.8, 0.8));
     }
+}
+
+function drawPieChart(gameweek) {
+    d3.json("static/leaguejson/bps.json", function(error, data) {
+        // console.log(data[gameweek][2].goal_types);
+        var opt = document.getElementById("options");
+        var newData = opt.options[opt.selectedIndex].value;
+        var getId = getStatId(newData);
+        makePieChart(getId);
+
+        d3.select('#options')
+            .on('change', function() {
+                var newData = d3.event.target.value;
+                var stat_id = getStatId(newData);
+                makePieChart(stat_id);
+            });
+
+        function makePieChart(stat_id) {
+            d3.select("#canvas3").remove();
+            var color = d3.scale.category10();
+
+            var interesting_statistics_svg = d3.select("#interesting-stats-chart").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", 140 + margin.top + margin.bottom)
+                .attr("id", "canvas3");
+
+            var interesting_statistics_tooltip = d3.select("#interesting-stats-chart").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+            // Draw the interesting statistics pie chart
+            var radius = (160) / 2;
+            var group = interesting_statistics_svg.append("g").attr("transform", "translate(" +
+                (margin.left + 300) + "," + (margin.top + 80) + ")");
+            var pie = d3.layout.pie().value(function (d) {
+                return d;
+            });
+            var arc = d3.svg.arc()
+                .outerRadius(radius)
+                .innerRadius(radius / 4);
+
+            var arcs = group.selectAll(".arc")
+                .data(pie(data[gameweek][stat_id].values));
+
+            arcs.enter()
+                .append("g")
+                .attr("fill", function (d) {
+                    return color(d.data);
+                });
+
+            arcs.append("path")
+                .attr("d", arc);
+
+            var showLegend = interesting_statistics_svg.selectAll(".legend")
+                .data(pie(data[gameweek][stat_id].values))
+                .enter().append("g")
+                .attr("transform", function(d,i){
+                    return "translate(" + (width - 110) + "," + (i * 15 + 20) + ")";
+                })
+                .attr("class", "legend");
+
+            showLegend.append("rect")
+                .attr("width", 10)
+                .attr("height", 10)
+                .attr("fill", function(d, i) {
+                    return color(d.data);
+                });
+
+            showLegend.append("text")
+                .text(function(d, i){
+                    return data[gameweek][stat_id].legend[i];
+                })
+                .style("font-size", "12px")
+                .attr("y", 10)
+                .attr("x", 11);
+
+            arcs.on("mouseover", function (d) {
+                d3.select(this)
+                    .filter(function (d) {
+                        return d.endAngle - d.startAngle > .01;
+                    }).append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("id", "pietext")
+                    .attr("transform", function (d) {
+                        d.outerRadius = radius;
+                        d.innerRadius = radius / 4;
+                        return "translate(" + arc.centroid(d) + ")";
+                    })
+                    .style("fill", "white")
+                    .text(function(d) { return d.data; });
+            })
+                .on("mouseout", function (d) {
+                    d3.select(this)
+                        .select("#pietext")
+                        .remove();
+                });
+
+            arcs.exit().remove();
+        }
+        function getStatId(newData) {
+            if(newData === 'Goals_type') {
+                stat_id = 2;
+            }
+            else if(newData === 'Goals_position') {
+                stat_id = 3;
+            }
+            else if(newData === 'Attempts') {
+                stat_id = 4;
+            }
+            else if(newData === 'Passes') {
+                stat_id = 5;
+            }
+            else if(newData === 'Pass_direction') {
+                stat_id = 6;
+            }
+            else if(newData === 'Saves') {
+                stat_id = 7;
+            }
+            else if(newData === 'Crosses') {
+                stat_id = 8;
+            }
+            else if(newData === 'Clearances') {
+                stat_id = 9;
+            }
+            return stat_id;
+        }
+    });
+}
+
+function barChart(position) {
+    d3.select('#canvas2').remove();
+
+    d3.json("static/leaguejson/bps.json", function (error, data) {
+        if(error) throw error;
+
+        var players = data[position][0].top_10_players;
+        var index = data[position][1].top_10_index;
+        console.log(index);
+        var h = 125;
+
+        var top_player_svg = d3.select("#time-chart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", h + margin.top + margin.bottom)
+            .attr("id", "canvas2")
+            .append("g")
+            .attr("transform", "translate(80" + "," + margin.top + ")");
+
+        var yScale = d3.scale.linear()
+            .range([0,h])
+            .domain([0,players.length]);
+
+        var xScale = d3.scale.linear()
+            .range([0,width])
+            .domain([0, 100]);
+
+
+        var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .tickSize(2)
+            .tickFormat(function(d,i){return players[i];})
+            .orient("left");
+
+        var gy = top_player_svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+        var bars = top_player_svg.selectAll("rect")
+            .data(index)
+            .enter()
+            .append("rect")
+            .attr("id","bars")
+            .attr("x", 0)
+            .attr("y", function (d,i) {
+                return yScale(i);
+            })
+            .attr("height", 11.5)
+            .attr("width", function (d) {
+                return xScale(d);
+            })
+            .style("fill", "steelblue");
+
+        top_player_svg.selectAll("text")
+            .data(index, function(d){return d;})
+            .enter()
+            .append("text")
+            .attr("class", "label")
+            .text(function(d){return d;})
+            .attr("text-anchor", "middle")
+            .attr("y", function(d,i){
+                return yScale(i);
+            })
+            .attr("x", function(d){ return xScale(d);})
+            .attr("font-weight", "bold")
+            .style("fill", "black")
+
+    });
 }
