@@ -55,12 +55,12 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var top_player_svg = d3.select("#time-chart").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .attr("id", "canvas2")
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // var top_player_svg = d3.select("#time-chart").append("svg")
+    //     .attr("width", width + margin.left + margin.right)
+    //     .attr("height", height + margin.top + margin.bottom)
+    //     .attr("id", "canvas2")
+    //     .append("g")
+    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
     function drawScatterPlot(error, playersJson) {
@@ -308,16 +308,17 @@ function makeGameweekPlot() {
                 var players = data[position][0].top_10_players;
                 var index = data[position][1].top_10_index;
                 console.log(index);
+                var h = 125;
 
                 var top_player_svg = d3.select("#time-chart").append("svg")
                     .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
+                    .attr("height", h + margin.top + margin.bottom)
                     .attr("id", "canvas2")
                     .append("g")
                     .attr("transform", "translate(80" + "," + margin.top + ")");
 
                 var yScale = d3.scale.linear()
-                    .range([0,height])
+                    .range([0,h])
                     .domain([0,players.length]);
 
                 var xScale = d3.scale.linear()
@@ -344,7 +345,7 @@ function makeGameweekPlot() {
                     .attr("y", function (d,i) {
                         return yScale(i);
                     })
-                    .attr("height", 19)
+                    .attr("height", 10)
                     .attr("width", function (d) {
                         return xScale(d);
                     })
@@ -676,16 +677,17 @@ function makeSlider() {
                         var players = data[position][0].top_10_players;
                         var index = data[position][1].top_10_index;
                         console.log(index);
+                        var h = 125;
 
                         var top_player_svg = d3.select("#time-chart").append("svg")
                             .attr("width", width + margin.left + margin.right)
-                            .attr("height", height + margin.top + margin.bottom)
+                            .attr("height", h + margin.top + margin.bottom)
                             .attr("id", "canvas2")
                             .append("g")
                             .attr("transform", "translate(80" + "," + margin.top + ")");
 
                         var yScale = d3.scale.linear()
-                            .range([0,height])
+                            .range([0,h])
                             .domain([0,players.length]);
 
                         var xScale = d3.scale.linear()
@@ -712,7 +714,7 @@ function makeSlider() {
                             .attr("y", function (d,i) {
                                 return yScale(i);
                             })
-                            .attr("height", 19)
+                            .attr("height", 10)
                             .attr("width", function (d) {
                                 return xScale(d);
                             })
