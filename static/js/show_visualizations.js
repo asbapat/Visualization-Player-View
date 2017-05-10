@@ -402,6 +402,13 @@ function makeSlider() {
                             .outerRadius(radius)
                             .innerRadius(radius / 4);
 
+                        var textArc = d3.svg.arc()
+                            .outerRadius(radius * 0.8)
+                            .innerRadius((radius / 4) * 0.8);
+
+                        var textOuterRadius = radius * 0.8;
+                        var textInnerRadius = (radius / 4) * 0.8;
+
                         var arcs = group.selectAll(".arc")
                             .data(pie(data[gameweek][stat_id].values));
 
@@ -413,6 +420,17 @@ function makeSlider() {
 
                         arcs.append("path")
                             .attr("d", arc);
+
+                        arcs.append("svg:text")
+                            .attr("transform", function(d) {
+                                d.outerRadius = textOuterRadius - 100; // Set Outer Coordinate
+                                d.innerRadius = textInnerRadius - 95; // Set Inner Coordinate
+                                return "translate(" + textArc.centroid(d) + ")";
+                            })
+                            .attr("text-anchor", "middle") //center the text on it's origin
+                            .style("fill", "black")
+                            .style("font", "bold 12px Arial")
+                            .text(function(d, i) { return data[gameweek][stat_id].legend[i]; });
 
                         arcs.on("mouseover", function (d) {
                             d3.select(this)
@@ -427,9 +445,9 @@ function makeSlider() {
                                     return "translate(" + arc.centroid(d) + ")";
                                 })
                                 .style("fill", "white")
-                                .text(function (d) {
-                                    return d.data;
-                                });
+                                .text(function(d) { return d.data; });
+                            // data[gameweek][stat_id].legend[i]
+
                         })
                             .on("mouseout", function (d) {
                                 d3.select(this)
@@ -469,56 +487,56 @@ function makeSlider() {
                 });
 
                 function barChart(position) {
-        d3.select('#canvas2').remove();
+                    d3.select('#canvas2').remove();
 
-        d3.json("static/leaguejson/bps.json", function (error, data) {
-            if(error) throw error;
+                    d3.json("static/leaguejson/bps.json", function (error, data) {
+                        if(error) throw error;
 
-            var players = data[position][0].top_10_players;
-            var index = data[position][1].top_10_index;
-            console.log(index);
+                        var players = data[position][0].top_10_players;
+                        var index = data[position][1].top_10_index;
+                        // console.log(index);
 
-            var top_player_svg = d3.select("#time-chart").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .attr("id", "canvas2")
-                .append("g")
-                .attr("transform", "translate(60" + "," + margin.top + ")");
+                        var top_player_svg = d3.select("#time-chart").append("svg")
+                            .attr("width", width + margin.left + margin.right)
+                            .attr("height", height + margin.top + margin.bottom)
+                            .attr("id", "canvas2")
+                            .append("g")
+                            .attr("transform", "translate(60" + "," + margin.top + ")");
 
-            var yScale = d3.scale.ordinal()
-                .rangeRoundBands([0,height], 0.1)
-                .domain(players);
+                        var yScale = d3.scale.ordinal()
+                            .rangeRoundBands([0,height], 0.1)
+                            .domain(players);
 
-            var xScale = d3.scale.linear()
-                .range([0,width])
-                .domain([0, 100]);
+                        var xScale = d3.scale.linear()
+                            .range([0,width])
+                            .domain([0, 100]);
 
-            var yAxis = d3.svg.axis()
-                .scale(yScale)
-                //.tickSize(2)
-                //.tickFormat(function(d,i){return players[i];})
-                .orient("left");
+                        var yAxis = d3.svg.axis()
+                            .scale(yScale)
+                            //.tickSize(2)
+                            //.tickFormat(function(d,i){return players[i];})
+                            .orient("left");
 
-            var gy = top_player_svg.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);
+                        var gy = top_player_svg.append("g")
+                            .attr("class", "y axis")
+                            .call(yAxis);
 
-            var bars = top_player_svg.selectAll("rect")
-                .data(index)
-                .enter()
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", function (d,i) {
-                    return yScale(players[i]);
-                })
-                .attr("height", yScale.rangeBand())
-                .attr("width", function (d) {
-                    return xScale(d);
-                })
-                .style("fill", "steelblue");
+                        var bars = top_player_svg.selectAll("rect")
+                            .data(index)
+                            .enter()
+                            .append("rect")
+                            .attr("x", 0)
+                            .attr("y", function (d,i) {
+                                return yScale(players[i]);
+                            })
+                            .attr("height", yScale.rangeBand())
+                            .attr("width", function (d) {
+                                return xScale(d);
+                            })
+                            .style("fill", "steelblue");
 
-        });
-    }
+                    });
+                }
 
             }));
 

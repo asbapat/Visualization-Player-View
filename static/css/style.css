@@ -6,7 +6,7 @@ h1 {
     font-family: Lato, sans-serif;
     font-size: 24px;
     font-style: normal;
-	font-variant: normal;
+    font-variant: normal;
 }
 
 h3 {
@@ -24,23 +24,23 @@ h3 {
 }
 
 .node {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
 }
 
 .node text {
-  font: 10px sans-serif;
+    font: 10px sans-serif;
 }
 
 .link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1.5px;
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
 }
 
 div.tab {
@@ -82,45 +82,45 @@ div.tab button.active {
 .track,
 .track-inset,
 .track-overlay {
-  stroke-linecap: round;
+    stroke-linecap: round;
 }
 
 .track {
-  stroke: #000;
-  stroke-opacity: 0.3;
-  stroke-width: 10px;
+    stroke: #000;
+    stroke-opacity: 0.3;
+    stroke-width: 10px;
 }
 
 .track-inset {
-  stroke: #ddd;
-  stroke-width: 8px;
+    stroke: #ddd;
+    stroke-width: 8px;
 }
 
 .track-overlay {
-  pointer-events: stroke;
-  stroke-width: 50px;
-  stroke: transparent;
-  cursor: crosshair;
+    pointer-events: stroke;
+    stroke-width: 50px;
+    stroke: transparent;
+    cursor: crosshair;
 }
 
 .handle {
-  fill: #fff;
-  stroke: #000;
-  stroke-opacity: 0.5;
-  stroke-width: 1.25px;
+    fill: #fff;
+    stroke: #000;
+    stroke-opacity: 0.5;
+    stroke-width: 1.25px;
 }
 
 .axis path,
-    .axis line {
-        fill: none;
-        stroke: rgba(22, 22, 22, 0.75);
-        shape-rendering: crispEdges;
-    }
+.axis line {
+    fill: none;
+    stroke: rgba(22, 22, 22, 0.75);
+    shape-rendering: crispEdges;
+}
 
 .axis text {
-        font-family: sans-serif;
-        font-size: 12px;
-    }
+    font-family: sans-serif;
+    font-size: 12px;
+}
 td, th{
     padding: 1px 4px;
 }
@@ -134,7 +134,13 @@ td, th{
     font-family: Lato, sans-serif;
     font-size: 15px;
 }
- .bar {
-            fill: #5f89ad;
-        }
+.bar {
+    fill: #5f89ad;
+}
 
+polyline {
+    opacity: .3;
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
+}
