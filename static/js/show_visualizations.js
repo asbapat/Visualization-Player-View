@@ -225,6 +225,7 @@ function makeSlider() {
                 hue(ticksData.invert(d3.mouse(this)[0]));
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
                 console.log(xposEnd , Math.round(xposEnd));
+                var gameweek = Math.round(xposEnd);
                 slider.interrupt();
                 d3.select("#canvas").remove();
 
@@ -251,6 +252,7 @@ function makeSlider() {
                     var color = d3.scale.category10();
                     d3.select("#canvas").remove();
                     d3.select("#canvas2").remove();
+
                     var svg = d3.select("#pca-chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
@@ -268,18 +270,6 @@ function makeSlider() {
                         .attr("id", "canvas2")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
-                        .attr("id", "canvas")
-                        .append("g")
-                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
-                        .attr("class", "tooltip")
-                        .style("opacity", 0);
-
 
                     var playersData = data;
                     if (Math.abs(d3.min(playersData, xValue)) > d3.max(playersData, xValue))
@@ -377,7 +367,69 @@ function makeSlider() {
                             .attr("cx", xMap)
                             .attr("cy", yMap);
                     }
+
                 });
+
+
+                d3.json("static/leaguejson/bps.json", function(error, data) {
+                    console.log(data[gameweek][2].goals_by_type);
+                    d3.select("#canvas3").remove();
+
+                    var interesting_statistics_svg = d3.select("#interesting-stats-chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .attr("id", "canvas3");
+
+                    var interesting_statistics_tooltip = d3.select("#interesting-stats-chart").append("div")
+                        .attr("class", "tooltip")
+                        .style("opacity", 0);
+
+                    // Draw the interesting statistics pie chart
+                    var radius = (height + margin.top + margin.bottom) / 2;
+                    var group = interesting_statistics_svg.append("g").attr("transform", "translate(" +
+                        (margin.left) + "," + (margin.top) + ")");
+                    var pie = d3.layout.pie().value(function(d) { return d; });
+                    var arc = d3.svg.arc()
+                        .outerRadius(radius)
+                        .innerRadius(radius/4);
+
+                    var arcs = group.selectAll(".arc")
+                        .data(pie(data[gameweek][2].goals_by_type));
+
+                    arcs.enter()
+                        .append("g")
+                        .attr("fill", "steelblue");
+
+                    arcs.append("path")
+                        .attr("d", arc);
+
+                    arcs.on("mouseover", function(d) {
+                        d3.select(this)
+                            .filter(function(d) { return d.endAngle - d.startAngle > .01; }).append("text")
+                            .attr("text-anchor", "middle")
+                            .attr("id", "pietext")
+                            .attr("transform", function(d) {
+                                d.outerRadius = radius;
+                                d.innerRadius = radius / 4;
+                                return "translate(" + arc.centroid(d) + ")";
+                            })
+                            .style("fill", "white")
+                            .text(function(d) { return d.data[gameweek][2].goals_by_type; });
+                    })
+                        .on("mouseout", function(d) {
+                            d3.select(this)
+                                .select("#pietext")
+                                .remove();
+                        });
+
+                    arcs.on("click", function(d) {
+                        var opt = document.getElementById("options");
+                        var newData = opt.options[opt.selectedIndex].value;
+                    });
+
+                    arcs.exit().remove();
+                });
+
             }));
 
 
