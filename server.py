@@ -234,31 +234,51 @@ def calculate_gameweek_details():
 
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         if int(index) > gameweek:
+            goals_by_type = list()
+            attempts = list()
+            goals_by_position = list()
+            passes = list()
+            pass_direction = list()
+            saves_made = list()
+            crosses = list()
+            clearances = list()
+
             top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
-            goals_by_type = [
-                {"headed" : headed, "left_foot": left_foot, "right_foot": right_foot, "own_goals": own_goals,}]
-            attempts = [{"open_play": open_play_attempt, "corners": corners_attempt, "throws": throws_attempt,
-                         "free_kick": free_kick_attempt, "set_play": set_play_attempt, "penalty": penalty_attempt}]
-            goals_by_position = [{"def_goals": def_goals, "mid_goals": mid_goals, "forward_goals": forward_goals}]
-            passes = [{"defensive_third": def_passes, "middle_third": mid_passes, "final_third": final_passes}]
-            pass_direction = [{"pass_forward": pass_forward, "pass_backward": pass_backward, "pass_left": pass_left,
-                              "pass_right": pass_right}]
-            saves_made = [{"saves_inside_box": saves_inside, "saves_outside_box": saves_outside,
-                            "saves_from_penalties": saves_penalty}]
-            crosses = [{"successful_left_crosses": succ_left_cross, "unsuccessful_left_crosses": unsucc_left_cross,
-                        "successful_right_crosses": succ_right_cross, "unsuccessful_right_crosses": unsucc_right_cross}]
-            clearances = [{"headed_clearances": headed_clearance, "other_clearances": other_clearance,
-                           "clearances_off_the_line": off_line_clearance}]
+            # goals_by_type = [
+            #     {"headed" : headed, "left_foot": left_foot, "right_foot": right_foot, "own_goals": own_goals,}]
+            # attempts = [{"open_play": open_play_attempt, "corners": corners_attempt, "throws": throws_attempt,
+            #              "free_kick": free_kick_attempt, "set_play": set_play_attempt, "penalty": penalty_attempt}]
+            # goals_by_position = [{"def_goals": def_goals, "mid_goals": mid_goals, "forward_goals": forward_goals}]
+            # passes = [{"defensive_third": def_passes, "middle_third": mid_passes, "final_third": final_passes}]
+            # pass_direction = [{"pass_forward": pass_forward, "pass_backward": pass_backward, "pass_left": pass_left,
+            #                   "pass_right": pass_right}]
+            # saves_made = [{"saves_inside_box": saves_inside, "saves_outside_box": saves_outside,
+            #                 "saves_from_penalties": saves_penalty}]
+            # crosses = [{"successful_left_crosses": succ_left_cross, "unsuccessful_left_crosses": unsucc_left_cross,
+            #             "successful_right_crosses": succ_right_cross, "unsuccessful_right_crosses": unsucc_right_cross}]
+            # clearances = [{"headed_clearances": headed_clearance, "other_clearances": other_clearance,
+            #                "clearances_off_the_line": off_line_clearance}]
+
+            goals_by_type.extend([headed, left_foot, right_foot, own_goals])
+            goals_by_position.extend([def_goals, mid_goals, forward_goals])
+            attempts.extend([open_play_attempt, corners_attempt, throws_attempt, free_kick_attempt, set_play_attempt, penalty_attempt])
+            passes.extend([def_passes, mid_passes, final_passes])
+            pass_direction.extend([pass_forward, pass_backward, pass_left, pass_right])
+            saves_made.extend([saves_inside, saves_outside, saves_penalty])
+            crosses.extend([succ_left_cross, unsucc_left_cross, succ_right_cross, unsucc_right_cross])
+            clearances.extend([headed_clearance, other_clearance, off_line_clearance])
+
             bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
             bps_score_dict[str(gameweek)].insert(1, {"top_10_index": top_10_baps})
-            bps_score_dict[str(gameweek)].insert(2, {"goals_by_type": goals_by_type})
-            bps_score_dict[str(gameweek)].insert(3, {"goals_by_position": goals_by_position})
-            bps_score_dict[str(gameweek)].insert(4, {"attempts": attempts})
-            bps_score_dict[str(gameweek)].insert(5, {"passes": passes})
-            bps_score_dict[str(gameweek)].insert(6, {"pass_direction": pass_direction})
-            bps_score_dict[str(gameweek)].insert(7, {"saves_made": saves_made})
-            bps_score_dict[str(gameweek)].insert(8, {"crosses": crosses})
-            bps_score_dict[str(gameweek)].insert(9, {"clearances": clearances})
+            bps_score_dict[str(gameweek)].insert(2, {"values": goals_by_type, "goal_types": ["Headed", "Left Foot",
+                                                                                               "Right Foot", "Own Goal"]})
+            bps_score_dict[str(gameweek)].insert(3, {"values": goals_by_position, "goals_by_position": goals_by_position})
+            bps_score_dict[str(gameweek)].insert(4, {"values": attempts, "attempts": attempts})
+            bps_score_dict[str(gameweek)].insert(5, {"values": passes, "passes": passes})
+            bps_score_dict[str(gameweek)].insert(6, {"values": pass_direction, "pass_direction": pass_direction})
+            bps_score_dict[str(gameweek)].insert(7, {"values": saves_made, "saves_made": saves_made})
+            bps_score_dict[str(gameweek)].insert(8, {"values" : crosses, "crosses": crosses})
+            bps_score_dict[str(gameweek)].insert(9, {"values": clearances, "clearances": clearances})
             gameweek += 1
             bps_score_dict[str(gameweek)] = list()
             top_10_baps = [0] * 10
