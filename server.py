@@ -271,14 +271,22 @@ def calculate_gameweek_details():
             bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
             bps_score_dict[str(gameweek)].insert(1, {"top_10_index": top_10_baps})
             bps_score_dict[str(gameweek)].insert(2, {"values": goals_by_type, "goal_types": ["Headed", "Left Foot",
-                                                                                               "Right Foot", "Own Goal"]})
-            bps_score_dict[str(gameweek)].insert(3, {"values": goals_by_position, "goals_by_position": goals_by_position})
-            bps_score_dict[str(gameweek)].insert(4, {"values": attempts, "attempts": attempts})
-            bps_score_dict[str(gameweek)].insert(5, {"values": passes, "passes": passes})
-            bps_score_dict[str(gameweek)].insert(6, {"values": pass_direction, "pass_direction": pass_direction})
-            bps_score_dict[str(gameweek)].insert(7, {"values": saves_made, "saves_made": saves_made})
-            bps_score_dict[str(gameweek)].insert(8, {"values" : crosses, "crosses": crosses})
-            bps_score_dict[str(gameweek)].insert(9, {"values": clearances, "clearances": clearances})
+                                                        "Right Foot", "Own Goal"]})
+            bps_score_dict[str(gameweek)].insert(3, {"values": goals_by_position, "goals_by_position": ["Defender Goals",
+                                                        "Midfielder Goals", "Striker Goals",]})
+            bps_score_dict[str(gameweek)].insert(4, {"values": attempts, "attempts": ["Open Play", "Corners", "Throws",
+                                                        "Free Kick", "Set Play", "Penalty"]})
+            bps_score_dict[str(gameweek)].insert(5, {"values": passes, "passes": ["Defensive Third", "Middle Third",
+                                                        "Final Third"]})
+            bps_score_dict[str(gameweek)].insert(6, {"values": pass_direction, "pass_direction": ["Forward",
+                                                        "Backward", "Left", "Right"]})
+            bps_score_dict[str(gameweek)].insert(7, {"values": saves_made, "saves_made": ["Inside Box", "Outside Box",
+                                                        "Penalty"]})
+            bps_score_dict[str(gameweek)].insert(8, {"values" : crosses, "crosses": ["Successful Left Crosses",
+                                                        "Unsuccessful Left Crosses", "Successful Right Crosses",
+                                                        "Unsuccessful Right Crosses"]})
+            bps_score_dict[str(gameweek)].insert(9, {"values": clearances, "clearances": ["Headed", "Other",
+                                                        "Off the line"]})
             gameweek += 1
             bps_score_dict[str(gameweek)] = list()
             top_10_baps = [0] * 10
