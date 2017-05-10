@@ -534,9 +534,16 @@ if __name__ == "__main__":
 
         scaler = MinMaxScaler()
         gameweeks_dataframe[key][['Time Played', 'Successful Dribbles', 'Shots Off Target inc woodwork',
-                                  'Shots On Target inc goals']] = \
+                                  'Shots On Target inc goals', 'Goals', 'Assists', 'Clean Sheets', 'Saves Made',
+                                  'Yellow Cards', 'Red Cards', 'Saves from Penalty', 'Key Passes', 'Big Chances',
+                                  'Total Clearances', 'Blocks', 'Interceptions', 'Recoveries',
+                                  'Winning Goal'
+                                  ]] = \
             scaler.fit_transform(gameweeks_dataframe[key][['Time Played', 'Successful Dribbles', 'Shots Off Target inc woodwork'
-                                                           , 'Shots On Target inc goals']])
+                                                           , 'Shots On Target inc goals', 'Goals', 'Assists', 'Clean Sheets'
+                                                           , 'Saves Made', 'Yellow Cards', 'Red Cards', 'Saves from Penalty',
+                                                           'Key Passes', 'Big Chances', 'Total Clearances', 'Blocks',
+                                                           'Interceptions', 'Recoveries', 'Winning Goal']])
 
     bps_score_values = calculate_gameweek_details()
 
