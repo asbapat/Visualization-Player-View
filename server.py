@@ -244,20 +244,6 @@ def calculate_gameweek_details():
             clearances = list()
 
             top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
-            # goals_by_type = [
-            #     {"headed" : headed, "left_foot": left_foot, "right_foot": right_foot, "own_goals": own_goals,}]
-            # attempts = [{"open_play": open_play_attempt, "corners": corners_attempt, "throws": throws_attempt,
-            #              "free_kick": free_kick_attempt, "set_play": set_play_attempt, "penalty": penalty_attempt}]
-            # goals_by_position = [{"def_goals": def_goals, "mid_goals": mid_goals, "forward_goals": forward_goals}]
-            # passes = [{"defensive_third": def_passes, "middle_third": mid_passes, "final_third": final_passes}]
-            # pass_direction = [{"pass_forward": pass_forward, "pass_backward": pass_backward, "pass_left": pass_left,
-            #                   "pass_right": pass_right}]
-            # saves_made = [{"saves_inside_box": saves_inside, "saves_outside_box": saves_outside,
-            #                 "saves_from_penalties": saves_penalty}]
-            # crosses = [{"successful_left_crosses": succ_left_cross, "unsuccessful_left_crosses": unsucc_left_cross,
-            #             "successful_right_crosses": succ_right_cross, "unsuccessful_right_crosses": unsucc_right_cross}]
-            # clearances = [{"headed_clearances": headed_clearance, "other_clearances": other_clearance,
-            #                "clearances_off_the_line": off_line_clearance}]
 
             goals_by_type.extend([headed, left_foot, right_foot, own_goals])
             goals_by_position.extend([def_goals, mid_goals, forward_goals])
