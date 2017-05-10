@@ -211,12 +211,20 @@ def get_bps_score(row):
     return bps_score
 
 
-def calculate_bps():
+def calculate_gameweek_details():
     bps_score_dict = dict()
     top_10_baps = [0] * 10
     top_10_players = [''] * 10
     home_team = list()
     away_team = list()
+    headed = left_foot = right_foot = own_goals = 0
+    def_goals = mid_goals = forward_goals = 0
+    open_play_attempt = corners_attempt = throws_attempt = free_kick_attempt = set_play_attempt = penalty_attempt = 0
+    def_passes = mid_passes = final_passes = 0
+    pass_forward = pass_backward = pass_left = pass_right = 0
+    saves_inside = saves_outside = saves_penalty = 0
+    succ_left_cross = succ_right_cross = unsucc_left_cross = unsucc_right_cross = 0
+    headed_clearance = other_clearance = off_line_clearance = 0
 
     for p_id in player_ids:
         player_baps_dict[p_id] = [0] * 38
@@ -226,17 +234,65 @@ def calculate_bps():
 
     for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
         if int(index) > gameweek:
+            goals_by_type = list()
+            attempts = list()
+            goals_by_position = list()
+            passes = list()
+            pass_direction = list()
+            saves_made = list()
+            crosses = list()
+            clearances = list()
+
             top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
+            # goals_by_type = [
+            #     {"headed" : headed, "left_foot": left_foot, "right_foot": right_foot, "own_goals": own_goals,}]
+            # attempts = [{"open_play": open_play_attempt, "corners": corners_attempt, "throws": throws_attempt,
+            #              "free_kick": free_kick_attempt, "set_play": set_play_attempt, "penalty": penalty_attempt}]
+            # goals_by_position = [{"def_goals": def_goals, "mid_goals": mid_goals, "forward_goals": forward_goals}]
+            # passes = [{"defensive_third": def_passes, "middle_third": mid_passes, "final_third": final_passes}]
+            # pass_direction = [{"pass_forward": pass_forward, "pass_backward": pass_backward, "pass_left": pass_left,
+            #                   "pass_right": pass_right}]
+            # saves_made = [{"saves_inside_box": saves_inside, "saves_outside_box": saves_outside,
+            #                 "saves_from_penalties": saves_penalty}]
+            # crosses = [{"successful_left_crosses": succ_left_cross, "unsuccessful_left_crosses": unsucc_left_cross,
+            #             "successful_right_crosses": succ_right_cross, "unsuccessful_right_crosses": unsucc_right_cross}]
+            # clearances = [{"headed_clearances": headed_clearance, "other_clearances": other_clearance,
+            #                "clearances_off_the_line": off_line_clearance}]
+
+            goals_by_type.extend([headed, left_foot, right_foot, own_goals])
+            goals_by_position.extend([def_goals, mid_goals, forward_goals])
+            attempts.extend([open_play_attempt, corners_attempt, throws_attempt, free_kick_attempt, set_play_attempt, penalty_attempt])
+            passes.extend([def_passes, mid_passes, final_passes])
+            pass_direction.extend([pass_forward, pass_backward, pass_left, pass_right])
+            saves_made.extend([saves_inside, saves_outside, saves_penalty])
+            crosses.extend([succ_left_cross, unsucc_left_cross, succ_right_cross, unsucc_right_cross])
+            clearances.extend([headed_clearance, other_clearance, off_line_clearance])
+
             bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
             bps_score_dict[str(gameweek)].insert(1, {"top_10_index": top_10_baps})
-            print "Home team", home_team
-            print "Away team", away_team
+            bps_score_dict[str(gameweek)].insert(2, {"values": goals_by_type, "goal_types": ["Headed", "Left Foot",
+                                                                                               "Right Foot", "Own Goal"]})
+            bps_score_dict[str(gameweek)].insert(3, {"values": goals_by_position, "goals_by_position": goals_by_position})
+            bps_score_dict[str(gameweek)].insert(4, {"values": attempts, "attempts": attempts})
+            bps_score_dict[str(gameweek)].insert(5, {"values": passes, "passes": passes})
+            bps_score_dict[str(gameweek)].insert(6, {"values": pass_direction, "pass_direction": pass_direction})
+            bps_score_dict[str(gameweek)].insert(7, {"values": saves_made, "saves_made": saves_made})
+            bps_score_dict[str(gameweek)].insert(8, {"values" : crosses, "crosses": crosses})
+            bps_score_dict[str(gameweek)].insert(9, {"values": clearances, "clearances": clearances})
             gameweek += 1
             bps_score_dict[str(gameweek)] = list()
             top_10_baps = [0] * 10
             top_10_players = [''] * 10
             home_team = list()
             away_team = list()
+            headed = left_foot = right_foot = own_goals = 0
+            def_goals = mid_goals = forward_goals = 0
+            open_play_attempt = corners_attempt = throws_attempt = free_kick_attempt = set_play_attempt = penalty_attempt = 0
+            def_passes = mid_passes = final_passes = 0
+            pass_forward = pass_backward = pass_left = pass_right = 0
+            saves_inside = saves_outside = saves_penalty = 0
+            succ_left_cross = succ_right_cross = unsucc_left_cross = unsucc_right_cross = 0
+            headed_clearance = other_clearance = off_line_clearance = 0
 
         bps_score = get_bps_score(row)
 
@@ -249,10 +305,90 @@ def calculate_bps():
                 home_team.append(row['Opposition'])
                 away_team.append(row['Team'])
 
+        # Calculate Goals by Type
+        if int(row['Headed Goals']) > 0:
+            headed += int(row['Headed Goals'])
+        if int(row['Left Foot Goals']) > 0:
+            left_foot += int(row['Left Foot Goals'])
+        if int(row['Right Foot Goals']) > 0:
+            right_foot += int(row['Right Foot Goals'])
+        if int(row['Other Goals']) > 0:
+            own_goals += int(row['Other Goals'])
+
+        # Calculate Goals by Position
+        if int(row['Position Id']) == 1 and int(row['Goals']) > 0:
+            def_goals += int(row['Goals'])
+        elif int(row['Position Id']) == 2 and int(row['Goals']) > 0:
+            def_goals += int(row['Goals'])
+        elif int(row['Position Id']) == 4 and int(row['Goals']) > 0:
+            mid_goals += int(row['Goals'])
+        elif int(row['Position Id']) == 6 and int(row['Goals']) > 0:
+            forward_goals += int(row['Goals'])
+
+        # Calculate Attempts
+        if int(row['Attempts Open Play on target']) > 0 or int(row['Attempts Open Play off target']) > 0:
+            open_play_attempt += int(row['Attempts Open Play on target']) + int(row['Attempts Open Play off target'])
+        if int(row['Attempts from Corners on target']) > 0 or int(row['Attempts from Corners off target']) > 0:
+            corners_attempt += int(row['Attempts from Corners on target']) + int(row['Attempts from Corners off target'])
+        if int(row['Attempts from Throws on target']) > 0 or int(row['Attempts from Throws off target']) > 0:
+            throws_attempt += int(row['Attempts from Throws on target']) + int(row['Attempts from Throws off target'])
+        if int(row['Attempts from Direct Free Kick on target']) > 0 or int(row['Attempts from Direct Free Kick off target']) > 0:
+            free_kick_attempt += int(row['Attempts from Direct Free Kick on target']) + int(row['Attempts from Direct Free Kick off target'])
+        if int(row['Attempts from Set Play on target']) > 0 or int(row['Attempts from Set Play off target']) > 0:
+            set_play_attempt += int(row['Attempts from Set Play on target']) + int(row['Attempts from Set Play off target'])
+        if int(row['Attempts from Penalties on target']) > 0 or int(row['Attempts from Penalties off target']) > 0:
+            penalty_attempt += int(row['Attempts from Penalties on target']) + int(row['Attempts from Penalties off target'])
+
+        # Calculate Passes
+        if int(row['Successful Passes Defensive third']) > 0 or int(row['Unsuccessful Passes Defensive third']) > 0:
+            def_passes += int(row['Successful Passes Defensive third']) + int(row['Unsuccessful Passes Defensive third'])
+        if int(row['Successful Passes Middle third']) > 0 or int(row['Unsuccessful Passes Middle third']) > 0:
+            mid_passes += int(row['Successful Passes Middle third']) + int(row['Unsuccessful Passes Middle third'])
+        if int(row['Successful Passes Final third']) > 0 or int(row['Unsuccessful Passes Final third']) > 0:
+            final_passes += int(row['Successful Passes Final third']) + int(row['Unsuccessful Passes Final third'])
+
+        # Calculate Pass Direction
+        if int(row['Pass Forward']) > 0:
+            pass_forward += int(row['Pass Forward'])
+        if int(row['Pass Backward']) > 0:
+            pass_backward += int(row['Pass Backward'])
+        if int(row['Pass Left']) > 0:
+            pass_left += int(row['Pass Left'])
+        if int(row['Pass Right']) > 0:
+            pass_right += int(row['Pass Right'])
+
+        # Calculate saves made
+        if int(row['Saves Made from Inside Box']) > 0:
+            saves_inside += int(row['Saves Made from Inside Box'])
+        if int(row['Saves Made from Outside Box']) > 0:
+            saves_outside += int(row['Saves Made from Outside Box'])
+        if int(row['Saves from Penalty']) > 0:
+            saves_penalty += int(row['Saves from Penalty'])
+
+        # Calculate crosses
+        if int(row['Successful Crosses Left']) > 0:
+            succ_left_cross += int(row['Successful Crosses Left'])
+        if int(row['Unsuccessful Crosses Left']) > 0:
+            unsucc_left_cross += int(row['Unsuccessful Crosses Left'])
+        if int(row['Successful Crosses Right']) > 0:
+            succ_right_cross += int(row['Successful Crosses Right'])
+        if int(row['Unsuccessful Crosses Right']) > 0:
+            unsucc_right_cross += int(row['Unsuccessful Crosses Right'])
+
+        # Calculate clearances
+        if int(row['Headed Clearances']) > 0:
+            headed_clearance += int(row['Headed Clearances'])
+        if int(row['Other Clearances']) > 0:
+            other_clearance += int(row['Other Clearances'])
+        if int(row['Clearances Off the Line']) > 0:
+            off_line_clearance += int(row['Clearances Off the Line'])
+
+        # Find top 10 players for a gameweek
         if bps_score > min(top_10_baps):
             lowest_score_index = top_10_baps.index(min(top_10_baps))
             top_10_baps[lowest_score_index] = bps_score
             top_10_players[lowest_score_index] = row['Player Surname']
+
 
         player_baps_dict[int(row['Player ID'])][index-1] = bps_score
         bps_score_dict[str(gameweek)].append({"name" : row['Player Surname'], "index": bps_score})
@@ -299,7 +435,7 @@ def perform_pca():
     global selected
     gameweek = request.args.get('post', 0, type=int)
 
-    # For first reload
+    # For first page reload
     if gameweek == 0:
         gameweek = 1
 
@@ -348,7 +484,24 @@ if __name__ == "__main__":
                                                         'Penalties Conceded', 'Error leading to Goal', 'Other Goals',
                                                         'Error leading to Attempt', 'Penalties Not Scored',
                                                         'Tackles Lost', 'Total Fouls Conceded', 'Offsides',
-                                                        'Touches open play final third', 'Opposition', 'Venue'])
+                                                        'Touches open play final third', 'Opposition', 'Venue',
+                                                        'Headed Goals', 'Left Foot Goals', 'Right Foot Goals',
+                                                        'Attempts Open Play on target', 'Attempts from Corners on target',
+                                                        'Attempts from Throws on target',
+                                                        'Attempts from Direct Free Kick on target',
+                                                        'Attempts from Set Play on target', 'Attempts from Penalties on target',
+                                                        'Attempts Open Play off target', 'Attempts from Corners off target',
+                                                        'Attempts from Throws off target',
+                                                        'Attempts from Direct Free Kick off target',
+                                                        'Attempts from Set Play off target', 'Attempts from Penalties off target',
+                                                        'Successful Passes Defensive third', 'Unsuccessful Passes Defensive third',
+                                                        'Successful Passes Middle third', 'Unsuccessful Passes Middle third',
+                                                        'Successful Passes Final third', 'Unsuccessful Passes Final third',
+                                                        'Pass Forward', 'Pass Backward', 'Pass Left', 'Pass Right',
+                                                        'Saves Made from Inside Box', 'Saves Made from Outside Box',
+                                                        'Saves from Penalty', 'Successful Crosses Left', 'Unsuccessful Crosses Left',
+                                                        'Successful Crosses Right', 'Unsuccessful Crosses Right',
+                                                        'Headed Clearances', 'Other Clearances', 'Clearances Off the Line'])
 
     player_mapping_dict = dict()
     player_baps_dict = dict()
@@ -383,7 +536,7 @@ if __name__ == "__main__":
         # gameweeks_dataframe[key] = pd.DataFrame(scaler.fit_transform(gameweeks_dataframe[key]),
         #                                           columns=gameweeks_dataframe[key].columns)
 
-    bps_score_values = calculate_bps()
+    bps_score_values = calculate_gameweek_details()
 
     with open(JSON_DIR +'bps.json', 'w') as f:
         json.dump(bps_score_values, f)

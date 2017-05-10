@@ -225,7 +225,6 @@ function makeSlider() {
                 hue(ticksData.invert(d3.mouse(this)[0]));
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
                 console.log(xposEnd , Math.round(xposEnd));
-                barChart(Math.round(xposEnd));
                 slider.interrupt();
                 d3.select("#canvas").remove();
 
@@ -251,7 +250,7 @@ function makeSlider() {
 
                     var color = d3.scale.category10();
                     d3.select("#canvas").remove();
-
+                    d3.select("#canvas2").remove();
                     var svg = d3.select("#pca-chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
@@ -263,23 +262,23 @@ function makeSlider() {
                         .attr("class", "tooltip")
                         .style("opacity", 0);
 
-                    // var top_player_svg = d3.select("#time-chart").append("svg")
-                    //     .attr("width", width + margin.left + margin.right)
-                    //     .attr("height", height + margin.top + margin.bottom)
-                    //     .attr("id", "canvas2")
-                    //     .append("g")
-                    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                    var top_player_svg = d3.select("#time-chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .attr("id", "canvas2")
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                    // var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
-                    //     .attr("width", width + margin.left + margin.right)
-                    //     .attr("height", height + margin.top + margin.bottom)
-                    //     .attr("id", "canvas")
-                    //     .append("g")
-                    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-                    //
-                    // var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
-                    //     .attr("class", "tooltip")
-                    //     .style("opacity", 0);
+                    var top_players_svg = d3.select("#interesting-stats-chart").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .attr("id", "canvas")
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                    var top_players_tooltip = d3.select("#interesting-stats-chart").append("div")
+                        .attr("class", "tooltip")
+                        .style("opacity", 0);
 
 
                     var playersData = data;
@@ -407,57 +406,5 @@ function makeSlider() {
     function hue(h) {
         handle.attr("cx", ticksData(h));
         //svg.style("background-color", d3.hsl(h, 0.8, 0.8));
-    }
-
-    function barChart(position) {
-        d3.select('#canvas2').remove();
-
-        d3.json("static/leaguejson/bps.json", function (error, data) {
-            if(error) throw error;
-
-            var players = data[position][0].top_10_players;
-            var index = data[position][1].top_10_index;
-            console.log(index)
-
-            var top_player_svg = d3.select("#time-chart").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .attr("id", "canvas2")
-                .append("g")
-                .attr("transform", "translate(60" + "," + margin.top + ")");
-
-            var yScale = d3.scale.ordinal()
-                .rangeRoundBands([0,height], 0.1)
-                .domain(players);
-
-            var xScale = d3.scale.linear()
-                .range([0,width])
-                .domain([0, 100]);
-
-            var yAxis = d3.svg.axis()
-                .scale(yScale)
-                //.tickSize(2)
-                //.tickFormat(function(d,i){return players[i];})
-                .orient("left");
-
-            var gy = top_player_svg.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);
-
-            var bars = top_player_svg.selectAll("rect")
-                .data(index)
-                .enter()
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", function (d,i) {
-                    return yScale(players[i]);
-                })
-                .attr("height", yScale.rangeBand())
-                .attr("width", function (d) {
-                    return xScale(d);
-                })
-                .style("fill", "steelblue");
-
-        });
     }
 }
