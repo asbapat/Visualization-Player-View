@@ -495,27 +495,28 @@ function makeSlider() {
 
                         var players = data[position][0].top_10_players;
                         var index = data[position][1].top_10_index;
-                        // console.log(index);
+                        console.log(index);
 
                         var top_player_svg = d3.select("#time-chart").append("svg")
                             .attr("width", width + margin.left + margin.right)
                             .attr("height", height + margin.top + margin.bottom)
                             .attr("id", "canvas2")
                             .append("g")
-                            .attr("transform", "translate(60" + "," + margin.top + ")");
+                            .attr("transform", "translate(80" + "," + margin.top + ")");
 
-                        var yScale = d3.scale.ordinal()
-                            .rangeRoundBands([0,height], 0.1)
-                            .domain(players);
+                        var yScale = d3.scale.linear()
+                            .range([0,height])
+                            .domain([0,players.length]);
 
                         var xScale = d3.scale.linear()
                             .range([0,width])
                             .domain([0, 100]);
 
+
                         var yAxis = d3.svg.axis()
                             .scale(yScale)
-                            //.tickSize(2)
-                            //.tickFormat(function(d,i){return players[i];})
+                            .tickSize(2)
+                            .tickFormat(function(d,i){return players[i];})
                             .orient("left");
 
                         var gy = top_player_svg.append("g")
@@ -526,15 +527,30 @@ function makeSlider() {
                             .data(index)
                             .enter()
                             .append("rect")
+                            .attr("id","bars")
                             .attr("x", 0)
                             .attr("y", function (d,i) {
-                                return yScale(players[i]);
+                                return yScale(i);
                             })
-                            .attr("height", yScale.rangeBand())
+                            .attr("height", 19)
                             .attr("width", function (d) {
                                 return xScale(d);
                             })
-                            .style("fill", "steelblue");
+                            .style("fill", "blue");
+
+                        top_player_svg.selectAll("text")
+                             .data(index, function(d){return d;})
+                            .enter()
+                            .append("text")
+                            .attr("class", "label")
+                            .text(function(d){return d;})
+                            .attr("text-anchor", "middle")
+                            .attr("y", function(d,i){
+                                return yScale(i);
+                            })
+                            .attr("x", function(d){ return xScale(d);})
+                            .attr("font-weight", "bold")
+                            .style("fill", "black")
 
                     });
                 }
