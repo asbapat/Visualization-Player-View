@@ -403,11 +403,11 @@ function makeSlider() {
                             .innerRadius(radius / 4);
 
                         var textArc = d3.svg.arc()
-                            .outerRadius(radius * 0.8)
-                            .innerRadius((radius / 4) * 0.8);
+                            .outerRadius(radius * 1.2)
+                            .innerRadius((radius / 4) * 1.2);
 
-                        var textOuterRadius = radius * 0.8;
-                        var textInnerRadius = (radius / 4) * 0.8;
+                        var textOuterRadius = radius * 1.2;
+                        var textInnerRadius = (radius / 4) * 1.2;
 
                         var arcs = group.selectAll(".arc")
                             .data(pie(data[gameweek][stat_id].values));
@@ -430,7 +430,10 @@ function makeSlider() {
                             .attr("text-anchor", "middle") //center the text on it's origin
                             .style("fill", "black")
                             .style("font", "bold 12px Arial")
-                            .text(function(d, i) { return data[gameweek][stat_id].legend[i]; });
+                            .text(function(d, i) {
+                                if(data[gameweek][stat_id].values[i] > 0)
+                                    return data[gameweek][stat_id].legend[i];
+                            });
 
                         arcs.on("mouseover", function (d) {
                             d3.select(this)
@@ -446,8 +449,6 @@ function makeSlider() {
                                 })
                                 .style("fill", "white")
                                 .text(function(d) { return d.data; });
-                            // data[gameweek][stat_id].legend[i]
-
                         })
                             .on("mouseout", function (d) {
                                 d3.select(this)
