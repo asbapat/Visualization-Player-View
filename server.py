@@ -438,7 +438,7 @@ def perform_pca():
 
     pca = pca.transform(gameweeks_dataframe[gameweek])
 
-    distance_matrix = metrics.pairwise_distances(pca, metric='correlation')
+    distance_matrix = metrics.pairwise_distances(pca, metric='euclidean')
     mds = MDS(n_components=2, dissimilarity='precomputed')
     mds = mds.fit_transform(distance_matrix)
 

@@ -181,10 +181,9 @@ function makeGameweekPlot() {
                 .attr("cx", xMap)
                 .attr("cy", yMap);
         }
-
-        barChart(1);
-        drawPieChart(1);
     }
+    barChart(1);
+    drawPieChart(1);
 }
 
 function makeSlider() {
