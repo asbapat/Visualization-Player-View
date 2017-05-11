@@ -12,6 +12,7 @@
     <script type="text/javascript" src="./static/lib/js/bootstrap.min.js"></script>
     <script type="text/javascript" src='./static/js/show_visualizations.js'></script>
     <script type="text/javascript" src="./static/js/CollapsibleTree.js"></script>
+    <script type="text/javascript" src="./static/js/bumpChart.js"></script>
 
     <link rel="stylesheet" href="./static/css/style.css">
     <link rel="stylesheet" href="./static/lib/css/dashboards.css">
@@ -39,6 +40,7 @@
 <div class="tab">
     <button class="tabStyle" onclick="checkTab(event, 'gameweek')">Gameweek Data</button>
     <button class="tabStyle" onclick="checkTab(event, 'season')">Season Data</button>
+    <button class="tabStyle" onclick="checkTab(event, 'bump')">Bump Chart</button>
 </div>
 
 <div id="gameweek" class="tabcontent">
@@ -165,6 +167,12 @@
             </div>
 
         </div>
+
+    </div>
+</div>
+
+<div id="bump" class="tabcontent">
+    <div id="makeBumpChart">
 
     </div>
 </div>
