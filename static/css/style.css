@@ -135,10 +135,16 @@ td, th{
     font-size: 15px;
 }
 
-
-polyline {
-    opacity: .3;
-    stroke: black;
-    stroke-width: 2px;
-    fill: none;
+.x.axis2 path,.x.axis2 line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.y.axis2 path {
+  fill: none;
+}
+.y.axis2 line {
+  fill: none;
+  stroke: #eeeeee;
+  shape-rendering: crispEdges;
 }

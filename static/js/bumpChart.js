@@ -10,7 +10,7 @@ function bumpChart() {
         width = 1200 - margin.left - margin.right,
         height = 520 - margin.top - margin.bottom;
 
-    var speed = 500;
+    var speed = 400;
 
     var x = d3.scale.linear()
         .range([0,width]);
@@ -56,22 +56,23 @@ function bumpChart() {
 
         y.domain(d3.range(1,d3.max(data.standing, function(club) { return d3.max(club.rank, function(d) { return d.position; }); }) + 1 ).reverse());
         xAxis.tickValues(data.standing[0].rank.map(function(d) { return d.matchday; }));
+        //xAxis1.tickValues(data.standing[0].rank.map(function(d) { return d.matchday; }));
         x.domain(d3.extent(data.standing[0].rank.map(function(d) { return d.matchday; })));
 
         //set y axis
         svg.append("g")
-            .attr("class", "y axis")
+            .attr("class", "y axis2")
             .call(yAxis);
 
         //set bottom axis position
         svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(" + 0 + "," + 526  + ")")
+            .attr("class", "x axis2")
+            .attr("transform", "translate(" + 0 + "," + 450  + ")")
             .call(xAxis);
 
         //set top axis
         svg.append("g")
-            .attr("class", "x axis")
+            .attr("class", "x axis2")
             .call(xAxis1);
 
         var club = svg.selectAll(".club")
@@ -104,7 +105,7 @@ function bumpChart() {
                 club.style("opacity",0.2);
                 club.filter(function(path) {return path.teamName === d.teamName; }).style("opacity",1);
             })
-            .on("mouseout", function (d) { club.style("opacity",1); })
+            .on("mouseout", function (d) { club.style("opacity",1); });
 
         var circleEnd = club.append("circle")
             .attr("cx", function(d) { return x(d.rank[0].matchday); })
@@ -141,7 +142,6 @@ function bumpChart() {
             .style("fill", function(d) { return d.color; })
             .style("font-weight", "bold")
             .text(function(d) { return ""+ d.rank[0].position + " " + d.teamName; });
-//   .text(function(d) { return ""+ d.rank[0].position + " " + d.teamName; });
 
         var matchday = 1;
         var transition = d3.transition()
