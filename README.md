@@ -8,3 +8,5 @@ References:
 * http://public.tableau.com/views/PremierLeagueFantasyFootballTableauPublic/PlayerSummary?:embed=y&:tabs=n&:display_count=yes&:showVizHome=no
 * http://public.tableau.com/views/PremierLeagueFantasyFootballTableauPublic/PlayerComparison?:embed=y&:tabs=n&:display_count=yes&:showVizHome=no
 * https://www.premierleague.com/stats/top/players/mins_played
+* http://jalapic.github.io/index
+* http://www.optasportspro.com/about/optapro-blog/posts/2012/mcfc-analytics-opta%27s-formation-codes/
