@@ -4,6 +4,9 @@
 function collapsibleTree() {
 
     d3.selectAll("svg").remove();
+    d3.select("#tableContent").remove();
+    d3.select('#playerDetail').remove();
+    d3.select('#bpsChart').remove();
     var margin = {top: 20, right: 20, bottom: 30, left: 200},
         width = 1200 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;

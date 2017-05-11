@@ -438,16 +438,25 @@ def perform_pca():
 
     pca = pca.transform(gameweeks_dataframe[gameweek])
 
+    distance_matrix = metrics.pairwise_distances(pca, metric='correlation')
+    mds = MDS(n_components=2, dissimilarity='precomputed')
+    mds = mds.fit_transform(distance_matrix)
+
     sample_player_names = list()
     for player_id in gameweeks_dataframe[gameweek].index.values:
         sample_player_names.append(player_mapping_dict[player_id])
 
     se = pd.DataFrame(sample_player_names)
-    pca = np.concatenate((pca, se), axis=1)
+    # pca = np.concatenate((pca, se), axis=1)
+    mds = np.concatenate((mds, se), axis=1)
 
-    pca_values = pd.DataFrame(pca)
-    pca_values.columns = ['PCA1', 'PCA2', 'PCA3', 'PCA4', 'PCA5', 'Name']
-    json_values = pca_values.to_json(orient='records')
+    # pca_values = pd.DataFrame(pca)
+    # pca_values.columns = ['PCA1', 'PCA2', 'PCA3', 'PCA4', 'PCA5', 'Name']
+    # json_values = pca_values.to_json(orient='records')
+
+    mds_values = pd.DataFrame(mds)
+    mds_values.columns = ['MDS1', 'MDS2', 'Name']
+    json_values = mds_values.to_json(orient='records')
 
     with open(JSON_DIR + 'players_pca_json.json', 'w') as f:
         f.write(json_values)
@@ -500,12 +509,7 @@ if __name__ == "__main__":
     pca_data_frame = pd.read_csv("Premier League 2011-12 Gameweek.csv", header=0,
                                                usecols=['Player ID', 'Gameweek', 'Time Played',
                                                         'Goals', 'Assists', 'Clean Sheets',
-                                                        'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
-                                                        'Successful Dribbles', 'Shots Off Target inc woodwork',
-                                                        'Shots On Target inc goals', 'Key Passes', 'Big Chances',
-                                                        'Total Clearances', 'Blocks', 'Interceptions', 'Recoveries',
-                                                        'Winning Goal'
-                                                        ])
+                                                        'Saves from Penalty', 'Big Chances', 'Winning Goal'])
 
     player_mapping_dict = dict()
     player_baps_dict = dict()
@@ -533,17 +537,12 @@ if __name__ == "__main__":
         del gameweeks_dataframe[key]['Gameweek']
 
         scaler = MinMaxScaler()
-        gameweeks_dataframe[key][['Time Played', 'Successful Dribbles', 'Shots Off Target inc woodwork',
-                                  'Shots On Target inc goals', 'Goals', 'Assists', 'Clean Sheets', 'Saves Made',
-                                  'Yellow Cards', 'Red Cards', 'Saves from Penalty', 'Key Passes', 'Big Chances',
-                                  'Total Clearances', 'Blocks', 'Interceptions', 'Recoveries',
-                                  'Winning Goal'
-                                  ]] = \
-            scaler.fit_transform(gameweeks_dataframe[key][['Time Played', 'Successful Dribbles', 'Shots Off Target inc woodwork'
-                                                           , 'Shots On Target inc goals', 'Goals', 'Assists', 'Clean Sheets'
-                                                           , 'Saves Made', 'Yellow Cards', 'Red Cards', 'Saves from Penalty',
-                                                           'Key Passes', 'Big Chances', 'Total Clearances', 'Blocks',
-                                                           'Interceptions', 'Recoveries', 'Winning Goal']])
+        gameweeks_dataframe[key][['Time Played',
+                                'Goals', 'Assists', 'Clean Sheets',
+                                'Saves from Penalty', 'Big Chances', 'Winning Goal']] = \
+                scaler.fit_transform(gameweeks_dataframe[key][['Time Played',
+                                                        'Goals', 'Assists', 'Clean Sheets',
+                                                        'Saves from Penalty', 'Big Chances', 'Winning Goal']])
 
     bps_score_values = calculate_gameweek_details()
 

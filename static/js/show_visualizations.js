@@ -49,7 +49,7 @@ function makeGameweekPlot() {
 
     var svg = d3.select("#pca-chart").append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("height", 385 + margin.top + margin.bottom)
         .attr("id", "canvas")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -61,13 +61,13 @@ function makeGameweekPlot() {
     function drawScatterPlot(error, playersJson) {
         if (error) throw error;
 
-        var xValue = function(d) { return d.PCA1; };
+        var xValue = function(d) { return d.MDS1; };
         var xScale = d3.scale.linear().domain([-2,2]).range([0, width]);
         var xMap = function(d) { return xScale(xValue(d)); };
         var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-        var yValue = function(d) { return d.PCA2; };
-        var yScale = d3.scale.linear().domain([-2,2]).range([height, 0]);
+        var yValue = function(d) { return d.MDS2; };
+        var yScale = d3.scale.linear().domain([-2,2]).range([385, 0]);
         var yMap = function(d) { return yScale(yValue(d)); };
         var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
@@ -110,7 +110,7 @@ function makeGameweekPlot() {
             .style("text-anchor", "end")
             .style("font-weight", "bold")
             // .style("font-size", "1.2em")
-            .text("PCA-1");
+            .text("MDS-1");
 
         // Draw the Y-Axis
         svg.append("g")
@@ -125,7 +125,7 @@ function makeGameweekPlot() {
             .style("text-anchor", "end")
             .style("font-weight", "bold")
             // .style("font-size", "1.2em")
-            .text("PCA-2");
+            .text("MDS-2");
 
         var points = svg.selectAll("circle")
             .data(playersData);
@@ -205,9 +205,6 @@ function makeSlider() {
         .call(d3.behavior.drag()
         // .on("dragstart.interrupt", function(){ slider.interrupt();})
             .on("dragend", function() {
-
-            })
-            .on("drag", function () {
                 hue(ticksData.invert(d3.mouse(this)[0]));
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
                 var gameweek = Math.round(xposEnd);
@@ -224,13 +221,13 @@ function makeSlider() {
 
                     var x0 = [-2,2],
                         y0 = [-2,2];
-                    var xValue = function(d) { return d.PCA1; };
+                    var xValue = function(d) { return d.MDS1; };
                     var xScale = d3.scale.linear().domain(x0).range([0, width]);
                     var xMap = function(d) { return xScale(xValue(d)); };
                     var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-                    var yValue = function(d) { return d.PCA2; };
-                    var yScale = d3.scale.linear().domain(y0).range([height, 0]);
+                    var yValue = function(d) { return d.MDS2; };
+                    var yScale = d3.scale.linear().domain(y0).range([385, 0]);
                     var yMap = function(d) { return yScale(yValue(d)); };
                     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
@@ -240,7 +237,7 @@ function makeSlider() {
 
                     var svg = d3.select("#pca-chart").append("svg")
                         .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
+                        .attr("height", 385 + margin.top + margin.bottom)
                         .attr("id", "canvas")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -286,7 +283,7 @@ function makeSlider() {
                         .style("text-anchor", "end")
                         .style("font-weight", "bold")
                         // .style("font-size", "1.2em")
-                        .text("PCA-1");
+                        .text("MDS-1");
 
                     // Draw the Y-Axis
                     svg.append("g")
@@ -301,7 +298,7 @@ function makeSlider() {
                         .style("text-anchor", "end")
                         .style("font-weight", "bold")
                         // .style("font-size", "1.2em")
-                        .text("PCA-2");
+                        .text("MDS-2");
 
                     var points = svg.selectAll("circle")
                         .data(playersData);
@@ -349,6 +346,10 @@ function makeSlider() {
                 });
                 barChart(gameweek);
                 drawPieChart(gameweek);
+
+            })
+            .on("drag", function () {
+
             }));
 
     slider.insert("g", ".track-overlay")
@@ -554,7 +555,7 @@ function barChart(position) {
             .attr("id","bars")
             .attr("x", 0)
             .attr("y", function (d,i) {
-                    return yScale(i);
+                return yScale(i);
             })
             .attr("height", 16.5)
             .attr("width", 0)
@@ -577,10 +578,10 @@ function barChart(position) {
             .attr("x", 0)
             .style("fill", "red");
 
-            labels.transition()
+        labels.transition()
             .duration(2500)
-                .attr("y", function(d,i){
-                    return yScale(i) + 32;
+            .attr("y", function(d,i){
+                return yScale(i) + 32;
             })
             .attr("x", function(d){ return xScale(d)+100;})
 
