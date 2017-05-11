@@ -544,7 +544,7 @@ function barChart(position) {
 
         var gy = top_player_svg.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate(0,5)")
+            .attr("transform", "translate(0,4)")
             .call(yAxis);
 
         var bars = top_player_svg.selectAll("rect")
@@ -557,29 +557,32 @@ function barChart(position) {
                     return yScale(i);
             })
             .attr("height", 16.5)
-            .attr("width", function (d) {
-                return xScale(d);
-            })
+            .attr("width", 0)
             .style("fill", "steelblue");
 
-        var transit = d3.select("svg").selectAll("rect")
+        var transit = top_player_svg.selectAll("rect")
             .data(index)
             .transition()
-            .duration(5000)
+            .duration(1000)
             .attr("width", function(d){ return xScale(d)});
 
         var labels = d3.select("#canvas2").append("g").selectAll("text")
             .data(index)
             .enter()
             .append("text")
-            //.attr("class", "label")
+            .attr("class", "label")
             .text(function(d){return d;})
             .attr("text-anchor", "end")
-            .attr("y", function(d,i){
+            .attr("y", 0)
+            .attr("x", 0)
+            .style("fill", "red");
+
+            labels.transition()
+            .duration(2000)
+                .attr("y", function(d,i){
                     return yScale(i) + 32;
             })
             .attr("x", function(d){ return xScale(d)+100;})
-            .style("fill", "black")
 
 
     });

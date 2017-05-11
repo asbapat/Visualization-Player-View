@@ -148,3 +148,7 @@ td, th{
   stroke: #eeeeee;
   shape-rendering: crispEdges;
 }
+.label{
+    font-family: Sans-Serif;
+    font-size: 14px;
+}
