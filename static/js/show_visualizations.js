@@ -59,9 +59,9 @@ function makeGameweekPlot() {
         .style("opacity", 0);
 
     d3.selection.prototype.moveToFront = function() {
-        return this.each(function(){
-            this.parentNode.appendChild(this);
-        });
+      return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
     };
 
     function drawScatterPlot(error, playersJson) {
@@ -569,7 +569,7 @@ function barChart(position) {
             .data(index)
             .enter()
             .append("rect")
-            .attr("id","bars")
+            .attr("id",function(d,i){return i;})
             .attr("x", 0)
             .attr("y", function (d,i) {
                 return yScale(i);
@@ -579,6 +579,7 @@ function barChart(position) {
             .style("fill", "steelblue")
             .on("mouseover", function (d) {
                 var pos = d3.select(this).attr("id");
+                console.log(players[pos])
                 highlight(players[pos],"red", 7.5);
             })
             .on("mouseout", function(d){
