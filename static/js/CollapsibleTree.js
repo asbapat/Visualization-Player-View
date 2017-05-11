@@ -290,10 +290,12 @@ function collapsibleTree() {
             d._children = d.children;
             d.children = null;
             d3.select("#teamlogo").remove();
+            document.getElementById("season_stats").style.display = "none";
         } else {
             d.children = d._children;
             d._children = null;
             d3.select("#teamlogo").remove();
+            document.getElementById("season_stats").style.display = "none";
 
             var teamDetails = svg.append("g")
                 .append("svg:image")
@@ -325,26 +327,16 @@ function collapsibleTree() {
         var width = 600, height = 220;
         var weeks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
 
-        yScale.domain([d3.max(d[selected_attribute]), 0]);
-
-        // var xValue = function(d, i) { return weeks[i]; };
-        // var xScale = d3.scale.linear().range([0, width]);
-        // var xMap = function(d) { return xScale(xValue(d)); };
-        // var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-        //
-        // var yValue = function(d) { return d[selected_attribute]; };
-        // var yScale = d3.scale.linear().range([height, 0]);
-        // var yMap = function(d) { return yScale(yValue(d)); };
-        // var yAxis = d3.svg.axis().scale(yScale).orient("left");
-        //
-        // xScale.domain([d3.min(d[selected_attribute], xValue) - 1, d3.max(d[selected_attribute], xValue) + 1]);
-        // yScale.domain([d3.min(d[selected_attribute], yValue)-0.1, d3.max(d[selected_attribute], yValue)+0.1]);
+        if(parseInt(d3.max(d[selected_attribute])) == 0)
+            yScale.domain([height - d3.max(d[selected_attribute]), 0]);
+        else
+            yScale.domain([d3.max(d[selected_attribute]), 0]);
 
         var line = d3.svg.line()
             .x(function(d,i){
                 return xScale(weeks[i]);
             })
-            .y(function (d,i) {
+            .y(function (d, i) {
                 return yScale(d);
             });
 
@@ -352,7 +344,6 @@ function collapsibleTree() {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .append('text')
             .attr("class", "title")
-            //.style("font-weight", "bold")
             .text("Statistics Progression");
 
         svg2.append("g")
@@ -381,7 +372,6 @@ function collapsibleTree() {
             .text("Metric");
 
         svg2.append("path")
-        // .attr("class", "line")
             .attr("d", line(d[selected_attribute]))
             .attr("stroke", "#ff0000")
             .style("fill","none");
