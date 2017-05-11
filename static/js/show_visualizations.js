@@ -563,7 +563,7 @@ function barChart(position) {
         var transit = top_player_svg.selectAll("rect")
             .data(index)
             .transition()
-            .duration(1000)
+            .duration(3000)
             .attr("width", function(d){ return xScale(d)});
 
         var labels = d3.select("#canvas2").append("g").selectAll("text")
@@ -578,7 +578,7 @@ function barChart(position) {
             .style("fill", "red");
 
             labels.transition()
-            .duration(2000)
+            .duration(2500)
                 .attr("y", function(d,i){
                     return yScale(i) + 32;
             })
