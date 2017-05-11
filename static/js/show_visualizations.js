@@ -58,6 +58,12 @@ function makeGameweekPlot() {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
+    d3.selection.prototype.moveToFront = function() {
+        return this.each(function(){
+            this.parentNode.appendChild(this);
+        });
+    };
+
     function drawScatterPlot(error, playersJson) {
         if (error) throw error;
 
@@ -127,11 +133,11 @@ function makeGameweekPlot() {
             // .style("font-size", "1.2em")
             .text("MDS-2");
 
-        var points = svg.selectAll("circle")
+        var points = svg.selectAll(".dot")
             .data(playersData);
 
         points.enter().append("circle")
-            .attr("class", "dot")
+            .attr("class", function(d){return d.Name;})
             .transition()
             .duration(1000)
             .ease("backOut")
@@ -141,6 +147,12 @@ function makeGameweekPlot() {
             .style("fill", function (d) {
                 return color(d);
             });
+
+        highlight = function(name, color, radius){
+            d3.select('.' + name).style("fill",color)
+                .attr("r", radius)
+                .moveToFront();
+        };
 
         points.on("mouseover", function (d) {
             tooltip.transition()
@@ -300,11 +312,11 @@ function makeSlider() {
                         // .style("font-size", "1.2em")
                         .text("MDS-2");
 
-                    var points = svg.selectAll("circle")
+                    var points = svg.selectAll(".dot")
                         .data(playersData);
 
                     points.enter().append("circle")
-                        .attr("class", "dot")
+                        .attr("class", function(d){return d.Name;})
                         .transition()
                         .duration(1000)
                         .ease("backOut")
@@ -314,6 +326,12 @@ function makeSlider() {
                         .style("fill", function (d) {
                             return color(d);
                         });
+
+                    highlight = function(name, color, radius){
+                        d3.select('.' + name).style("fill",color)
+                            .attr("r", radius)
+                            .moveToFront();
+                    };
 
                     points.on("mouseover", function (d) {
                         tooltip.transition()
@@ -559,7 +577,15 @@ function barChart(position) {
             })
             .attr("height", 16.5)
             .attr("width", 0)
-            .style("fill", "steelblue");
+            .style("fill", "steelblue")
+            .on("mouseover", function (d) {
+                var pos = d3.select(this).attr("id");
+                highlight(players[pos],"red", 7.5);
+            })
+            .on("mouseout", function(d){
+                var pos = d3.select(this).attr("id");
+                highlight(players[pos], "steelblue", 3.5)
+            });
 
         var transit = top_player_svg.selectAll("rect")
             .data(index)
