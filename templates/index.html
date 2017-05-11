@@ -120,8 +120,6 @@
     <div id="makeSeason" style="background-color: #fff;">
         <h3 align="center">Season Data</h3>
 
-        <!--div id="playerDetails" style="float: right;"> </div-->
-
         <div class="container-fluid" style="border: none;">
 
             <div class="row">
@@ -157,8 +155,16 @@
                         <div class="chart-stage">
                             <div id="playerDetails"></div>
                         </div>
-                         <div class="chart-stage">
-                            <div id="lineChart"></div>
+                        <div class="chart-stage" align="center">
+                            <select id="season_stats">
+                                <option value="index_values" selected>Performance Index</option>
+                                <option value="goal_values">Goals</option>
+                                <option value="assist_values">Assists</option>
+                                <option value="attempts_values">Attempts</option>
+                                <option value="passes_values">Passes</option>
+                            </select>
+
+                            <div id="lineChart" style="padding-top: 10px;"></div>
                         </div>
                     </div>
                 </div>

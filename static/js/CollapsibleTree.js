@@ -7,6 +7,7 @@ function collapsibleTree() {
     d3.select("#tableContent").remove();
     d3.select('#playerDetail').remove();
     d3.select('#bpsChart').remove();
+    document.getElementById("season_stats").style.display = "none";
     var margin = {top: 20, right: 20, bottom: 30, left: 200},
         width = 1200 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
@@ -28,6 +29,16 @@ function collapsibleTree() {
         .projection(function (d) {
             return [d.y, d.x];
         });
+
+    var colorScale = d3.scale.ordinal()
+        .domain(["Arsenal", "Aston Villa", "Blackburn Rovers", "Bolton Wanderers", "Chelsea", "Everton", "Fulham",
+            "Liverpool", "Manchester City", "Manchester United", "Newcastle United", "Norwich City",
+            "Queens Park Rangers", "Stoke City", "Sunderland", "Swansea City", "Tottenham Hotspur",
+            "West Bromwich Albion", "Wigan Athletic", "Wolverhampton Wanderers"])
+        .range(["#EF0107", "#7A003C", "#1B458F", "#2A3C7D", "#034694", "#274488", "#353233", "#D00027", "#5CBFEB",
+            "#DA020E", "#231F20", "#00A150", "#005AA7", "#E03A3E", "#EB172B", "#000000", "#001C58", "#091453",
+            "#005CAB", "#E67C2F"]);
+
     var svg = d3.select("#collapsibleTree").append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
@@ -191,13 +202,15 @@ function collapsibleTree() {
             d3.select("#tableContent").remove();
             d3.select('#playerDetail').remove();
             d3.select('#bpsChart').remove();
-            // var profile = svg.append("g")
-            //     .append("svg:image")
-            //     .attr("xlink:href", d.player_image)
-            //     .attr("width",150)
-            //     .attr("height",150)
-            //     .attr("x",850)
-            //     .attr("y",0);
+            var opt = document.getElementById("season_stats");
+            var newData = opt.options[opt.selectedIndex].value;
+            makeLineChart(newData, d);
+
+            d3.select('#season_stats')
+                .on('change', function() {
+                    var newData = d3.event.target.value;
+                    makeLineChart(newData, d);
+                });
 
             var playerTable = d3.select('#playerProfile')
                 .append('table')
@@ -208,12 +221,15 @@ function collapsibleTree() {
 
             var columns = [{src:d.player_image}];
             var logo = [{src:d.player_logo}];
+
+            document.getElementById("season_stats").style.display = "block";
+
             var headers = playerTable.append('thead').append('tr')
                 .selectAll('th')
                 .data(columns)
                 .enter()
                 .append('th')
-                .style("background", "skyblue");
+                .style("background", d.team_color);
 
             headers.append('img')
                 .attr('src',function (d) {return d.src;})
@@ -240,108 +256,35 @@ function collapsibleTree() {
                 .attr('width',170)
                 .attr('height', 80)
                 .style("padding-left", "60px");
-                //.style("float", "right");
-                //.style("padding-left", "20px");
+            //.style("float", "right");
+            //.style("padding-left", "20px");
 
-            var svg2 = d3.select("#lineChart").append("svg")
-                .attr('id','bpsChart')
-                .attr("class","svg2")
-                .attr("width", 600)
-                .attr("height", 220);
-
-            yScale.domain([d3.max(d.index_values), 0]);
-
-            var weeks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
-
-            var line = d3.svg.line()
-                .x(function(d,i){
-                    return xScale(weeks[i]);
-                })
-                .y(function (d,i) {
-                    return yScale(d);
-                });
-
-            svg2.append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .append('text')
-                .attr("class", "title")
-                //.style("font-weight", "bold")
-                .text("Performance Variation");
-
-            svg2.append("g")
-                .attr("class","x axis")
-                .attr("transform","translate(0," + yScale(0) + ")")
-                .call(xAxis)
-            .append("text")
-            .attr("class", "label")
-            .attr("x", 590)
-            .attr("y", 13)
-            .style("text-anchor", "end")
-            // .style("font-weight", "bold")
-            // .style("font-size", "1.2em")
-            .text("Gameweek");
-
-            svg2.append("g")
-                .attr("class", "y axis")
-                .attr("transform", "translate(" + xScale(0) + ",0)")
-                .call(yAxis);
-            // .append("text")
-            // .attr("transform", "rotate(-90)")
-            // .attr("y", 6)
-            // .attr("x", -1)
-            // .attr("dy", ".71em")
-            // .style("text-anchor", "end")
-            // .style("font-weight", "bold")
-            // //.style("font-size", "0.2em")
-            // .text("BPS");
-
-            svg2.append("path")
-                // .attr("class", "line")
-                .attr("d", line(d.index_values))
-            .attr("stroke", "#ff0000")
-                .style("fill","none");
-
-             var playerDetails = d3.select('#playerDetails')
+            var playerDetails = d3.select('#playerDetails')
                 .append('table')
                 .attr('id', 'playerDetail')
                 .attr("width", "75%")
                 .attr("height", height/4)
-                 .attr("align", "center");
+                .attr("align", "center");
 
-             var heads = playerDetails.append('thead').append('tr')
+            var heads = playerDetails.append('thead').append('tr')
                 .selectAll('th')
                 .data(["Time Played", "Goals", "Big Chances", "Total Fouls"])
                 .enter()
                 .append('th')
-                 .text(function(d) { return d;})
-                 .style("background", "lightyellow");
+                .text(function(d) { return d;})
+                .style("background", "lightyellow")
+                .style("height", "10px")
+                .style("text-align", "center");
 
-             var body = playerDetails.append('tbody').append('tr')
-                 .selectAll('td')
-                 .data([d.time_played, d.goals, d.bigchances, d.totalFouls])
-                 .enter()
-                 .append('td')
-                 .text(function(d){ return d;});
+            var body = playerDetails.append('tbody').append('tr')
+                .selectAll('td')
+                .data([d.time_played, d.goals, d.bigchances, d.totalFouls])
+                .enter()
+                .append('td')
+                .text(function(d){ return d;})
+                .style("height", "10px")
+                .style("text-align", "center");
 
-
-            // .data([d.name, d.position])
-            //  .enter()
-            //  .append('th')
-            //  .text(function(d) { return d; });
-
-
-            // var rows = playerTable.append('tbody').selectAll('tr')
-            //     .data(d)
-            //     .enter()
-            //     .append('tr');
-            //
-            // rows.selectAll('td')
-            //     .data(d)
-            //     .enter()
-            //     .append('td')
-            //     .text(function(d) {
-            //         return d.position;
-            //     });
         }
         if (d.children) {
             d._children = d.children;
@@ -369,5 +312,78 @@ function collapsibleTree() {
             });
         }
         update(d);
+    }
+
+    function makeLineChart(selected_attribute, d) {
+        d3.select('#bpsChart').remove();
+
+        var svg2 = d3.select("#lineChart").append("svg")
+            .attr('id','bpsChart')
+            .attr("class","svg2")
+            .attr("width", 600)
+            .attr("height", 220);
+        var width = 600, height = 220;
+        var weeks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
+
+        yScale.domain([d3.max(d[selected_attribute]), 0]);
+
+        // var xValue = function(d, i) { return weeks[i]; };
+        // var xScale = d3.scale.linear().range([0, width]);
+        // var xMap = function(d) { return xScale(xValue(d)); };
+        // var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+        //
+        // var yValue = function(d) { return d[selected_attribute]; };
+        // var yScale = d3.scale.linear().range([height, 0]);
+        // var yMap = function(d) { return yScale(yValue(d)); };
+        // var yAxis = d3.svg.axis().scale(yScale).orient("left");
+        //
+        // xScale.domain([d3.min(d[selected_attribute], xValue) - 1, d3.max(d[selected_attribute], xValue) + 1]);
+        // yScale.domain([d3.min(d[selected_attribute], yValue)-0.1, d3.max(d[selected_attribute], yValue)+0.1]);
+
+        var line = d3.svg.line()
+            .x(function(d,i){
+                return xScale(weeks[i]);
+            })
+            .y(function (d,i) {
+                return yScale(d);
+            });
+
+        svg2.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .append('text')
+            .attr("class", "title")
+            //.style("font-weight", "bold")
+            .text("Statistics Progression");
+
+        svg2.append("g")
+            .attr("class","x axis")
+            .attr("transform","translate(0," + yScale(0) + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", 590)
+            .attr("y", 13)
+            .style("text-anchor", "end")
+            .text("Gameweek");
+
+        svg2.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(" + xScale(0) + ",0)")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("x", -1)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .style("font-weight", "bold")
+            //.style("font-size", "0.2em")
+            .text("Metric");
+
+        svg2.append("path")
+        // .attr("class", "line")
+            .attr("d", line(d[selected_attribute]))
+            .attr("stroke", "#ff0000")
+            .style("fill","none");
     }
 }

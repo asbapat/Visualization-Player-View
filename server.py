@@ -27,6 +27,14 @@ def make_collapsible_tree():
     teams_dict = dict()             # Maps the player to his particular club
     player_dict = dict()            # Maps the statistics to a player
 
+    color_dict = {"Arsenal": "#FE343B", "Aston Villa": "#FF47A3", "Blackburn Rovers": "#316ED8",
+                  "Bolton Wanderers": "#4762C2", "Chelsea": "#045FC8", "Everton": "#416AC8", "Fulham": "#B0ABAD",
+                  "Liverpool": "#FF4769", "Manchester City": "#5CBFEB", "Manchester United": "#FD5D65",
+                  "Newcastle United": "#B2A9AB", "Norwich City": "#00A150", "Queens Park Rangers": "#5CB3FF",
+                  "Stoke City": "#EC8385", "Sunderland": "#F47C88", "Swansea City": "#EBEBEB",
+                  "Tottenham Hotspur": "#EBF1FF", "West Bromwich Albion": "#A3AFF5", "Wigan Athletic": "#99CFFF",
+                  "Wolverhampton Wanderers": "#E67C2F"}
+
     for team in premier_league_data.loc[:, "Team"]:
         teams.append(team)
         if team not in club_list:
@@ -54,6 +62,7 @@ def make_collapsible_tree():
         stats_dict = {"Position": position, "Time Played": row['Time Played'], "Goals": row['Goals']}
         stats_list.append([stats_dict])
         team_logo = 'static/lib/images/logos/' + teams[i] + '.png'
+        team_name = teams[i]
         i += 1
         # player_dict[surname].append({"name": "Position: " + position, "size": "Position: "})
         # player_dict[surname].append({"name": "Time Played: " + str(row['Time Played']), "size": "Time Played: "})
@@ -64,7 +73,12 @@ def make_collapsible_tree():
         player_dict[player_id].append(team_logo)
         player_dict[player_id].append(row['Big Chances'])
         player_dict[player_id].append(row['Total Fouls Conceded'])
+        player_dict[player_id].append(color_dict[team_name])
         player_dict[player_id].append(player_baps_dict[index])
+        player_dict[player_id].append(player_goals_dict[index])
+        player_dict[player_id].append(player_assists_dict[index])
+        player_dict[player_id].append(player_attempts_dict[index])
+        player_dict[player_id].append(player_passes_dict[index])
 
     i = 0
     team_list = list()
@@ -75,7 +89,9 @@ def make_collapsible_tree():
                                      "position": player_dict[p_id][0], "time_played": player_dict[p_id][1],
                                      "goals": player_dict[p_id][2], "player_logo": player_dict[p_id][3],
                                      "bigchances": player_dict[p_id][4], "totalFouls": player_dict[p_id][5],
-                                     "index_values": player_dict[p_id][6]})
+                                     "team_color": player_dict[p_id][6], "index_values": player_dict[p_id][7],
+                                     "goal_values": player_dict[p_id][8], "assist_values": player_dict[p_id][9],
+                                     "attempts_values": player_dict[p_id][10], "passes_values": player_dict[p_id][11]})
         # player_stats_list.append({"name": player, "children": player_dict[player]})
         i += 1
 
@@ -228,6 +244,10 @@ def calculate_gameweek_details():
 
     for p_id in player_ids:
         player_baps_dict[p_id] = [0] * 38
+        player_goals_dict[p_id] = [0] * 38
+        player_assists_dict[p_id] = [0] * 38
+        player_attempts_dict[p_id] = [0] * 38
+        player_passes_dict[p_id] = [0] * 38
 
     gameweek = 1
     bps_score_dict[str(gameweek)] = list()
@@ -289,6 +309,8 @@ def calculate_gameweek_details():
             headed_clearance = other_clearance = off_line_clearance = 0
 
         bps_score = get_bps_score(row)
+        total_passes = 0
+        total_attempts = 0
 
         if row['Venue'] == 'Home':
             if row['Team'] not in home_team:
@@ -322,16 +344,22 @@ def calculate_gameweek_details():
         # Calculate Attempts
         if int(row['Attempts Open Play on target']) > 0 or int(row['Attempts Open Play off target']) > 0:
             open_play_attempt += int(row['Attempts Open Play on target']) + int(row['Attempts Open Play off target'])
+            total_attempts += int(row['Attempts Open Play on target']) + int(row['Attempts Open Play off target'])
         if int(row['Attempts from Corners on target']) > 0 or int(row['Attempts from Corners off target']) > 0:
             corners_attempt += int(row['Attempts from Corners on target']) + int(row['Attempts from Corners off target'])
+            total_attempts += int(row['Attempts from Corners on target']) + int(row['Attempts from Corners off target'])
         if int(row['Attempts from Throws on target']) > 0 or int(row['Attempts from Throws off target']) > 0:
             throws_attempt += int(row['Attempts from Throws on target']) + int(row['Attempts from Throws off target'])
+            total_attempts += int(row['Attempts from Throws on target']) + int(row['Attempts from Throws off target'])
         if int(row['Attempts from Direct Free Kick on target']) > 0 or int(row['Attempts from Direct Free Kick off target']) > 0:
             free_kick_attempt += int(row['Attempts from Direct Free Kick on target']) + int(row['Attempts from Direct Free Kick off target'])
+            total_attempts += int(row['Attempts from Direct Free Kick on target']) + int(row['Attempts from Direct Free Kick off target'])
         if int(row['Attempts from Set Play on target']) > 0 or int(row['Attempts from Set Play off target']) > 0:
             set_play_attempt += int(row['Attempts from Set Play on target']) + int(row['Attempts from Set Play off target'])
+            total_attempts += int(row['Attempts from Set Play on target']) + int(row['Attempts from Set Play off target'])
         if int(row['Attempts from Penalties on target']) > 0 or int(row['Attempts from Penalties off target']) > 0:
             penalty_attempt += int(row['Attempts from Penalties on target']) + int(row['Attempts from Penalties off target'])
+            total_attempts += int(row['Attempts from Penalties on target']) + int(row['Attempts from Penalties off target'])
 
         # Calculate Passes
         if int(row['Successful Passes Defensive third']) > 0 or int(row['Unsuccessful Passes Defensive third']) > 0:
@@ -344,12 +372,16 @@ def calculate_gameweek_details():
         # Calculate Pass Direction
         if int(row['Pass Forward']) > 0:
             pass_forward += int(row['Pass Forward'])
+            total_passes += int(row['Pass Forward'])
         if int(row['Pass Backward']) > 0:
             pass_backward += int(row['Pass Backward'])
+            total_passes += int(row['Pass Backward'])
         if int(row['Pass Left']) > 0:
             pass_left += int(row['Pass Left'])
+            total_passes += int(row['Pass Left'])
         if int(row['Pass Right']) > 0:
             pass_right += int(row['Pass Right'])
+            total_passes += int(row['Pass Right'])
 
         # Calculate saves made
         if int(row['Saves Made from Inside Box']) > 0:
@@ -385,6 +417,10 @@ def calculate_gameweek_details():
 
 
         player_baps_dict[int(row['Player ID'])][index-1] = bps_score
+        player_goals_dict[int(row['Player ID'])][index - 1] = int(row['Goals'])
+        player_assists_dict[int(row['Player ID'])][index - 1] = int(row['Assists'])
+        player_passes_dict[int(row['Player ID'])][index - 1] = total_passes
+        player_attempts_dict[int(row['Player ID'])][index - 1] = total_attempts
         bps_score_dict[str(gameweek)].append({"name" : row['Player Surname'], "index": bps_score})
 
     return bps_score_dict
@@ -434,7 +470,7 @@ def perform_pca():
         gameweek = 1
 
     # Perform PCA on the data based on best PCA attributes
-    pca = PCA(n_components=5).fit(gameweeks_dataframe[gameweek])
+    pca = PCA(n_components=3).fit(gameweeks_dataframe[gameweek])
 
     pca = pca.transform(gameweeks_dataframe[gameweek])
 
@@ -508,11 +544,15 @@ if __name__ == "__main__":
 
     pca_data_frame = pd.read_csv("Premier League 2011-12 Gameweek.csv", header=0,
                                                usecols=['Player ID', 'Gameweek', 'Time Played',
-                                                        'Goals', 'Assists', 'Clean Sheets',
+                                                        'Goals', 'Assists', 'Clean Sheets', 'Red Cards', 'Yellow Cards',
                                                         'Saves from Penalty', 'Big Chances', 'Winning Goal'])
 
     player_mapping_dict = dict()
     player_baps_dict = dict()
+    player_goals_dict = dict()
+    player_assists_dict = dict()
+    player_attempts_dict = dict()
+    player_passes_dict = dict()
 
     for index, row in premier_league_data.loc[:,
                       ['Player Surname', 'Player ID']].iterrows():
@@ -538,10 +578,10 @@ if __name__ == "__main__":
 
         scaler = MinMaxScaler()
         gameweeks_dataframe[key][['Time Played',
-                                'Goals', 'Assists', 'Clean Sheets',
+                                'Goals', 'Assists', 'Clean Sheets', 'Red Cards', 'Yellow Cards',
                                 'Saves from Penalty', 'Big Chances', 'Winning Goal']] = \
                 scaler.fit_transform(gameweeks_dataframe[key][['Time Played',
-                                                        'Goals', 'Assists', 'Clean Sheets',
+                                                        'Goals', 'Assists', 'Clean Sheets', 'Red Cards', 'Yellow Cards',
                                                         'Saves from Penalty', 'Big Chances', 'Winning Goal']])
 
     bps_score_values = calculate_gameweek_details()

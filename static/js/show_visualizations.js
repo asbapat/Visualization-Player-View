@@ -398,7 +398,7 @@ function makeSlider() {
 
 function drawPieChart(gameweek) {
     d3.json("static/leaguejson/bps.json", function(error, data) {
-        // console.log(data[gameweek][2].goal_types);
+
         var opt = document.getElementById("options");
         var newData = opt.options[opt.selectedIndex].value;
         var getId = getStatId(newData);
@@ -579,7 +579,7 @@ function barChart(position) {
             .style("fill", "steelblue")
             .on("mouseover", function (d) {
                 var pos = d3.select(this).attr("id");
-                console.log(players[pos])
+                //console.log(players[pos]);
                 highlight(players[pos],"red", 7.5);
             })
             .on("mouseout", function(d){
