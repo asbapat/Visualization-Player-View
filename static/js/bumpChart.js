@@ -7,10 +7,10 @@ function bumpChart() {
     // d3.select("#canvas").remove();
 
     var margin = {top: 20, right: 180, bottom: 50, left: 30},
-        width = 1000 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+        width = 1200 - margin.left - margin.right,
+        height = 520 - margin.top - margin.bottom;
 
-    var speed = 1000;
+    var speed = 500;
 
     var x = d3.scale.linear()
         .range([0,width]);
@@ -124,7 +124,7 @@ function bumpChart() {
         svg.append("text")
             .attr("x", width / 2 )
             .attr("y",  height + (margin.bottom/1.5))
-            .attr("style","font-size:16px;") // to bold title
+            .attr("style","font-size:14px;") // to bold title
             .style("text-anchor", "middle")
             .text("Game in Season");
 

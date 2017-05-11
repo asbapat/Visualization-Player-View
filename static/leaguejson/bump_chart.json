@@ -477,7 +477,7 @@
     },
     {
       "teamName": "Bolton Wanderers",
-      "color": "#F5A12D",
+      "color": "#2A3C7D",
       "rank": [
         {
           "matchday": 1,
@@ -951,7 +951,7 @@
     },
     {
       "teamName": "Fulham",
-      "color": "#60223B",
+      "color": "#353233",
       "rank": [
         {
           "matchday": 1,
@@ -1741,7 +1741,7 @@
     },
     {
       "teamName": "Norwich City",
-      "color": "#ED1A3B",
+      "color": "#00A150",
       "rank": [
         {
           "matchday": 1,
@@ -1899,7 +1899,7 @@
     },
     {
       "teamName": "Queens Park Rangers",
-      "color": "#FDBE11",
+      "color": "#005AA7",
       "rank": [
         {
           "matchday": 1,
@@ -3004,8 +3004,8 @@
       ]
     },
     {
-      "teamName": "Wolverhampton Wanderers",
-      "color": "#53162F",
+      "teamName": "Wolverhampton",
+      "color": "#E67C2F",
       "rank": [
         {
           "matchday": 1,
