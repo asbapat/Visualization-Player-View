@@ -213,8 +213,8 @@ def get_bps_score(row):
 
 def calculate_gameweek_details():
     bps_score_dict = dict()
-    top_10_baps = [0] * 10
-    top_10_players = [''] * 10
+    top_10_baps = [0] * 5
+    top_10_players = [''] * 5
     home_team = list()
     away_team = list()
     headed = left_foot = right_foot = own_goals = 0
@@ -275,8 +275,8 @@ def calculate_gameweek_details():
                                                         "Off the line"]})
             gameweek += 1
             bps_score_dict[str(gameweek)] = list()
-            top_10_baps = [0] * 10
-            top_10_players = [''] * 10
+            top_10_baps = [0] * 5
+            top_10_players = [''] * 5
             home_team = list()
             away_team = list()
             headed = left_foot = right_foot = own_goals = 0
