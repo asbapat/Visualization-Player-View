@@ -35,7 +35,7 @@ function checkTab(evt, tabName) {
 
 var margin = {top: 20, right: 20, bottom: 20, left: 20},
     width = 600 - margin.left - margin.right,
-    height = 350 - margin.top - margin.bottom;
+    height = 250 - margin.top - margin.bottom;
 
 function makeGameweekPlot() {
     queue()
@@ -209,7 +209,7 @@ function makeSlider() {
                 xposEnd = ticksData.invert(d3.mouse(this)[0]);
                 var gameweek = Math.round(xposEnd);
                 slider.interrupt();
-                d3.select("#canvas").remove();
+                // d3.select("#canvas").remove();
 
                 $.ajaxSetup({
                     async: false
@@ -510,7 +510,9 @@ function barChart(position) {
 
         var players = data[position][0].top_10_players;
         var index = data[position][1].top_10_index;
-        console.log(index);
+
+
+
         var h = 125;
 
         var top_player_svg = d3.select("#time-chart").append("svg")
@@ -525,18 +527,21 @@ function barChart(position) {
             .domain([0,players.length]);
 
         var xScale = d3.scale.linear()
-            .range([0,width])
-            .domain([0, 100]);
+            .range([0,475])
+            .domain([0, d3.max(index)]);
 
 
         var yAxis = d3.svg.axis()
             .scale(yScale)
             .tickSize(2)
-            .tickFormat(function(d,i){return players[i];})
+            .tickFormat(function(d,i){
+                return players[i];})
+            .tickValues(d3.range(5))
             .orient("left");
 
         var gy = top_player_svg.append("g")
             .attr("class", "y axis")
+            .attr("transform", "translate(0,5)")
             .call(yAxis);
 
         var bars = top_player_svg.selectAll("rect")
@@ -546,27 +551,33 @@ function barChart(position) {
             .attr("id","bars")
             .attr("x", 0)
             .attr("y", function (d,i) {
-                return yScale(i);
+                    return yScale(i);
             })
-            .attr("height", 11.5)
+            .attr("height", 16.5)
             .attr("width", function (d) {
                 return xScale(d);
             })
             .style("fill", "steelblue");
 
-        top_player_svg.selectAll("text")
-            .data(index, function(d){return d;})
+        var transit = d3.select("svg").selectAll("rect")
+            .data(index)
+            .transition()
+            .duration(5000)
+            .attr("width", function(d){ return xScale(d)});
+
+        var labels = d3.select("#canvas2").append("g").selectAll("text")
+            .data(index)
             .enter()
             .append("text")
-            .attr("class", "label")
+            //.attr("class", "label")
             .text(function(d){return d;})
-            .attr("text-anchor", "middle")
+            .attr("text-anchor", "end")
             .attr("y", function(d,i){
-                return yScale(i);
+                    return yScale(i) + 32;
             })
-            .attr("x", function(d){ return xScale(d);})
-            .attr("font-weight", "bold")
+            .attr("x", function(d){ return xScale(d)+100;})
             .style("fill", "black")
+
 
     });
 }
