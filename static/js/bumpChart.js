@@ -56,7 +56,6 @@ function bumpChart() {
 
         y.domain(d3.range(1,d3.max(data.standing, function(club) { return d3.max(club.rank, function(d) { return d.position; }); }) + 1 ).reverse());
         xAxis.tickValues(data.standing[0].rank.map(function(d) { return d.matchday; }));
-        //xAxis1.tickValues(data.standing[0].rank.map(function(d) { return d.matchday; }));
         x.domain(d3.extent(data.standing[0].rank.map(function(d) { return d.matchday; })));
 
         //set y axis
@@ -96,7 +95,6 @@ function bumpChart() {
         var circleStart = club.append("circle")
             .attr("cx", function(d) { return x(d.rank[0].matchday); })
             .attr("cy", function(d) { return y(d.rank[0].position) + y.rangeBand()/2; })
-            //    .style("fill", function(d) { return d.color; })
             .attr("r", 6)
             .style("stroke", function(d) { return d.color; })
             .style("stroke-width", 4)
@@ -110,7 +108,6 @@ function bumpChart() {
         var circleEnd = club.append("circle")
             .attr("cx", function(d) { return x(d.rank[0].matchday); })
             .attr("cy", function(d) { return y(d.rank[0].position) + y.rangeBand()/2; })
-            // .style("fill", function(d) { return d.color; })
             .attr("r", 6)
             .style("stroke", function(d) { return d.color; })
             .style("stroke-width", 4)
