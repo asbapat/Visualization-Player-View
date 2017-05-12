@@ -231,6 +231,7 @@ def calculate_gameweek_details():
     bps_score_dict = dict()
     top_10_baps = [0] * 5
     top_10_players = [''] * 5
+    top_10_id = [0] * 5
     home_team = list()
     away_team = list()
     headed = left_foot = right_foot = own_goals = 0
@@ -243,16 +244,16 @@ def calculate_gameweek_details():
     headed_clearance = other_clearance = off_line_clearance = 0
 
     for p_id in player_ids:
-        player_baps_dict[p_id] = [0] * 38
-        player_goals_dict[p_id] = [0] * 38
-        player_assists_dict[p_id] = [0] * 38
-        player_attempts_dict[p_id] = [0] * 38
-        player_passes_dict[p_id] = [0] * 38
+        player_baps_dict[p_id] = [0] * 39
+        player_goals_dict[p_id] = [0] * 39
+        player_assists_dict[p_id] = [0] * 39
+        player_attempts_dict[p_id] = [0] * 39
+        player_passes_dict[p_id] = [0] * 39
 
     gameweek = 1
     bps_score_dict[str(gameweek)] = list()
 
-    for index, row in gameweek_premier_league_data.loc[:,:].iterrows():
+    for index, row in gameweek_premier_league_data.loc[:, :].iterrows():
         if int(index) > gameweek:
             goals_by_type = list()
             attempts = list()
@@ -262,6 +263,7 @@ def calculate_gameweek_details():
             saves_made = list()
             crosses = list()
             clearances = list()
+            new_radar = list()
 
             top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
 
@@ -273,6 +275,15 @@ def calculate_gameweek_details():
             saves_made.extend([saves_inside, saves_outside, saves_penalty])
             crosses.extend([succ_left_cross, unsucc_left_cross, succ_right_cross, unsucc_right_cross])
             clearances.extend([headed_clearance, other_clearance, off_line_clearance])
+
+            for p_id in top_10_id:
+                radar_data = list()
+                radar_data.append({"axis": "Goals", "value": player_goals_dict[p_id][gameweek - 1]})
+                radar_data.append({"axis": "Assists", "value": player_assists_dict[p_id][gameweek - 1]})
+                radar_data.append({"axis": "Passes", "value": player_passes_dict[p_id][gameweek - 1]})
+                radar_data.append({"axis": "Attempts", "value": player_attempts_dict[p_id][gameweek - 1]})
+                radar_data.append({"axis": "Index", "value": player_baps_dict[p_id][gameweek - 1]})
+                new_radar.append(radar_data)
 
             bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
             bps_score_dict[str(gameweek)].insert(1, {"top_10_index": top_10_baps})
@@ -288,15 +299,17 @@ def calculate_gameweek_details():
                                                         "Backward", "Left", "Right"]})
             bps_score_dict[str(gameweek)].insert(7, {"values": saves_made, "legend": ["Inside Box", "Outside Box",
                                                         "Penalty"]})
-            bps_score_dict[str(gameweek)].insert(8, {"values" : crosses, "legend": ["Successful Left Crosses",
-                                                        "Unsuccessful Left Crosses", "Successful Right Crosses",
-                                                        "Unsuccessful Right Crosses"]})
+            bps_score_dict[str(gameweek)].insert(8, {"values" : crosses, "legend": ["Successful Left",
+                                                        "Unsuccessful Left", "Successful Right",
+                                                        "Unsuccessful Right"]})
             bps_score_dict[str(gameweek)].insert(9, {"values": clearances, "legend": ["Headed", "Other",
                                                         "Off the line"]})
+            bps_score_dict[str(gameweek)].insert(10, new_radar)
             gameweek += 1
             bps_score_dict[str(gameweek)] = list()
             top_10_baps = [0] * 5
             top_10_players = [''] * 5
+            top_10_id = [0] * 5
             home_team = list()
             away_team = list()
             headed = left_foot = right_foot = own_goals = 0
@@ -414,7 +427,7 @@ def calculate_gameweek_details():
             lowest_score_index = top_10_baps.index(min(top_10_baps))
             top_10_baps[lowest_score_index] = bps_score
             top_10_players[lowest_score_index] = row['Player Surname']
-
+            top_10_id[lowest_score_index] = int(row['Player ID'])
 
         player_baps_dict[int(row['Player ID'])][index-1] = bps_score
         player_goals_dict[int(row['Player ID'])][index - 1] = int(row['Goals'])

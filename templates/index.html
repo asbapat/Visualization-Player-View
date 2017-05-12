@@ -13,6 +13,7 @@
     <script type="text/javascript" src='./static/js/show_visualizations.js'></script>
     <script type="text/javascript" src="./static/js/CollapsibleTree.js"></script>
     <script type="text/javascript" src="./static/js/bumpChart.js"></script>
+    <script type="text/javascript" src="./static/js/RadarChart.js"></script>
 
     <link rel="stylesheet" href="./static/css/style.css">
     <link rel="stylesheet" href="./static/lib/css/dashboards.css">
@@ -69,7 +70,7 @@
                         <!-- Best Players -->
 
                         <!-- Interesting Statistics -->
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="chart-wrapper">
                                 <div class="chart-title">
                                     Interesting Statistics
@@ -93,29 +94,27 @@
                         </div>
                         <!-- Interesting Statistics -->
 
-{#                        <!-- Top Players by position -->#}
-{#                        <div class="col-sm-6">#}
-{#                            <div class="chart-wrapper">#}
-{#                                <div class="chart-title">#}
-{#                                    Interesting Statistics#}
-{#                                </div>#}
-{#                                <div class="chart-stage">#}
+                        {#                        <!-- Top Players by position -->#}
+                        <div class="col-sm-6">
+                            <div class="chart-wrapper">
+                                <div class="chart-title">
+                                    Comparison of Top 5 Players
+                                </div>
+                                <div class="chart-stage">
 {#                                    <div align="center">#}
-{#                                        <select id="options">#}
-{#                                            <option value="Goals_type" selected>Goals by type</option>#}
-{#                                            <option value="Goals_position" selected>Goals by position</option>#}
-{#                                            <option value="Attempts">Attempts</option>#}
-{#                                            <option value="Passes">Passes</option>#}
-{#                                            <option value="Pass_direction">Pass Direction</option>#}
-{#                                            <option value="Saves">Saves Made</option>#}
-{#                                            <option value="Crosses">Crosses</option>#}
-{#                                            <option value="Clearances">Clearances</option>#}
+{#                                        <select id="positions">#}
+{#                                            <option value="gk" selected>Goalkeeper</option>#}
+{#                                            <option value="def" selected>Defender</option>#}
+{#                                            <option value="mid">Midfielder</option>#}
+{#                                            <option value="for">Striker</option>#}
 {#                                        </select>#}
 {#                                    </div>#}
-{#                                    <div id="interesting-stats-chart"></div>#}
 {#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
+{#                                <div class="chart-stage">#}
+                                    <div id="position-stats-chart"></div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Top Players by position -->
 
                     </div>
