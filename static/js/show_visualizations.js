@@ -694,18 +694,18 @@ function drawPositionDetails(gameweek) {
         var svg = d3.select('#position-stats-chart')
             .selectAll('svg')
             .append('svg')
-            .attr("width", w+30)
+            .attr("width", w+50)
             .attr("height", h);
 
 // Create the title for the legend
-        var text = svg.append("text")
-            .attr("class", "title")
-            .attr('transform', 'translate(90,0)')
-            .attr("x", w - 180)
-            .attr("y", 20)
-            .attr("font-size", "8px")
-            .attr("fill", "#404040")
-            .text("Aguero");
+//         var text = svg.append("text")
+//             .attr("class", "title")
+//             .attr('transform', 'translate(90,0)')
+//             .attr("x", w - 180)
+//             .attr("y", 20)
+//             .attr("font-size", "8px")
+//             .attr("fill", "#404040")
+//             .text("Top 5");
 
 //Initiate Legend
         var legend = svg.append("g")

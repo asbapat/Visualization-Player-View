@@ -1,3 +1,4 @@
+from __future__ import division
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -6,6 +7,8 @@ import numpy as np
 import random
 import json
 import pandas as pd
+import sys
+import math
 
 from scipy.spatial.distance import cdist
 from sklearn.preprocessing import normalize, MinMaxScaler
@@ -150,12 +153,12 @@ def get_bps_score(row):
 
     # BPS for clearances, blocks and interceptions
     if int(row['Total Clearances']) > 0 or int(row['Blocks']) > 0 or int(row['Interceptions']) > 0:
-        total_val = (int(row['Total Clearances']) + int(row['Blocks']) + int(row['Interceptions'])) / 2
+        total_val = math.floor((int(row['Total Clearances']) + int(row['Blocks']) + int(row['Interceptions'])) / 2)
         bps_score += 1 * total_val
 
     # BPS for recoveries
     if int(row['Recoveries']) > 0:
-        bps_score += 1 * (int(row['Recoveries']) / 3)
+        bps_score += 1 * math.floor((int(row['Recoveries']) / 3))
 
     # BPS for key passes
     if int(row['Key Passes']) > 0:
@@ -276,13 +279,57 @@ def calculate_gameweek_details():
             crosses.extend([succ_left_cross, unsucc_left_cross, succ_right_cross, unsucc_right_cross])
             clearances.extend([headed_clearance, other_clearance, off_line_clearance])
 
+            min_goals = min_assists = min_passes = min_attempts = min_baps = sys.maxint
+            max_goals = max_assists = max_passes = max_attempts = max_baps = -sys.maxint
+            for p_id in top_10_id:
+                if player_goals_dict[p_id][gameweek - 1] > max_goals:
+                    max_goals = player_goals_dict[p_id][gameweek - 1]
+                if player_goals_dict[p_id][gameweek - 1] < min_goals:
+                    min_goals = player_goals_dict[p_id][gameweek - 1]
+
+                if player_assists_dict[p_id][gameweek - 1] > max_assists:
+                    max_assists = player_assists_dict[p_id][gameweek - 1]
+                if player_assists_dict[p_id][gameweek - 1] < min_assists:
+                    min_assists = player_assists_dict[p_id][gameweek - 1]
+
+                if player_passes_dict[p_id][gameweek - 1] > max_passes:
+                    max_passes = player_passes_dict[p_id][gameweek - 1]
+                if player_passes_dict[p_id][gameweek - 1] < min_passes:
+                    min_passes = player_passes_dict[p_id][gameweek - 1]
+
+                if player_attempts_dict[p_id][gameweek - 1] > max_attempts:
+                    max_attempts = player_attempts_dict[p_id][gameweek - 1]
+                if player_attempts_dict[p_id][gameweek - 1] < min_attempts:
+                    min_attempts = player_attempts_dict[p_id][gameweek - 1]
+
+                if player_baps_dict[p_id][gameweek - 1] > max_baps:
+                    max_baps = player_baps_dict[p_id][gameweek - 1]
+                if player_baps_dict[p_id][gameweek - 1] < min_baps:
+                    min_baps = player_baps_dict[p_id][gameweek - 1]
+
+            if min_goals == max_goals:
+                max_goals = min_goals + 1
+                min_goals -= 1
+            if min_assists == max_assists:
+                max_assists = min_assists + 1
+                min_assists -= 1
+            if min_passes == max_passes:
+                max_passes = min_passes + 1
+                min_passes -= 1
+            if min_attempts == max_attempts:
+                max_attempts = min_attempts + 1
+                min_attempts -= 1
+            if min_baps == max_baps:
+                max_baps = min_baps + 1
+                min_baps -= 1
+
             for p_id in top_10_id:
                 radar_data = list()
-                radar_data.append({"axis": "Goals", "value": player_goals_dict[p_id][gameweek - 1]})
-                radar_data.append({"axis": "Assists", "value": player_assists_dict[p_id][gameweek - 1]})
-                radar_data.append({"axis": "Passes", "value": player_passes_dict[p_id][gameweek - 1]})
-                radar_data.append({"axis": "Attempts", "value": player_attempts_dict[p_id][gameweek - 1]})
-                radar_data.append({"axis": "Index", "value": player_baps_dict[p_id][gameweek - 1]})
+                radar_data.append({"axis": "Goals", "value": ((player_goals_dict[p_id][gameweek - 1] - min_goals) / (max_goals - min_goals))})
+                radar_data.append({"axis": "Assists", "value": ((player_assists_dict[p_id][gameweek - 1] - min_assists) / (max_assists - min_assists))})
+                radar_data.append({"axis": "Passes", "value": ((player_passes_dict[p_id][gameweek - 1] - min_passes) / (max_passes - min_passes))})
+                radar_data.append({"axis": "Attempts", "value": ((player_attempts_dict[p_id][gameweek - 1] - min_attempts) / (max_attempts - min_attempts))})
+                radar_data.append({"axis": "Index", "value": ((player_baps_dict[p_id][gameweek - 1] - min_baps) / (max_baps - min_baps))})
                 new_radar.append(radar_data)
 
             bps_score_dict[str(gameweek)].insert(0, {"top_10_players": top_10_players})
