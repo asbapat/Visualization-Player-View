@@ -203,96 +203,110 @@ function collapsibleTree() {
             d3.select('#bpsChart').remove();
             var opt = document.getElementById("season_stats");
             var newData = opt.options[opt.selectedIndex].value;
-            makeLineChart(newData, d);
+            if(d[newData] != null) {
+                makeLineChart(newData, d);
 
-            d3.select('#season_stats')
-                .on('change', function() {
-                    var newData = d3.event.target.value;
-                    makeLineChart(newData, d);
-                });
+                d3.select('#season_stats')
+                    .on('change', function () {
+                        var newData = d3.event.target.value;
+                        makeLineChart(newData, d);
+                    });
 
-            var playerTable = d3.select('#playerProfile')
-                .append('table')
-                .attr('id', 'tableContent')
-                .attr("width", "100%")
-                .attr("height", margin.top)
-                .attr("align", "center");
+                var playerTable = d3.select('#playerProfile')
+                    .append('table')
+                    .attr('id', 'tableContent')
+                    .attr("width", "100%")
+                    .attr("height", margin.top)
+                    .attr("align", "center");
 
-            var columns = [{src:d.player_image}];
-            var logo = [{src:d.player_logo}];
+                var columns = [{src: d.player_image}];
+                var logo = [{src: d.player_logo}];
 
-            var headers = playerTable.append('thead').append('tr')
-                .selectAll('th')
-                .data(columns)
-                .enter()
-                .append('th')
-                .style("background", d.team_color);
+                var headers = playerTable.append('thead').append('tr')
+                    .selectAll('th')
+                    .data(columns)
+                    .enter()
+                    .append('th')
+                    .style("background", d.team_color);
 
-            headers.append('img')
-                .attr('src',function (d) {return d.src;})
-                .attr('width',100)
-                .attr('height', 100);
-            //.style("float", "left");
+                headers.append('img')
+                    .attr('src', function (d) {
+                        return d.src;
+                    })
+                    .attr('width', 100)
+                    .attr('height', 100);
+                //.style("float", "left");
 
-            headers.append('text')
-                .data([d.name])
-                .attr("class", "textboxes")
-                .text(function (d) {return d;})
-                .attr("dx",10)
-                .style("padding-left", "70px");
+                headers.append('text')
+                    .data([d.name])
+                    .attr("class", "textboxes")
+                    .text(function (d) {
+                        return d;
+                    })
+                    .attr("dx", 10)
+                    .style("padding-left", "70px");
 
-            headers.append('text')
-                .data([d.position])
-                .attr("class", "textboxes")
-                .text(function (d) {return d;})
-                .attr("dx",10)
-                .style("padding-left", "25px");
+                headers.append('text')
+                    .data([d.position])
+                    .attr("class", "textboxes")
+                    .text(function (d) {
+                        return d;
+                    })
+                    .attr("dx", 10)
+                    .style("padding-left", "25px");
 
-            headers.append('img').data(logo)
-                .attr('src',function (d) {return d.src;})
-                .attr('width',170)
-                .attr('height', 80)
-                .style("padding-left", "60px");
-            //.style("float", "right");
-            //.style("padding-left", "20px");
+                headers.append('img').data(logo)
+                    .attr('src', function (d) {
+                        return d.src;
+                    })
+                    .attr('width', 170)
+                    .attr('height', 80)
+                    .style("padding-left", "60px");
+                //.style("float", "right");
+                //.style("padding-left", "20px");
 
-            var playerDetails = d3.select('#playerDetails')
-                .append('table')
-                .attr('id', 'playerDetail')
-                .attr("width", "75%")
-                .attr("height", height/4)
-                .attr("align", "center");
+                var playerDetails = d3.select('#playerDetails')
+                    .append('table')
+                    .attr('id', 'playerDetail')
+                    .attr("width", "75%")
+                    .attr("height", height / 4)
+                    .attr("align", "center");
 
-            var heads = playerDetails.append('thead').append('tr')
-                .selectAll('th')
-                .data(["Time Played", "Goals", "Big Chances", "Total Fouls"])
-                .enter()
-                .append('th')
-                .text(function(d) { return d;})
-                .style("background", "lightyellow")
-                .style("height", "10px")
-                .style("text-align", "center");
+                var heads = playerDetails.append('thead').append('tr')
+                    .selectAll('th')
+                    .data(["Time Played", "Goals", "Big Chances", "Total Fouls"])
+                    .enter()
+                    .append('th')
+                    .text(function (d) {
+                        return d;
+                    })
+                    .style("background", "lightyellow")
+                    .style("height", "10px")
+                    .style("text-align", "center");
 
-            var body = playerDetails.append('tbody').append('tr')
-                .selectAll('td')
-                .data([d.time_played, d.goals, d.bigchances, d.totalFouls])
-                .enter()
-                .append('td')
-                .text(function(d){ return d;})
-                .style("height", "10px")
-                .style("text-align", "center");
+                var body = playerDetails.append('tbody').append('tr')
+                    .selectAll('td')
+                    .data([d.time_played, d.goals, d.bigchances, d.totalFouls])
+                    .enter()
+                    .append('td')
+                    .text(function (d) {
+                        return d;
+                    })
+                    .style("height", "10px")
+                    .style("text-align", "center");
+            }
 
         }
         if (d.children) {
             d._children = d.children;
             d.children = null;
             d3.select("#teamlogo").remove();
-           // document.getElementById("season_stats").style.display = "none";
+            document.getElementById("season_stats").style.display = "none";
         } else {
             d.children = d._children;
             d._children = null;
             d3.select("#teamlogo").remove();
-          //  document.getElementById("season_stats").style.display = "none";
+            //  document.getElementById("season_stats").style.display = "none";
 
             var teamDetails = svg.append("g")
                 .append("svg:image")
