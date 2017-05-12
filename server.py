@@ -268,7 +268,7 @@ def calculate_gameweek_details():
             clearances = list()
             new_radar = list()
 
-            top_10_baps, top_10_players = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players), reverse=True)))
+            top_10_baps, top_10_players, top_10_id = (list(t) for t in zip(*sorted(zip(top_10_baps, top_10_players, top_10_id), reverse=True)))
 
             goals_by_type.extend([headed, left_foot, right_foot, own_goals])
             goals_by_position.extend([def_goals, mid_goals, forward_goals])
