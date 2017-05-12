@@ -10,8 +10,7 @@ import pandas as pd
 import sys
 import math
 
-from scipy.spatial.distance import cdist
-from sklearn.preprocessing import normalize, MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn import metrics
@@ -23,7 +22,6 @@ JSON_DIR = 'static/leaguejson/'
 def make_collapsible_tree():
     teams = list()                  # Stores the club of each player
     club_list = list()              # Stores the unique list of clubs
-    player_stats_list = list()      # Stores the statistics of each player
     player_list = list()            # Stores the surname of each player
     player_id_list = list()         # Stores the ID of each player
     stats_list = list()             # Stores the stats of each player
@@ -67,9 +65,7 @@ def make_collapsible_tree():
         team_logo = 'static/lib/images/logos/' + teams[i] + '.png'
         team_name = teams[i]
         i += 1
-        # player_dict[surname].append({"name": "Position: " + position, "size": "Position: "})
-        # player_dict[surname].append({"name": "Time Played: " + str(row['Time Played']), "size": "Time Played: "})
-        # player_dict[surname].append({"name": "Goals: " + str(row['Goals']), "size": "Goals: "})
+
         player_dict[player_id].append(position)
         player_dict[player_id].append(row['Time Played'])
         player_dict[player_id].append(row['Goals'])
@@ -95,7 +91,6 @@ def make_collapsible_tree():
                                      "team_color": player_dict[p_id][6], "index_values": player_dict[p_id][7],
                                      "goal_values": player_dict[p_id][8], "assist_values": player_dict[p_id][9],
                                      "attempts_values": player_dict[p_id][10], "passes_values": player_dict[p_id][11]})
-        # player_stats_list.append({"name": player, "children": player_dict[player]})
         i += 1
 
     for team in teams_dict:
@@ -660,7 +655,6 @@ if __name__ == "__main__":
     with open(JSON_DIR +'league.json', 'w') as f:
         json.dump(league_dict, f)
 
-    #premier_league_data = premier_league_data.reset_index()
     del premier_league_data['Team']
     del premier_league_data['Position Id']
     premier_league_data = premier_league_data.set_index(['Player Surname'])
@@ -668,12 +662,11 @@ if __name__ == "__main__":
     premier_league_data.index.names = ['Player Name']
     premier_league_data.columns.names = ['Attributes']
 
-    #gameweek_premier_league_data = gameweek_premier_league_data.reset_index()
-    del gameweek_premier_league_data['Team']
-    del gameweek_premier_league_data['Opposition']
-    del gameweek_premier_league_data['Venue']
-    del gameweek_premier_league_data['Player Surname']
-    del gameweek_premier_league_data['Position Id']
+    # del gameweek_premier_league_data['Team']
+    # del gameweek_premier_league_data['Opposition']
+    # del gameweek_premier_league_data['Venue']
+    # del gameweek_premier_league_data['Player Surname']
+    # del gameweek_premier_league_data['Position Id']
 
     gameweek_premier_league_data.index.names = ['Gameweek']
     gameweek_premier_league_data.columns.names = ['Attributes']
@@ -681,7 +674,7 @@ if __name__ == "__main__":
 
     scaler = MinMaxScaler()
     premier_league_data = pd.DataFrame(scaler.fit_transform(premier_league_data), columns=premier_league_data.columns)
-    gameweek_premier_league_data = pd.DataFrame(scaler.fit_transform(gameweek_premier_league_data),
-                                               columns=gameweek_premier_league_data.columns)
+    # gameweek_premier_league_data = pd.DataFrame(scaler.fit_transform(gameweek_premier_league_data),
+    #                                            columns=gameweek_premier_league_data.columns)
 
     app.run(host='0.0.0.0', port=8086, debug=True, use_reloader=False)

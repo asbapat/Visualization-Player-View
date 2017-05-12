@@ -383,9 +383,35 @@ function collapsibleTree() {
             //.style("font-size", "0.2em")
             .text("Metric");
 
-        svg2.append("path")
+        var path = svg2.append("path")
             .attr("d", line(d[selected_attribute]))
             .attr("stroke", "#ff0000")
             .style("fill","none");
+
+        var totalLength = path.node().getTotalLength();
+
+        var g = svg2.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        path.attr("stroke-dasharray", totalLength + " " + totalLength)
+            .attr("stroke-dashoffset", totalLength)
+            .transition()
+            .duration(4000)
+            .ease("linear")
+            .tween("line", function () {
+                var interp = d3.interpolateNumber(totalLength, 0);
+                var self = d3.select(this);
+                return function (t) {
+                    var offset = interp(t);
+                    self.attr("stroke-dashoffset", offset);
+                    var xPos = this.getPointAtLength(totalLength - offset).x;
+                    g.selectAll(".point").each(function () {
+                        var point = d3.select(this);
+                        if (xPos > (+point.attr('cx'))) {
+                            point.style('opacity', 1);
+                        }
+                    })
+                };
+            });
     }
 }
