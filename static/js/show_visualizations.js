@@ -664,18 +664,7 @@ function drawPositionDetails(gameweek) {
         var colorscale = d3.scale.category10();
 
 //Legend titles
-//     var LegendOptions = ['Smartphone','Tablet'];
-
-// Data
-//         var d = [
-//             [
-//                 {axis:"Goals",value:0.59},
-//                 {axis:"Assists",value:0.56},
-//                 {axis:"Passes",value:0.42},
-//                 {axis:"Attempts",value:0.34},
-//                 {axis:"Index",value:0.48}
-//             ]
-//         ];
+    var LegendOptions = data[gameweek][0].top_10_players;
 
 //Options for the Radar chart, other than default
         var mycfg = {
@@ -715,30 +704,30 @@ function drawPositionDetails(gameweek) {
                 .attr("class", "legend")
                 .attr("height", 100)
                 .attr("width", 200)
-                .attr('transform', 'translate(90,20)')
+                .attr('transform', 'translate(90,0)')
             ;
         //Create colour squares
-        // legend.selectAll('rect')
-        //     .data(LegendOptions)
-        //     .enter()
-        //     .append("rect")
-        //     .attr("x", w - 65)
-        //     .attr("y", function(d, i){ return i * 20;})
-        //     .attr("width", 10)
-        //     .attr("height", 10)
-        //     .style("fill", function(d, i){ return colorscale(i);})
-        // ;
+        legend.selectAll('rect')
+            .data(LegendOptions)
+            .enter()
+            .append("rect")
+            .attr("x", w - 185)
+            .attr("y", function(d, i){ return i * 15;})
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", function(d, i){ return colorscale(i);})
+        ;
         //Create text next to squares
-        // legend.selectAll('text')
-        //     .data(LegendOptions)
-        //     .enter()
-        //     .append("text")
-        //     .attr("x", w - 52)
-        //     .attr("y", function(d, i){ return i * 20 + 9;})
-        //     .attr("font-size", "11px")
-        //     .attr("fill", "#737373")
-        //     .text(function(d) { return d; })
-        // ;
+        legend.selectAll('text')
+            .data(LegendOptions)
+            .enter()
+            .append("text")
+            .attr("x", w - 172)
+            .attr("y", function(d, i){ return i * 15 + 9;})
+            .attr("font-size", "11px")
+            .attr("fill", "#737373")
+            .text(function(d) { return d; })
+        ;
     });
 
 }
