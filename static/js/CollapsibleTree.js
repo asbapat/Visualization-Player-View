@@ -8,6 +8,7 @@ function collapsibleTree() {
     d3.select('#playerDetail').remove();
     d3.select('#bpsChart').remove();
     document.getElementById("season_stats").style.display = "none";
+
     var margin = {top: 20, right: 20, bottom: 30, left: 200},
         width = 1200 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
@@ -51,8 +52,6 @@ function collapsibleTree() {
         root = data;
         root.x0 = height / 2;
         root.y0 = 0;
-
-
 
         root.children.forEach(collapse);
         update(root);
@@ -222,8 +221,6 @@ function collapsibleTree() {
             var columns = [{src:d.player_image}];
             var logo = [{src:d.player_logo}];
 
-            document.getElementById("season_stats").style.display = "block";
-
             var headers = playerTable.append('thead').append('tr')
                 .selectAll('th')
                 .data(columns)
@@ -317,6 +314,7 @@ function collapsibleTree() {
     }
 
     function makeLineChart(selected_attribute, d) {
+        document.getElementById("season_stats").style.display = "block";
         d3.select('#bpsChart').remove();
 
         var svg2 = d3.select("#lineChart").append("svg")
@@ -328,9 +326,9 @@ function collapsibleTree() {
         var weeks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
 
         if(parseInt(d3.max(d[selected_attribute])) == 0)
-            yScale.domain([height - d3.max(d[selected_attribute]), 0]);
+            yScale.domain([height - d3.max(d[selected_attribute]), d3.min(d[selected_attribute])]);
         else
-            yScale.domain([d3.max(d[selected_attribute]), 0]);
+            yScale.domain([d3.max(d[selected_attribute]), d3.min(d[selected_attribute])]);
 
         var line = d3.svg.line()
             .x(function(d,i){

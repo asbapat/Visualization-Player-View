@@ -126,7 +126,7 @@ td, th{
 }
 
 .svg2{
-    background-color: aliceblue;
+    /*background-color: aliceblue;*/
 }
 
 .title {
@@ -149,6 +149,6 @@ td, th{
   shape-rendering: crispEdges;
 }
 .label{
-    font-family: Sans-Serif;
+    font-family: Lato, sans-serif;
     font-size: 14px;
 }
