@@ -482,10 +482,13 @@ function drawPieChart(gameweek) {
                 .on("mouseover", function (d) {
                     d3.select(this)
                         .attr("d", arcOver)
+                        .attr("stroke", "black")
+                        .attr("stroke-width",1)
                 })
                 .on("mouseout", function (d) {
                     d3.select(this)
                         .attr("d", arc)
+                        .attr("stroke", "none")
                 });
 
             arcs.append('text')
