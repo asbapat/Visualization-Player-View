@@ -106,10 +106,9 @@ function bumpChart() {
             .on("mouseout", function (d) { club.style("opacity",1); });
 
         circleStart.append("image")
-        // .attr("xlink:href", function(d){
-        //     return d.image;
-        // })
-            .attr("xlink:href", "static/lib/images/logos/Sunderland.png")
+            .attr("xlink:href", function(d){
+                return d.image;
+            })
             .attr("x", "9px")
             .attr("y","10px")
             .attr("width","25px")
@@ -129,10 +128,10 @@ function bumpChart() {
             .on("mouseout", function (d) { club.style("opacity",1); });
 
         circleEnd.append("image")
-        // .attr("xlink:href", function(d){
-        //     return d.image;
-        // })
-            .attr("xlink:href", "static/lib/images/logos/Sunderland.png")
+            .attr("xlink:href", function(d){
+                console.log(d);
+                return d.image;
+            })
             .attr("x", "9px")
             .attr("y","10px")
             .attr("width","25px")

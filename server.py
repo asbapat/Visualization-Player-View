@@ -540,19 +540,24 @@ def perform_pca():
     mds = mds.fit_transform(distance_matrix)
 
     sample_player_names = list()
+    sample_player_id_list = list()
     for player_id in gameweeks_dataframe[gameweek].index.values:
         sample_player_names.append(player_mapping_dict[player_id])
+        sample_player_id_list.append(player_id)
 
     se = pd.DataFrame(sample_player_names)
     # pca = np.concatenate((pca, se), axis=1)
     mds = np.concatenate((mds, se), axis=1)
+
+    se2 = pd.DataFrame(sample_player_id_list)
+    mds = np.concatenate((mds, se2), axis=1)
 
     # pca_values = pd.DataFrame(pca)
     # pca_values.columns = ['PCA1', 'PCA2', 'PCA3', 'PCA4', 'PCA5', 'Name']
     # json_values = pca_values.to_json(orient='records')
 
     mds_values = pd.DataFrame(mds)
-    mds_values.columns = ['MDS1', 'MDS2', 'Name']
+    mds_values.columns = ['MDS1', 'MDS2', 'Name', 'Id']
     json_values = mds_values.to_json(orient='records')
 
     with open(JSON_DIR + 'players_pca_json.json', 'w') as f:
