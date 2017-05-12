@@ -287,12 +287,12 @@ function collapsibleTree() {
             d._children = d.children;
             d.children = null;
             d3.select("#teamlogo").remove();
-            document.getElementById("season_stats").style.display = "none";
+           // document.getElementById("season_stats").style.display = "none";
         } else {
             d.children = d._children;
             d._children = null;
             d3.select("#teamlogo").remove();
-            document.getElementById("season_stats").style.display = "none";
+          //  document.getElementById("season_stats").style.display = "none";
 
             var teamDetails = svg.append("g")
                 .append("svg:image")

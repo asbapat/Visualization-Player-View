@@ -59,9 +59,9 @@ function makeGameweekPlot() {
         .style("opacity", 0);
 
     d3.selection.prototype.moveToFront = function() {
-      return this.each(function(){
-        this.parentNode.appendChild(this);
-      });
+        return this.each(function(){
+            this.parentNode.appendChild(this);
+        });
     };
 
     function drawScatterPlot(error, playersJson) {
@@ -148,16 +148,28 @@ function makeGameweekPlot() {
                 return color(d);
             });
 
-        highlight = function(name, color, radius){
+        highlight = function(name, color, radius, opacity){
             d3.select('.' + name).style("fill",color)
                 .attr("r", radius)
                 .moveToFront();
+
+            var xVal = d3.select('.' + name).attr("cx");
+            var yVal = d3.select('.' + name).attr("cy");
+
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", opacity);
+            tooltip.html(name)
+                .style("left", (Number(xVal)) + "px")
+                .style("top", (Number(yVal) + 20) + "px")
+                .style("font-weight", "bold");
         };
 
         points.on("mouseover", function (d) {
             tooltip.transition()
                 .duration(200)
                 .style("opacity", .9);
+            console.log(Number((xValue(d))));
             tooltip.html(d.Name + " (" + Number((xValue(d)).toFixed(3)) + ", " + Number((yValue(d)).toFixed(3)) + ")")
                 .style("left", (d3.event.pageX - 670) + "px")
                 .style("top", (d3.event.pageY - 180) + "px");
@@ -326,16 +338,28 @@ function makeSlider() {
                             return color(d);
                         });
 
-                    highlight = function(name, color, radius){
+                    highlight = function(name, color, radius, opacity){
                         d3.select('.' + name).style("fill",color)
                             .attr("r", radius)
                             .moveToFront();
+
+                        var xVal = d3.select('.' + name).attr("cx");
+                        var yVal = d3.select('.' + name).attr("cy");
+
+                        tooltip.transition()
+                            .duration(200)
+                            .style("opacity", opacity);
+                        tooltip.html(name)
+                            .style("left", (Number(xVal)) + "px")
+                            .style("top", (Number(yVal) + 20) + "px")
+                            .style("font-weight", "bold");
                     };
 
                     points.on("mouseover", function (d) {
                         tooltip.transition()
                             .duration(200)
                             .style("opacity", .9);
+                        console.log(Number((xValue(d))));
                         tooltip.html(d.Name + " (" + Number((xValue(d)).toFixed(3)) + ", " + Number((yValue(d)).toFixed(3)) + ")")
                             .style("left", (d3.event.pageX - 670) + "px")
                             .style("top", (d3.event.pageY - 180) + "px");
@@ -580,11 +604,11 @@ function barChart(position) {
             .on("mouseover", function (d) {
                 var pos = d3.select(this).attr("id");
                 //console.log(players[pos]);
-                highlight(players[pos],"red", 7.5);
+                highlight(players[pos],"red", 7.5, 0.9);
             })
             .on("mouseout", function(d){
                 var pos = d3.select(this).attr("id");
-                highlight(players[pos], "steelblue", 3.5)
+                highlight(players[pos], "steelblue", 3.5, 0)
             });
 
         var transit = top_player_svg.selectAll("rect")
