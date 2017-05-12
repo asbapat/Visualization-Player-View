@@ -615,10 +615,14 @@ function barChart(position) {
             .on("mouseover", function (d) {
                 var pos = d3.select(this).attr("id");
                 highlight(players[pos],"red", 7.5, 0.9);
+
+                d3.select(this).style("fill", "orange")
             })
             .on("mouseout", function(d){
                 var pos = d3.select(this).attr("id");
-                highlight(players[pos], "steelblue", 3.5, 0)
+                highlight(players[pos], "steelblue", 3.5, 0);
+
+                d3.select(this).style("fill", "steelblue");
             });
 
         var transit = top_player_svg.selectAll("rect")
