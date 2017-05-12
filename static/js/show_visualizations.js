@@ -137,7 +137,7 @@ function makeGameweekPlot() {
             .data(playersData);
 
         points.enter().append("circle")
-            .attr("class", function(d){return d.Name;})
+            .attr("class", function(d){return "x" + d.Id;})
             .transition()
             .duration(1000)
             .ease("backOut")
@@ -148,13 +148,15 @@ function makeGameweekPlot() {
                 return color(d);
             });
 
-        highlight = function(name, color, radius, opacity){
-            d3.select('.' + name).style("fill",color)
+        highlight = function(Id, name, color, radius, opacity){
+            d3.select(".x" + Id).style("fill",color)
                 .attr("r", radius)
                 .moveToFront();
 
-            var xVal = d3.select('.' + name).attr("cx");
-            var yVal = d3.select('.' + name).attr("cy");
+            console.log(name)
+
+            var xVal = d3.select('.x' + Id).attr("cx");
+            var yVal = d3.select('.x' + Id).attr("cy");
 
             tooltip.transition()
                 .duration(200)
@@ -332,7 +334,7 @@ function makeSlider() {
                         .data(playersData);
 
                     points.enter().append("circle")
-                        .attr("class", function(d){return d.Name;})
+                        .attr("class", function(d){return "x" + d.Id;})
                         .transition()
                         .duration(1000)
                         .ease("backOut")
@@ -343,13 +345,14 @@ function makeSlider() {
                             return color(d);
                         });
 
-                    highlight = function(name, color, radius, opacity){
-                        d3.select('.' + name).style("fill",color)
+                    highlight = function(Id, name, color, radius, opacity){
+                        d3.select(".x" + Id).style("fill",color)
                             .attr("r", radius)
                             .moveToFront();
 
-                        var xVal = d3.select('.' + name).attr("cx");
-                        var yVal = d3.select('.' + name).attr("cy");
+
+                        var xVal = d3.select('.x' + Id).attr("cx");
+                        var yVal = d3.select('.x' + Id).attr("cy");
 
                         tooltip.transition()
                             .duration(200)
@@ -571,7 +574,8 @@ function barChart(position, data) {
 
     var players = data[position][0].top_10_players;
     var index = data[position][1].top_10_index;
-
+    var ids = data[position][11].top_10_id;
+    console.log(ids)
 
 
     var h = 125;
@@ -619,13 +623,13 @@ function barChart(position, data) {
         .style("fill", "steelblue")
         .on("mouseover", function (d) {
             var pos = d3.select(this).attr("id");
-            highlight(players[pos],"red", 7.5, 0.9);
+            highlight(ids[pos], players[pos], "red", 7.5, 0.9);
 
             d3.select(this).style("fill", "orange")
         })
         .on("mouseout", function(d){
             var pos = d3.select(this).attr("id");
-            highlight(players[pos], "steelblue", 3.5, 0);
+            highlight(ids[pos], players[pos], "steelblue", 3.5, 0);
 
             d3.select(this).style("fill", "steelblue");
         });
