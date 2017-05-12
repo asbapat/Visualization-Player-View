@@ -631,7 +631,7 @@ function barChart(position) {
             .attr("text-anchor", "end")
             .attr("y", 0)
             .attr("x", 0)
-            .style("fill", "red");
+            .style("fill", "black");
 
         labels.transition()
             .duration(2500)

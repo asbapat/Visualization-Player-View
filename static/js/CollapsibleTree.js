@@ -11,7 +11,7 @@ function collapsibleTree() {
 
     var margin = {top: 20, right: 20, bottom: 30, left: 200},
         width = 1200 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        height = 520 - margin.top - margin.bottom;
 
     var xScale = d3.scale.linear().range([30, 550]).domain([0,38]);
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
@@ -57,7 +57,7 @@ function collapsibleTree() {
         update(root);
     });
 
-    d3.select(self.frameElement).style("height", "800px");
+    d3.select(self.frameElement).style("height", "880px");
 
     function collapse(d) {
         if (d.children) {
@@ -98,7 +98,7 @@ function collapsibleTree() {
 
         nodeEnter.append("text")
             .attr("x", function (d) {
-                return d.children || d._children ? -10 : 10;
+                return d.children || d._children ? -15 : 15;
             })
             .attr("dy", ".35em")
             .attr("text-anchor", function (d) {
@@ -117,8 +117,8 @@ function collapsibleTree() {
             })
             .attr("x", "-9px")
             .attr("y","-10px")
-            .attr("width","20px")
-            .attr("height", "20px");
+            .attr("width","25px")
+            .attr("height", "25px");
 
         nodeEnter.append("image")
             .attr("xlink:href", function(d){
@@ -352,11 +352,11 @@ function collapsibleTree() {
                 return yScale(d);
             });
 
-        svg2.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .append('text')
-            .attr("class", "title")
-            .text("Statistics Progression");
+        // svg2.append("g")
+        //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        //     .append('text')
+        //     .attr("class", "title")
+        //     .text("Statistics Progression");
 
         svg2.append("g")
             .attr("class","x axis")
