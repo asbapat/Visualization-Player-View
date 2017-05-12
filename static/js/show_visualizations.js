@@ -194,9 +194,13 @@ function makeGameweekPlot() {
                 .attr("cy", yMap);
         }
     }
-    barChart(1);
-    drawPieChart(1);
-    drawPositionDetails(1);
+    d3.json("static/leaguejson/bps.json", function(error, data) {
+        if(error) throw error;
+
+        barChart(1, data);
+        drawPieChart(1, data);
+        drawPositionDetails(1, data);
+    });
 }
 
 function makeSlider() {
@@ -386,9 +390,14 @@ function makeSlider() {
                     }
 
                 });
-                barChart(gameweek);
-                drawPieChart(gameweek);
-                drawPositionDetails(gameweek);
+
+                d3.json("static/leaguejson/bps.json", function(error, data) {
+                    if(error) throw error;
+
+                    barChart(gameweek, data);
+                    drawPieChart(gameweek, data);
+                    drawPositionDetails(gameweek, data);
+                });
 
             })
             .on("drag", function () {
@@ -422,316 +431,293 @@ function makeSlider() {
     }
 }
 
-function drawPieChart(gameweek) {
-    d3.json("static/leaguejson/bps.json", function(error, data) {
+function drawPieChart(gameweek, data) {
 
-        var opt = document.getElementById("options");
-        var newData = opt.options[opt.selectedIndex].value;
-        var getId = getStatId(newData);
-        makePieChart(getId);
+    var opt = document.getElementById("options");
+    var newData = opt.options[opt.selectedIndex].value;
+    var getId = getStatId(newData);
+    makePieChart(getId);
 
-        d3.select('#options')
-            .on('change', function() {
-                var newData = d3.event.target.value;
-                var stat_id = getStatId(newData);
-                makePieChart(stat_id);
+    d3.select('#options')
+        .on('change', function() {
+            var newData = d3.event.target.value;
+            var stat_id = getStatId(newData);
+            makePieChart(stat_id);
+        });
+
+    function makePieChart(stat_id) {
+        d3.select("#canvas3").remove();
+        var color = d3.scale.category10();
+
+        var interesting_statistics_svg = d3.select("#interesting-stats-chart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", 140 + margin.top + margin.bottom)
+            .attr("id", "canvas3");
+
+        var interesting_statistics_tooltip = d3.select("#interesting-stats-chart").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+        // Draw the interesting statistics pie chart
+        var radius = (140) / 2;
+        var height = 140;
+
+        var group = interesting_statistics_svg.append("g").attr("transform", "translate(" +
+            (margin.left + 60) + "," + (margin.top + 80) + ")");
+        var pie = d3.layout.pie().value(function (d) {
+            return d;
+        });
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius)
+            .innerRadius(radius / 4);
+
+        var arcOver = d3.svg.arc()
+            .innerRadius(radius / 4)
+            .outerRadius(radius + 5 + 5);
+
+        var arcs = group.selectAll(".arc")
+            .data(pie(data[gameweek][stat_id].values));
+
+        arcs.enter()
+            .append("g")
+            .attr("fill", function (d) {
+                return color(d.data);
             });
 
-        function makePieChart(stat_id) {
-            d3.select("#canvas3").remove();
-            var color = d3.scale.category10();
-
-            var interesting_statistics_svg = d3.select("#interesting-stats-chart").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", 140 + margin.top + margin.bottom)
-                .attr("id", "canvas3");
-
-            var interesting_statistics_tooltip = d3.select("#interesting-stats-chart").append("div")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
-
-            // Draw the interesting statistics pie chart
-            var radius = (140) / 2;
-            var height = 140;
-
-            var group = interesting_statistics_svg.append("g").attr("transform", "translate(" +
-                (margin.left + 60) + "," + (margin.top + 80) + ")");
-            var pie = d3.layout.pie().value(function (d) {
-                return d;
+        arcs.append("path")
+            .attr("d", arc)
+            .on("mouseover", function (d) {
+                d3.select(this)
+                    .attr("d", arcOver)
+                    .attr("stroke", "black")
+                    .attr("stroke-width",1)
+            })
+            .on("mouseout", function (d) {
+                d3.select(this)
+                    .attr("d", arc)
+                    .attr("stroke", "none")
             });
 
-            var arc = d3.svg.arc()
-                .outerRadius(radius)
-                .innerRadius(radius / 4);
+        arcs.append('text')
+            .attr('transform', function(d) {
+                return "translate(" + arc.centroid(d) + ")";
+            })
+            .attr("text-anchor", "middle")
+            .style("fill", "white")
+            .text(function(d) {
+                if(d.data > 0)
+                    return d.data;
+            });
 
-            var arcOver = d3.svg.arc()
-                .innerRadius(radius / 4)
-                .outerRadius(radius + 5 + 5);
+        var showLegend = interesting_statistics_svg.selectAll(".legend")
+            .data(pie(data[gameweek][stat_id].values))
+            .enter().append("g")
+            .attr("transform", function(d,i){
+                return "translate(" + (width - 390) + "," + (i * 15 + 20) + ")";
+            })
+            .attr("class", "legend");
 
-            var arcs = group.selectAll(".arc")
-                .data(pie(data[gameweek][stat_id].values));
+        showLegend.append("rect")
+            .attr("width", 10)
+            .attr("height", 10)
+            .attr("fill", function(d, i) {
+                return color(d.data);
+            });
 
-            arcs.enter()
-                .append("g")
-                .attr("fill", function (d) {
-                    return color(d.data);
-                });
+        showLegend.append("text")
+            .text(function(d, i){
+                return data[gameweek][stat_id].legend[i];
+            })
+            .style("font-size", "12px")
+            .attr("y", 10)
+            .attr("x", 11);
 
-            arcs.append("path")
-                .attr("d", arc)
-                .on("mouseover", function (d) {
-                    d3.select(this)
-                        .attr("d", arcOver)
-                        .attr("stroke", "black")
-                        .attr("stroke-width",1)
-                })
-                .on("mouseout", function (d) {
-                    d3.select(this)
-                        .attr("d", arc)
-                        .attr("stroke", "none")
-                });
+        arcs.exit().remove();
+    }
 
-            arcs.append('text')
-                .attr('transform', function(d) {
-                    return "translate(" + arc.centroid(d) + ")";
-                })
-                .attr("text-anchor", "middle")
-                .style("fill", "white")
-                .text(function(d) {
-                    if(d.data > 0)
-                        return d.data;
-                });
-
-            var showLegend = interesting_statistics_svg.selectAll(".legend")
-                .data(pie(data[gameweek][stat_id].values))
-                .enter().append("g")
-                .attr("transform", function(d,i){
-                    return "translate(" + (width - 390) + "," + (i * 15 + 20) + ")";
-                })
-                .attr("class", "legend");
-
-            showLegend.append("rect")
-                .attr("width", 10)
-                .attr("height", 10)
-                .attr("fill", function(d, i) {
-                    return color(d.data);
-                });
-
-            showLegend.append("text")
-                .text(function(d, i){
-                    return data[gameweek][stat_id].legend[i];
-                })
-                .style("font-size", "12px")
-                .attr("y", 10)
-                .attr("x", 11);
-
-            arcs.exit().remove();
+    function getStatId(newData) {
+        if(newData === 'Goals_type') {
+            stat_id = 2;
         }
-
-        function getStatId(newData) {
-            if(newData === 'Goals_type') {
-                stat_id = 2;
-            }
-            else if(newData === 'Goals_position') {
-                stat_id = 3;
-            }
-            else if(newData === 'Attempts') {
-                stat_id = 4;
-            }
-            else if(newData === 'Passes') {
-                stat_id = 5;
-            }
-            else if(newData === 'Pass_direction') {
-                stat_id = 6;
-            }
-            else if(newData === 'Saves') {
-                stat_id = 7;
-            }
-            else if(newData === 'Crosses') {
-                stat_id = 8;
-            }
-            else if(newData === 'Clearances') {
-                stat_id = 9;
-            }
-            return stat_id;
+        else if(newData === 'Goals_position') {
+            stat_id = 3;
         }
-    });
+        else if(newData === 'Attempts') {
+            stat_id = 4;
+        }
+        else if(newData === 'Passes') {
+            stat_id = 5;
+        }
+        else if(newData === 'Pass_direction') {
+            stat_id = 6;
+        }
+        else if(newData === 'Saves') {
+            stat_id = 7;
+        }
+        else if(newData === 'Crosses') {
+            stat_id = 8;
+        }
+        else if(newData === 'Clearances') {
+            stat_id = 9;
+        }
+        return stat_id;
+    }
+
 }
 
-function barChart(position) {
+function barChart(position, data) {
     d3.select('#canvas2').remove();
 
-    d3.json("static/leaguejson/bps.json", function (error, data) {
-        if(error) throw error;
-
-        var players = data[position][0].top_10_players;
-        var index = data[position][1].top_10_index;
+    var players = data[position][0].top_10_players;
+    var index = data[position][1].top_10_index;
 
 
 
-        var h = 125;
+    var h = 125;
 
-        var top_player_svg = d3.select("#time-chart").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", h + margin.top + margin.bottom)
-            .attr("id", "canvas2")
-            .append("g")
-            .attr("transform", "translate(80" + "," + margin.top + ")");
+    var top_player_svg = d3.select("#time-chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .attr("id", "canvas2")
+        .append("g")
+        .attr("transform", "translate(80" + "," + margin.top + ")");
 
-        var yScale = d3.scale.linear()
-            .range([0,h])
-            .domain([0,players.length]);
+    var yScale = d3.scale.linear()
+        .range([0,h])
+        .domain([0,players.length]);
 
-        var xScale = d3.scale.linear()
-            .range([0,475])
-            .domain([0, d3.max(index)]);
-
-
-        var yAxis = d3.svg.axis()
-            .scale(yScale)
-            .tickSize(2)
-            .tickFormat(function(d,i){
-                return players[i];})
-            .tickValues(d3.range(5))
-            .orient("left");
-
-        var gy = top_player_svg.append("g")
-            .attr("class", "y axis")
-            .attr("transform", "translate(0,4)")
-            .call(yAxis);
-
-        var bars = top_player_svg.selectAll("rect")
-            .data(index)
-            .enter()
-            .append("rect")
-            .attr("id",function(d,i){return i;})
-            .attr("x", 0)
-            .attr("y", function (d,i) {
-                return yScale(i);
-            })
-            .attr("height", 16.5)
-            .attr("width", 0)
-            .style("fill", "steelblue")
-            .on("mouseover", function (d) {
-                var pos = d3.select(this).attr("id");
-                highlight(players[pos],"red", 7.5, 0.9);
-
-                d3.select(this).style("fill", "orange")
-            })
-            .on("mouseout", function(d){
-                var pos = d3.select(this).attr("id");
-                highlight(players[pos], "steelblue", 3.5, 0);
-
-                d3.select(this).style("fill", "steelblue");
-            });
-
-        var transit = top_player_svg.selectAll("rect")
-            .data(index)
-            .transition()
-            .duration(3000)
-            .attr("width", function(d){ return xScale(d)});
-
-        var labels = d3.select("#canvas2").append("g").selectAll("text")
-            .data(index)
-            .enter()
-            .append("text")
-            .attr("class", "label")
-            .text(function(d){return d;})
-            .attr("text-anchor", "end")
-            .attr("y", 0)
-            .attr("x", 0)
-            .style("fill", "black");
-
-        labels.transition()
-            .duration(2500)
-            .attr("y", function(d,i){
-                return yScale(i) + 32;
-            })
-            .attr("x", function(d){ return xScale(d)+100;})
+    var xScale = d3.scale.linear()
+        .range([0,475])
+        .domain([0, d3.max(index)]);
 
 
-    });
+    var yAxis = d3.svg.axis()
+        .scale(yScale)
+        .tickSize(2)
+        .tickFormat(function(d,i){
+            return players[i];})
+        .tickValues(d3.range(5))
+        .orient("left");
+
+    var gy = top_player_svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(0,4)")
+        .call(yAxis);
+
+    var bars = top_player_svg.selectAll("rect")
+        .data(index)
+        .enter()
+        .append("rect")
+        .attr("id",function(d,i){return i;})
+        .attr("x", 0)
+        .attr("y", function (d,i) {
+            return yScale(i);
+        })
+        .attr("height", 16.5)
+        .attr("width", 0)
+        .style("fill", "steelblue")
+        .on("mouseover", function (d) {
+            var pos = d3.select(this).attr("id");
+            highlight(players[pos],"red", 7.5, 0.9);
+
+            d3.select(this).style("fill", "orange")
+        })
+        .on("mouseout", function(d){
+            var pos = d3.select(this).attr("id");
+            highlight(players[pos], "steelblue", 3.5, 0);
+
+            d3.select(this).style("fill", "steelblue");
+        });
+
+    var transit = top_player_svg.selectAll("rect")
+        .data(index)
+        .transition()
+        .duration(3000)
+        .attr("width", function(d){ return xScale(d)});
+
+    var labels = d3.select("#canvas2").append("g").selectAll("text")
+        .data(index)
+        .enter()
+        .append("text")
+        .attr("class", "label")
+        .text(function(d){return d;})
+        .attr("text-anchor", "end")
+        .attr("y", 0)
+        .attr("x", 0)
+        .style("fill", "black");
+
+    labels.transition()
+        .duration(2500)
+        .attr("y", function(d,i){
+            return yScale(i) + 32;
+        })
+        .attr("x", function(d){ return xScale(d)+100;})
+
+
 }
 
-function drawPositionDetails(gameweek) {
+function drawPositionDetails(gameweek, data) {
     d3.select('#positionStats').remove();
 
-    d3.json("static/leaguejson/bps.json", function (error, data) {
-        if (error) throw error;
+    var d = data[gameweek][10];
 
-        var d = data[gameweek][10];
-        console.log(d);
+    var w = 110,
+        h = 105;
 
-        var w = 110,
-            h = 105;
-
-        var colorscale = d3.scale.category10();
+    var colorscale = d3.scale.category10();
 
 //Legend titles
     var LegendOptions = data[gameweek][0].top_10_players;
 
 //Options for the Radar chart, other than default
-        var mycfg = {
-            w: w,
-            h: h,
-            maxValue: 0.6,
-            levels: 6,
-            ExtraWidthX: 300
-        };
+    var mycfg = {
+        w: w,
+        h: h,
+        maxValue: 0.6,
+        levels: 6,
+        ExtraWidthX: 300
+    };
 
 //Call function to draw the Radar chart
 //Will expect that data is in %'s
-        RadarChart.draw("#position-stats-chart", d, mycfg);
+    RadarChart.draw("#position-stats-chart", d, mycfg);
 
 ////////////////////////////////////////////
 /////////// Initiate legend ////////////////
 ////////////////////////////////////////////
 
-        var svg = d3.select('#position-stats-chart')
-            .selectAll('svg')
-            .append('svg')
-            .attr("width", w+50)
-            .attr("height", h);
-
-// Create the title for the legend
-//         var text = svg.append("text")
-//             .attr("class", "title")
-//             .attr('transform', 'translate(90,0)')
-//             .attr("x", w - 180)
-//             .attr("y", 20)
-//             .attr("font-size", "8px")
-//             .attr("fill", "#404040")
-//             .text("Top 5");
+    var svg = d3.select('#position-stats-chart')
+        .selectAll('svg')
+        .append('svg')
+        .attr("width", w+50)
+        .attr("height", h);
 
 //Initiate Legend
-        var legend = svg.append("g")
-                .attr("class", "legend")
-                .attr("height", 100)
-                .attr("width", 200)
-                .attr('transform', 'translate(90,0)')
-            ;
-        //Create colour squares
-        legend.selectAll('rect')
-            .data(LegendOptions)
-            .enter()
-            .append("rect")
-            .attr("x", w - 185)
-            .attr("y", function(d, i){ return i * 15;})
-            .attr("width", 10)
-            .attr("height", 10)
-            .style("fill", function(d, i){ return colorscale(i);})
-        ;
-        //Create text next to squares
-        legend.selectAll('text')
-            .data(LegendOptions)
-            .enter()
-            .append("text")
-            .attr("x", w - 172)
-            .attr("y", function(d, i){ return i * 15 + 9;})
-            .attr("font-size", "11px")
-            .attr("fill", "#737373")
-            .text(function(d) { return d; })
-        ;
-    });
+    var legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("height", 100)
+        .attr("width", 200)
+        .attr('transform', 'translate(90,0)');
+    //Create colour squares
+    legend.selectAll('rect')
+        .data(LegendOptions)
+        .enter()
+        .append("rect")
+        .attr("x", w - 185)
+        .attr("y", function(d, i){ return i * 15;})
+        .attr("width", 10)
+        .attr("height", 10)
+        .style("fill", function(d, i){ return colorscale(i);});
+    //Create text next to squares
+    legend.selectAll('text')
+        .data(LegendOptions)
+        .enter()
+        .append("text")
+        .attr("x", w - 172)
+        .attr("y", function(d, i){ return i * 15 + 9;})
+        .attr("font-size", "11px")
+        .attr("fill", "#737373")
+        .text(function(d) { return d; });
 
 }

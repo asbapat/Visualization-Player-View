@@ -105,6 +105,16 @@ function bumpChart() {
             })
             .on("mouseout", function (d) { club.style("opacity",1); });
 
+        circleStart.append("image")
+        // .attr("xlink:href", function(d){
+        //     return d.image;
+        // })
+            .attr("xlink:href", "static/lib/images/logos/Sunderland.png")
+            .attr("x", "9px")
+            .attr("y","10px")
+            .attr("width","25px")
+            .attr("height", "25px");
+
         var circleEnd = club.append("circle")
             .attr("cx", function(d) { return x(d.rank[0].matchday); })
             .attr("cy", function(d) { return y(d.rank[0].position) + y.rangeBand()/2; })
@@ -117,6 +127,16 @@ function bumpChart() {
                 club.filter(function(path) {return path.teamName === d.teamName; }).style("opacity",1);
             })
             .on("mouseout", function (d) { club.style("opacity",1); });
+
+        circleEnd.append("image")
+        // .attr("xlink:href", function(d){
+        //     return d.image;
+        // })
+            .attr("xlink:href", "static/lib/images/logos/Sunderland.png")
+            .attr("x", "9px")
+            .attr("y","10px")
+            .attr("width","25px")
+            .attr("height", "25px");
 
         // text label for the x axis
         svg.append("text")

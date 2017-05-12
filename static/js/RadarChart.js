@@ -17,7 +17,7 @@ var RadarChart = {
             TranslateX: 80,
             TranslateY: 80,
             ExtraWidthX: 100,
-            ExtraWidthY: 150,
+            ExtraWidthY: 100,
             color: d3.scale.category10()
         };
 

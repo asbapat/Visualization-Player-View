@@ -352,6 +352,7 @@ def calculate_gameweek_details():
             bps_score_dict[str(gameweek)].insert(9, {"values": clearances, "legend": ["Headed", "Other",
                                                         "Off the line"]})
             bps_score_dict[str(gameweek)].insert(10, new_radar)
+            bps_score_dict[str(gameweek)].insert(11, {"top_10_id": top_10_id})
             gameweek += 1
             bps_score_dict[str(gameweek)] = list()
             top_10_baps = [0] * 5
