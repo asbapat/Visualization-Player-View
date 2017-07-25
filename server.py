@@ -15,6 +15,9 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn import metrics
 from sklearn.manifold import MDS
+import os
+
+MYDIR = os.path.dirname(__file__)
 
 JSON_DIR = 'static/leaguejson/'
 
@@ -562,7 +565,7 @@ def perform_pca():
 
 
 if __name__ == "__main__":
-    premier_league_data = pd.read_csv("Premier League 2011-12.csv", header=0,
+    premier_league_data = pd.read_csv("I:\PlayerView\Visualization-Player-View\Premier League 2011-12.csv", header=0,
                                       usecols=['Player ID', 'Player Surname', 'Team', 'Time Played', 'Position Id',
                                                'Goals', 'Assists', 'Clean Sheets', 'Saves from Penalty', 'Saves Made',
                                                'Yellow Cards', 'Red Cards', 'Successful Dribbles',
@@ -572,7 +575,7 @@ if __name__ == "__main__":
                                                'Total Successful Passes All', 'Penalties Conceded',
                                                'Tackles Lost', 'Total Fouls Conceded', 'Offsides'])
 
-    gameweek_premier_league_data = pd.read_csv("Premier League 2011-12 Gameweek.csv", header=0,
+    gameweek_premier_league_data = pd.read_csv("I:\PlayerView\Visualization-Player-View\Premier League 2011-12 Gameweek.csv", header=0,
                                                usecols=['Player ID', 'Player Surname', 'Team', 'Gameweek', 'Time Played',
                                                         'Position Id', 'Goals', 'Assists', 'Clean Sheets',
                                                         'Saves from Penalty', 'Saves Made', 'Yellow Cards', 'Red Cards',
@@ -603,7 +606,7 @@ if __name__ == "__main__":
                                                         'Successful Crosses Right', 'Unsuccessful Crosses Right',
                                                         'Headed Clearances', 'Other Clearances', 'Clearances Off the Line'])
 
-    pca_data_frame = pd.read_csv("Premier League 2011-12 Gameweek.csv", header=0,
+    pca_data_frame = pd.read_csv("I:\PlayerView\Visualization-Player-View\Premier League 2011-12 Gameweek.csv", header=0,
                                                usecols=['Player ID', 'Gameweek', 'Time Played',
                                                         'Goals', 'Assists', 'Clean Sheets', 'Red Cards', 'Yellow Cards',
                                                         'Saves from Penalty', 'Big Chances', 'Winning Goal'])
@@ -647,12 +650,14 @@ if __name__ == "__main__":
 
     bps_score_values = calculate_gameweek_details()
 
-    with open(JSON_DIR +'bps.json', 'w') as f:
+    # with open(JSON_DIR +'bps.json', 'w') as f:
+    with open(os.path.join(MYDIR, JSON_DIR + 'bps.json'), 'w') as f:
         json.dump(bps_score_values, f)
 
     league_dict = make_collapsible_tree()
 
-    with open(JSON_DIR +'league.json', 'w') as f:
+    # with open(JSON_DIR +'league.json', 'w') as f:
+    with open(os.path.join(MYDIR, JSON_DIR + 'league.json'), 'w') as f:
         json.dump(league_dict, f)
 
     del premier_league_data['Team']
